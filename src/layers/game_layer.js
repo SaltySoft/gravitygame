@@ -32,28 +32,10 @@ define([
                 radius: 100
             });
             base.objects.push(planet);
-//            var planet =  Planet.init(base, {
-//                x: 300,
-//                y: 200,
-//                radius: 10
-//            });
-//            base.objects.push(planet);
-//            var planet =  Planet.init(base, {
-//                x: 400,
-//                y: 500,
-//                radius: 20
-//            });
-//            base.objects.push(planet);
-//            base.objects.push(planet);
-//            var planet =  Planet.init(base, {
-//                x: -200,
-//                y: 300,
-//                radius: 30
-//            });
-//            base.objects.push(planet);
-//
+
+
             base.mobile_objects = [];
-//
+
 
             var planet =  Planet.init(base, {
                 x: 233,

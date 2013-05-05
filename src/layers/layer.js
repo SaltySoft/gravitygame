@@ -18,7 +18,6 @@ define([
         draw: function () {
         },
         logic: function () {
-
         },
         run: function () {
             var base = this;
@@ -26,7 +25,6 @@ define([
             base.logic();
             base.physics();
             base.draw();
-
         }
     });
 

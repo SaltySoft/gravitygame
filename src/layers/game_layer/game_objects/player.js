@@ -4,7 +4,15 @@ define([
 ], function (Class, Obj) {
     var Player = Obj.create();
 
+    Player.extend({
+        states: {
+            FLYING: 0,
+            WALKING : 1
+        }
+    });
+
     Player.include({
+
         init: function (layer, obj) {
             var base = this;
             base.layer = layer;
@@ -15,8 +23,11 @@ define([
                 speedY: 0,
                 accelerationX: 0,
                 accelerationY: 0,
-                mass: 10
+                mass: 10,
+                angle: 0
             };
+            base.current_planet = undefined;
+            base.state = Player.states.FLYING;
 
             if (obj !== undefined && obj.x !== undefined && obj.y !== undefined) {
                 base.traits.x = obj.x;
@@ -70,12 +81,26 @@ define([
         },
         physics: function (layer) {
             var base = this;
-            base.traits.speedX += base.traits.accelerationX + base.accelOffsetX;
-            base.traits.speedY += base.traits.accelerationY + base.accelOffsetY;
-
 
             base.traits.x += base.traits.speedX;
             base.traits.y += base.traits.speedY;
+
+            if (base.state == Player.states.FLYING) {
+
+
+                base.traits.speedX += base.traits.accelerationX + base.accelOffsetX;
+                base.traits.speedY += base.traits.accelerationY + base.accelOffsetY;
+            } else {
+                base.traits.speedX = 0;
+                base.traits.speedY = 0;
+
+            }
+
+
+
+
+
+
             base.traits.accelerationX = 0;
             base.traits.accelerationY = 0;
 

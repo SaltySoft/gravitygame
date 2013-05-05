@@ -1,6 +1,7 @@
 define([
-    './object'
-], function (Obj) {
+    './object',
+    './player'
+], function (Obj, Player) {
     var Planet = Obj.create();
 
     Planet.extend({
@@ -36,17 +37,16 @@ define([
             for (var k in layer.mobile_objects)
             {
                 var object = layer.mobile_objects[k];
-                var x = (base.traits.x -  object.traits.x);
-                var y = (base.traits.y -  object.traits.y);
-                var distance = Math.sqrt(x*x + y*y);
+                var distance = base.distanceTo(object);
 
-                var force = (base.traits.mass + object.traits.mass) / (distance * distance * 1000);
+                var force = base.gravityTo(object);
+                var unit = base.unitVectorTo(object);
+                var unitx = unit.x;
+                var unity = unit.y;
 
-                var unitx = x / (x*x + y*y);
-                var unity = y / (x*x + y*y);
-
-                var addx = unitx * force;
-                var addy = unity * force;
+                var g = base.gravityVectorTo(object);
+                var addx = g.x;
+                var addy = g.y;
 
                 var screen_pos = object.getScreenPos();
                 var lineto = {
@@ -66,17 +66,17 @@ define([
 
 
 
-                if (Math.abs(distance - base.traits.radius) <= 5) {
-                    base.speedX = -base.speedX;
-                    base.speedY = -base.speedY;
-
-                    base.unforceLine.dest.x = screen_pos.x - (object.traits.accelerationX * unitx) * 10000;
-                    base.unforceLine.dest.y = screen_pos.y - (object.traits.accelerationY * unitx) * 10000;
+                if (Math.abs(distance - base.traits.radius - 10) <= 2) {
                     base.traits.color = "green";
+                    object.state = Player.states.WALKING;
+                    object.current_planet = base;
                 } else {
                     base.traits.color = "red";
-                    object.traits.accelerationX += addx;
-                    object.traits.accelerationY += addy;
+                    if (object.state == Player.states.FLYING) {
+                        object.traits.accelerationX += addx;
+                        object.traits.accelerationY += addy;
+                    }
+
                 }
 
             }
