@@ -72,16 +72,16 @@ define([
             if (base.camera.speedY > 0) {
                 base.camera.speedY -= 0.05;
             }
-            if (base.inputs_engine.keyPressed(100)) {
+            if (base.inputs_engine.keyPressed(37)) {
                 base.camera.speedX -= 0.1;
             }
-            if (base.inputs_engine.keyPressed(102)) {
+            if (base.inputs_engine.keyPressed(39)) {
                 base.camera.speedX += 0.1;
             }
-            if (base.inputs_engine.keyPressed(98)) {
+            if (base.inputs_engine.keyPressed(38)) {
                 base.camera.speedY -= 0.1;
             }
-            if (base.inputs_engine.keyPressed(104)) {
+            if (base.inputs_engine.keyPressed(40)) {
                 base.camera.speedY += 0.1;
             }
             base.camera.x += base.camera.speedX;
