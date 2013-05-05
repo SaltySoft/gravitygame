@@ -8,15 +8,13 @@ define([
         y: 0
     });
     Obj.include({
-        init: function (x, y) {
+        init: function (layer, obj) {
             var base = this;
-            if (x !== undefined && y != undefined) {
-                base.x = x;
-                base.y = y;
-            } else {
-                base.x = 0;
-                base.y = 0;
-            }
+            base.traits = {
+                x: obj.x ? obj.x : 0,
+                y: obj.y ? obj.y : 0
+            };
+            base.layer = layer;
         },
         logic: function () {
 
@@ -26,6 +24,13 @@ define([
         },
         physics: function (layer) {
 
+        },
+        getScreenPos: function () {
+            var base = this;
+            return {
+                x: Math.round(base.traits.x - base.layer.camera.x),
+                y: Math.round(base.traits.y - base.layer.camera.y)
+            };
         }
     });
 

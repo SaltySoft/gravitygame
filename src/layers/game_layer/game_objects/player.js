@@ -5,61 +5,89 @@ define([
     var Player = Obj.create();
 
     Player.include({
-        init: function (x,y) {
+        init: function (layer, obj) {
             var base = this;
-
-            base.position = {
+            base.layer = layer;
+            base.traits = {
                 x: 0,
                 y: 0,
                 speedX: 0,
-                speedY: 0
+                speedY: 0,
+                accelerationX: 0,
+                accelerationY: 0,
+                mass: 10
             };
 
-            if (x !== undefined && y != undefined) {
-                base.position.x = x;
-                base.position.y = y;
+            if (obj !== undefined && obj.x !== undefined && obj.y !== undefined) {
+                base.traits.x = obj.x;
+                base.traits.y = obj.y;
             }
         },
         logic: function (layer) {
             var base = this;
             base.inputs = layer.inputs_engine;
 
-            if (base.position.speedX < 0)
-                base.position.speedX += 0.025;
-            if (base.position.speedX > 0)
-                base.position.speedX -= 0.025;3
-            if (base.position.speedY < 0)
-                base.position.speedY += 0.025;
-            if (base.position.speedY > 0)
-                base.position.speedY -= 0.025;
+//            if (base.traits.speedX < 0)
+//                base.traits.speedX += 0.025;
+//            if (base.traits.speedX > 0)
+//                base.traits.speedX -= 0.025;3
+//            if (base.traits.speedY < 0)
+//                base.traits.speedY += 0.025;
+//            if (base.traits.speedY > 0)
+//                base.traits.speedY -= 0.025;
 
+            base.accelOffsetX = 0;
+            base.accelOffsetY = 0;
             if (base.inputs.keyPressed(65)) {
-                base.position.speedX -= 0.05;
+                base.accelOffsetX = -0.05;
             }
             if (base.inputs.keyPressed(68)) {
-                base.position.speedX += 0.05;
+                base.accelOffsetX = 0.05;
             }
             if (base.inputs.keyPressed(87)) {
-                base.position.speedY -= 0.05;
+                base.accelOffsetY = -0.05;
             }
             if (base.inputs.keyPressed(83)) {
-                base.position.speedY += 0.05;
+                base.accelOffsetY = 0.05;
             }
 
-            base.position.x += base.position.speedX;
-            base.position.y += base.position.speedY;
+
+
+
+
 
         },
         draw: function (gengine) {
             var base = this;
             gengine.drawCircle({
-                x: base.position.x,
-                y: base.position.y,
-                radius: 3 + Math.abs(base.position.speedX) + Math.abs(base.position.speedY) * 10
+                x: base.traits.x,
+                y: base.traits.y,
+                radius: 10
             });
+
+
+
         },
         physics: function (layer) {
+            var base = this;
+            base.traits.speedX += base.traits.accelerationX + base.accelOffsetX;
+            base.traits.speedY += base.traits.accelerationY + base.accelOffsetY;
 
+
+            base.traits.x += base.traits.speedX;
+            base.traits.y += base.traits.speedY;
+            base.traits.accelerationX = 0;
+            base.traits.accelerationY = 0;
+
+            var context = base.layer.game.context;
+            context.lineWidth = 2;
+            context.strokeStyle = "black";
+            context.beginPath();
+            var screen_pos = base.getScreenPos();
+            context.moveTo(screen_pos.x, screen_pos.y);
+//            context.lineTo(screen_pos.x + base.traits.speedX, screen_pos.y + base.traits.speedY);
+            context.lineTo(0, 0);
+            context.stroke();
         }
     });
 

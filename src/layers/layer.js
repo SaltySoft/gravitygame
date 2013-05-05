@@ -23,9 +23,10 @@ define([
         run: function () {
             var base = this;
             base.inputs();
+            base.logic();
             base.physics();
             base.draw();
-            base.logic();
+
         }
     });
 

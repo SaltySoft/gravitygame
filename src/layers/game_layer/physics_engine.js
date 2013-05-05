@@ -55,7 +55,7 @@ define([
             base.camera_control();
 
             for (var k in base.layer.objects) {
-                base.layer.objects[k].physics(base.layer.game);
+                base.layer.objects[k].physics(base.layer);
             }
         }
     });

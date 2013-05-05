@@ -32,28 +32,64 @@ define([
                 radius: 100
             });
             base.objects.push(planet);
+//            var planet =  Planet.init(base, {
+//                x: 300,
+//                y: 200,
+//                radius: 10
+//            });
+//            base.objects.push(planet);
+//            var planet =  Planet.init(base, {
+//                x: 400,
+//                y: 500,
+//                radius: 20
+//            });
+//            base.objects.push(planet);
+//            base.objects.push(planet);
+//            var planet =  Planet.init(base, {
+//                x: -200,
+//                y: 300,
+//                radius: 30
+//            });
+//            base.objects.push(planet);
+//
+            base.mobile_objects = [];
+//
+
             var planet =  Planet.init(base, {
-                x: 300,
-                y: 200,
+                x: 233,
+                y: 455,
                 radius: 10
             });
             base.objects.push(planet);
+            base.mobile_objects.push(planet);
             var planet =  Planet.init(base, {
-                x: 400,
-                y: 500,
-                radius: 20
-            });
-            base.objects.push(planet);
-            base.objects.push(planet);
-            var planet =  Planet.init(base, {
-                x: -200,
-                y: 300,
-                radius: 30
-            });
-            base.objects.push(planet);
+                x: 243,
+                y: 100,
+                radius: 10
 
-            var player = Player.init();
+            });
+            base.objects.push(planet);
+            base.mobile_objects.push(planet);
+            var planet =  Planet.init(base, {
+                x: 675,
+                y: 344,
+                radius: 10
+            });
+            base.objects.push(planet);
+            base.mobile_objects.push(planet);
+            var planet =  Planet.init(base, {
+                x: 150,
+                y: 500,
+                radius: 10
+            });
+            base.objects.push(planet);
+            base.mobile_objects.push(planet);
+            var player = Player.init(base, {
+                x: 300,
+                y: 300
+            });
             base.objects.push(player);
+            base.mobile_objects.push(player);
         },
         cameraPos: function (params) {
             var base = this;
