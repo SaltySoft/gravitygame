@@ -17,11 +17,15 @@ define([
         },
         draw: function () {
         },
+        logic: function () {
+
+        },
         run: function () {
             var base = this;
             base.inputs();
             base.physics();
             base.draw();
+            base.logic();
         }
     });
 

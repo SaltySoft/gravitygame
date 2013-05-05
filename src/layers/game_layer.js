@@ -15,7 +15,9 @@ define([
             base.camera = {
                 x: 0,
                 y: 0,
-                distance: 100
+                distance: 100,
+                speedX: 0,
+                speedY: 0
             };
             base.inputs_engine = InputsEngine.init(base);
             base.physics_engine = PhysicsEngine.init(base);
@@ -56,10 +58,38 @@ define([
             if (params.y)
                 base.camera.y = params.y;
         },
+        logic: function () {
+            var base = this;
+            if (base.camera.speedX < 0) {
+                base.camera.speedX += 0.05;
+            }
+            if (base.camera.speedX > 0) {
+                base.camera.speedX -= 0.05;
+            }
+            if (base.camera.speedY < 0) {
+                base.camera.speedY += 0.05;
+            }
+            if (base.camera.speedY > 0) {
+                base.camera.speedY -= 0.05;
+            }
+            if (base.inputs_engine.keyPressed(100)) {
+                base.camera.speedX -= 0.1;
+            }
+            if (base.inputs_engine.keyPressed(102)) {
+                base.camera.speedX += 0.1;
+            }
+            if (base.inputs_engine.keyPressed(98)) {
+                base.camera.speedY -= 0.1;
+            }
+            if (base.inputs_engine.keyPressed(104)) {
+                base.camera.speedY += 0.1;
+            }
+            base.camera.x += base.camera.speedX;
+            base.camera.y += base.camera.speedY;
+        },
         inputs: function () {
             var base = this;
             base.inputs_engine.run();
-
         },
         physics: function () {
             var base = this;
@@ -67,7 +97,7 @@ define([
         },
         draw: function () {
             var base = this;
-            base.camera.x -= 0.5;
+
             base.graphics_engine.run();
         }
     });
