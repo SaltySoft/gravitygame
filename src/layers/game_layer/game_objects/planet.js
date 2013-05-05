@@ -1,7 +1,7 @@
 define([
-    'class'
-], function (Class) {
-    var Planet = Class.create();
+    './object'
+], function (Obj) {
+    var Planet = Obj.create();
 
     Planet.extend({
 

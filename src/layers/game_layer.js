@@ -4,8 +4,9 @@ define([
     './game_layer/inputs_engine',
     './game_layer/physics_engine',
     './game_layer/graphics_engine',
-    './game_layer/game_objects/planet'
-], function (Class, Layer, InputsEngine, PhysicsEngine, GraphicsEngine, Planet) {
+    './game_layer/game_objects/planet',
+    './game_layer/game_objects/player'
+], function (Class, Layer, InputsEngine, PhysicsEngine, GraphicsEngine, Planet, Player) {
     var GameLayer = Layer.create();
 
     GameLayer.include({
@@ -50,6 +51,9 @@ define([
                 radius: 30
             });
             base.objects.push(planet);
+
+            var player = Player.init();
+            base.objects.push(player);
         },
         cameraPos: function (params) {
             var base = this;
@@ -57,35 +61,13 @@ define([
                 base.camera.x = params.x;
             if (params.y)
                 base.camera.y = params.y;
+
         },
         logic: function () {
             var base = this;
-            if (base.camera.speedX < 0) {
-                base.camera.speedX += 0.05;
+            for (var k in base.objects) {
+                base.objects[k].logic(base);
             }
-            if (base.camera.speedX > 0) {
-                base.camera.speedX -= 0.05;
-            }
-            if (base.camera.speedY < 0) {
-                base.camera.speedY += 0.05;
-            }
-            if (base.camera.speedY > 0) {
-                base.camera.speedY -= 0.05;
-            }
-            if (base.inputs_engine.keyPressed(37)) {
-                base.camera.speedX -= 0.1;
-            }
-            if (base.inputs_engine.keyPressed(39)) {
-                base.camera.speedX += 0.1;
-            }
-            if (base.inputs_engine.keyPressed(38)) {
-                base.camera.speedY -= 0.1;
-            }
-            if (base.inputs_engine.keyPressed(40)) {
-                base.camera.speedY += 0.1;
-            }
-            base.camera.x += base.camera.speedX;
-            base.camera.y += base.camera.speedY;
         },
         inputs: function () {
             var base = this;

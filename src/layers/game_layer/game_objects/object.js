@@ -1,27 +1,33 @@
 define([
     'class'
 ], function (Class) {
-    var Object = new Class();
+    var Obj = Class.create();
 
-    Object.extend({
+    Obj.extend({
         x: 0,
         y: 0
     });
-    Object.include({
+    Obj.include({
         init: function (x, y) {
             var base = this;
             if (x !== undefined && y != undefined) {
                 base.x = x;
                 base.y = y;
+            } else {
+                base.x = 0;
+                base.y = 0;
             }
         },
-        draw: function (game) {
+        logic: function () {
 
         },
-        physics: function (game) {
+        draw: function (gengine) {
+
+        },
+        physics: function (layer) {
 
         }
     });
 
-    return Object;
+    return Obj;
 });
