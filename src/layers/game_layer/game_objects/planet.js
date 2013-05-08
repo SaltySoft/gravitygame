@@ -42,7 +42,7 @@ define([
                     main_grav = true;
                     object.closest_distance = distance;
                 }
-                if (main_grav && !layer.inputs_engine.keyPressed(32)) {
+                if (!layer.inputs_engine.keyPressed(32)) {
 
                     var force = base.gravityTo(object);
                     var unit = base.unitVectorTo(object);
@@ -79,32 +79,56 @@ define([
                         y: unit.x
                     };
 
-
-                    var angle = Math.atan(tangent.y / tangent.x);
-                    if (base.traits.y > object.traits.y)
-                        object.traits.angle = angle + Math.PI;
-                    else
-                        object.traits.angle = angle;
-
-                    if (distance <= base.traits.radius) {
-                        base.traits.color = "green";
-                        var speed = object.calcSpeed(object.traits.speedX + addx, object.traits.speedY + addy);
-                        object.traits.x -= speed * unit.x;
-                        object.traits.y -= speed * unit.y;
-                    } else {
-                        base.traits.color = "red";
-                    }
-                    object.traits.accelerationX += addx;
-                    object.traits.accelerationY += addy
-                    if (base.traits.radius + 200 > distance) {
-                        object.traits.speedX *= 0.95 + (0.05 * (distance) / (base.traits.radius + 200));
-                        object.traits.speedY *= 0.95 + (0.05 * (distance) / (base.traits.radius + 200));
+                    if (main_grav) {
+                        var angle = Math.atan(tangent.y / tangent.x);
+                        object.addAngle(angle);
+                        object.addCenter({
+                            x: base.traits.x,
+                            y: base.traits.y
+                        });
                     }
 
+                    if (distance < base.traits.radius + 500) {
+
+                        if (distance <= base.traits.radius) {
+                            base.traits.color = "green";
+                            var speed = object.calcSpeed(object.traits.speedX + addx, object.traits.speedY + addy);
+                            object.traits.x -= speed * unit.x;
+                            object.traits.y -= speed * unit.y;
+                        } else {
+                            base.traits.color = "red";
+                        }
+                        object.traits.accelerationX += addx;
+                        object.traits.accelerationY += addy
+                        if (base.traits.radius + 50 > distance) {
+                            object.traits.speedX *= 0.9 + (0.05 * (distance) / (base.traits.radius + 50));
+                            object.traits.speedY *= 0.9 + (0.05 * (distance) / (base.traits.radius + 50));
+                        }
+                    }
 
 
                 }
             }
+        },
+        predraw: function (gengine) {
+            var base = this;
+            var x = base.traits.x;
+            var y = base.traits.y;
+            var radius = base.traits.radius;
+            var ctx = base.layer.game.context;
+            var screen_pos = base.getScreenPos();
+            var radgrad = ctx.createRadialGradient(screen_pos.x, screen_pos.y, radius + 500, screen_pos.x, screen_pos.y, 0);
+            radgrad.addColorStop(0, 'rgba(255, 255, 255, 0)');
+            radgrad.addColorStop(0.1, 'rgba(255, 255, 255, 0.2)');
+            radgrad.addColorStop(1, 'rgba(255, 255, 255, 0.7)');
+
+
+            gengine.drawCircle({
+                x: x,
+                y: y,
+                radius: radius + 500,
+                fill_style: radgrad
+            });
         },
         draw: function (gengine) {
             var base = this;
@@ -112,10 +136,11 @@ define([
             var y = base.traits.y;
             var radius = base.traits.radius;
 
+
             gengine.drawCircle({
                 x: x,
                 y: y,
-                radius:  + 200,
+                radius: radius + 50,
                 line_width: 3,
                 stroke_style: 'black',
                 fill_style: "grey"
@@ -128,17 +153,6 @@ define([
                 stroke_style: 'green',
                 fill_style: base.traits.color
             });
-
-
-            var context = base.layer.game.context;
-            context.lineWidth = 2;
-            context.strokeStyle = "blue";
-            context.beginPath();
-            context.moveTo(base.forceLine.origin.x, base.forceLine.origin.y);
-            context.lineTo(base.forceLine.dest.x, base.forceLine.dest.y);
-            context.moveTo(base.forceLine.origin.x, base.forceLine.origin.y);
-            context.lineTo(base.unforceLine.dest.x, base.unforceLine.dest.y);
-            context.stroke();
 
 
         }

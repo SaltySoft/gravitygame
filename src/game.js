@@ -11,16 +11,24 @@ define([
     Game.include({
         init: function (container) {
             var base = this;
-
+            $("html").css("padding", "0px");
+            $("body").css("padding", "0px");
+            $("html").css("margin", "0px");
+            $("body").css("margin", "0px");
             base.canvas = document.createElement("canvas");
-            base.canvas.width = 1000;
-            base.canvas.height = 1000;
+            $(base.canvas).css("background-color", "black");
+            base.canvas.width = $(document).width() - 15;
+            base.canvas.height = $(document).height() - 15;
 
             base.layers = [];
             $(container).append(base.canvas);
             base.context = base.canvas.getContext('2d');
             var game_layer = GameLayer.init(base)
             base.addLayer(game_layer);
+            if (window.mozRequestAnimationFrame)
+                base.anfunc = window.mozRequestAnimationFrame;
+            else if (window.requestAnimationFrame)
+                base.anfunc = window.requestAnimationFrame;
         },
         addLayer: function (layer) {
             this.layers.push(layer);
@@ -32,7 +40,9 @@ define([
             var base = this;
 
             setTimeout(function () {
-                window.requestAnimationFrame(base.animate.bind(base));
+                base.anfunc.call(window, base.animate.bind(base));
+
+
                 base.layers[base.layers.length - 1].run();
             }, 1);
 

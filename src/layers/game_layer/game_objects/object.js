@@ -42,13 +42,29 @@ define([
         gravityTo: function (object) {
             var base = this;
             var distance = base.distanceTo(object);
-            var force = (6.6438 * 0.0001 * base.traits.mass + object.traits.mass) / 25;
+            if (distance < 500) {
+                var coeff = (200 * (distance / 500))
+            } else {
+                var coeff = 200;
+            }
+            var force = (0.9 * base.traits.mass + object.traits.mass) / 200;
             return force;
         },
         unitVectorTo: function (object) {
             var base = this;
             var x = (base.traits.x - object.traits.x);
             var y = (base.traits.y - object.traits.y);
+            var unitx = x / Math.sqrt(x * x + y * y);
+            var unity = y / Math.sqrt(x * x + y * y);
+            return {
+                x: unitx,
+                y: unity
+            };
+        },
+        unitVectorToVector: function (vector) {
+            var base = this;
+            var x = (base.traits.x - vector.x);
+            var y = (base.traits.y - vector.y);
             var unitx = x / Math.sqrt(x * x + y * y);
             var unity = y / Math.sqrt(x * x + y * y);
             return {

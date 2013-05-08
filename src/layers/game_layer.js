@@ -29,7 +29,7 @@ define([
             var planet =  Planet.init(base, {
                 x: 500,
                 y: 500,
-                radius: 30
+                radius: 100
             });
             base.objects.push(planet);
 
@@ -39,7 +39,7 @@ define([
 //
 //            var planet =  Planet.init(base, {
 //                x: 233,
-//                y: 455,
+//                y: 300,
 //                radius: 10
 //            });
 //            base.objects.push(planet);
@@ -63,8 +63,8 @@ define([
 //            });
 //            base.objects.push(planet);
             var player = Player.init(base, {
-                x: 200,
-                y: 200
+                x: 400,
+                y: 400
             });
             base.objects.push(player);
             base.mobile_objects.push(player);

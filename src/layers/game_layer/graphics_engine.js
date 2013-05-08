@@ -20,6 +20,10 @@ define([
             base.context = base.layer.game.context;
             base.context.clearRect(0, 0, canvas.width, canvas.height);
             for (var k in base.layer.objects) {
+                if (base.layer.objects[k].predraw)
+                    base.layer.objects[k].predraw(base);
+            }
+            for (var k in base.layer.objects) {
                 base.layer.objects[k].draw(base);
             }
         },
@@ -42,8 +46,8 @@ define([
                 context.strokeStyle = params.stroke_style;
             else
                 context.strokeStyle = "#000000";
-
-            context.stroke();
+            if (params.line_width)
+                context.stroke();
             if (params.angle !== undefined ) {
                 context.beginPath();
                 context.moveTo(params.x - base.layer.camera.x, params.y - base.layer.camera.y);
