@@ -73,11 +73,11 @@ define([
 
             if (base.inputs.keyPressed(87)) {
                 base.running = true;
-                base.traits.accel_jet = 0.2;
+                base.traits.accel_jet = 0.1;
             }
             else if (base.inputs.keyPressed(83)) {
                 base.running = true;
-                base.traits.accel_jet = -0.2;
+                base.traits.accel_jet = -0.1;
             }
             else {
                 base.running = false;
@@ -134,14 +134,12 @@ define([
                     base.traits.angle += Math.PI;
                 if (base.traits.speedY < 0)
                     base.traits.angle += 2 * Math.PI;
-                console.log(base.traits.speedY, base.traits.speedX, base.traits.angle);
             } else {
                 base.center.x /= base.center_count;
                 base.center.y /= base.center_count;
                 if (base.center.x) {
                     var unit = base.unitVectorToVector(base.center);
                     var angle = Math.atan(-unit.x / unit.y);
-                    console.log(unit);
                     base.traits.angle = angle;
                     if (unit.y < 0)
                         base.traits.angle += Math.PI;
@@ -150,12 +148,24 @@ define([
                 }
             }
 
+
             base.traits.speedX += base.traits.accelerationX + Math.cos(base.traits.angle) * base.traits.accel_jet;
             base.traits.speedY += base.traits.accelerationY + Math.sin(base.traits.angle) * base.traits.accel_jet;
 
 
             base.traits.x += base.traits.speedX + base.traits.offsetx;
             base.traits.y += base.traits.speedY + base.traits.offsety;
+
+            if (base.closest_planet) {
+                var distance = base.distanceTo(base.closest_planet);
+                if (distance < base.closest_planet.traits.radius) {
+                    var unit = base.unitVectorTo(base.closest_planet);
+                    base.traits.x += (base.closest_planet.traits.radius - distance) * unit.x;
+                    base.traits.y += (base.closest_planet.traits.radius - distance) * unit.y;
+                } else {
+                    console.log("not in planet");
+                }
+            }
 
             base.traits.offsetx = 0;
             base.traits.offsety = 0;

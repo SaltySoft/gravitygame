@@ -26,7 +26,7 @@ define([
 
             base.objects = [];
             console.log(game);
-            var planet =  Planet.init(base, {
+            var planet = Planet.init(base, {
                 x: 500,
                 y: 500,
                 radius: 100
@@ -62,12 +62,13 @@ define([
 //                radius: 10
 //            });
 //            base.objects.push(planet);
-            var player = Player.init(base, {
+            base.player = Player.init(base, {
                 x: 400,
                 y: 400
             });
-            base.objects.push(player);
-            base.mobile_objects.push(player);
+
+            base.objects.push(base.player);
+            base.mobile_objects.push(base.player);
         },
         cameraPos: function (params) {
             var base = this;
@@ -81,7 +82,6 @@ define([
             var base = this;
 
 
-
             for (var k in base.objects) {
                 base.objects[k].logic(base);
             }
@@ -92,6 +92,21 @@ define([
         },
         physics: function () {
             var base = this;
+
+            if (base.player.traits.x < base.camera.x - 30) {
+                base.camera.x = base.player.traits.x - 30;
+            }
+            if (base.player.traits.x > base.camera.x + base.game.canvas.width + 30) {
+                base.camera.x = base.player.traits.x + 30 - base.game.canvas.width;
+            }
+
+            if (base.player.traits.y < base.camera.y - 30) {
+                base.camera.y = base.player.traits.y - 30;
+            }
+            if (base.player.traits.y > base.camera.y + base.game.canvas.height - 30) {
+                base.camera.y = base.player.traits.y + 30 - base.game.canvas.height;
+            }
+
             base.physics_engine.run();
         },
         draw: function () {

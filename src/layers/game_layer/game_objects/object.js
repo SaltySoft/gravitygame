@@ -47,7 +47,7 @@ define([
             } else {
                 var coeff = 200;
             }
-            var force = (0.9 * base.traits.mass + object.traits.mass) / 200;
+            var force = (0.9 * base.traits.mass + object.traits.mass) / coeff;
             return force;
         },
         unitVectorTo: function (object) {

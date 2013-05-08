@@ -41,6 +41,7 @@ define([
                 if (distance < object.closest_distance || object.closest_distance == -1) {
                     main_grav = true;
                     object.closest_distance = distance;
+                    object.closest_planet = base;
                 }
                 if (!layer.inputs_engine.keyPressed(32)) {
 
@@ -90,19 +91,17 @@ define([
 
                     if (distance < base.traits.radius + 500) {
 
-                        if (distance <= base.traits.radius) {
-                            base.traits.color = "green";
-                            var speed = object.calcSpeed(object.traits.speedX + addx, object.traits.speedY + addy);
-                            object.traits.x -= speed * unit.x;
-                            object.traits.y -= speed * unit.y;
-                        } else {
-                            base.traits.color = "red";
-                        }
+
                         object.traits.accelerationX += addx;
                         object.traits.accelerationY += addy
                         if (base.traits.radius + 50 > distance) {
-                            object.traits.speedX *= 0.9 + (0.05 * (distance) / (base.traits.radius + 50));
-                            object.traits.speedY *= 0.9 + (0.05 * (distance) / (base.traits.radius + 50));
+                            object.traits.speedX *= 0.95 + (0.05 * (distance) / (base.traits.radius + 100));
+                            object.traits.speedY *= 0.95 + (0.05 * (distance) / (base.traits.radius + 100));
+                        }
+                        if (distance < base.traits.radius) {
+                            base.traits.color = "green";
+                        } else {
+                            base.traits.color = "red";
                         }
                     }
 
