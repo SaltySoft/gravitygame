@@ -27,48 +27,44 @@ define([
             base.objects = [];
             console.log(game);
             var planet =  Planet.init(base, {
-                x: 100,
-                y: 100,
-                radius: 100
+                x: 500,
+                y: 500,
+                radius: 30
             });
             base.objects.push(planet);
 
 
             base.mobile_objects = [];
 
-
-            var planet =  Planet.init(base, {
-                x: 233,
-                y: 455,
-                radius: 10
-            });
-            base.objects.push(planet);
-            base.mobile_objects.push(planet);
-            var planet =  Planet.init(base, {
-                x: 243,
-                y: 100,
-                radius: 10
-
-            });
-            base.objects.push(planet);
-            base.mobile_objects.push(planet);
-            var planet =  Planet.init(base, {
-                x: 675,
-                y: 344,
-                radius: 10
-            });
-            base.objects.push(planet);
-            base.mobile_objects.push(planet);
-            var planet =  Planet.init(base, {
-                x: 150,
-                y: 500,
-                radius: 10
-            });
-            base.objects.push(planet);
-            base.mobile_objects.push(planet);
+//
+//            var planet =  Planet.init(base, {
+//                x: 233,
+//                y: 455,
+//                radius: 10
+//            });
+//            base.objects.push(planet);
+//            var planet =  Planet.init(base, {
+//                x: 243,
+//                y: 100,
+//                radius: 10
+//
+//            });
+//            base.objects.push(planet);
+//            var planet =  Planet.init(base, {
+//                x: 675,
+//                y: 344,
+//                radius: 10
+//            });
+//            base.objects.push(planet);
+//            var planet =  Planet.init(base, {
+//                x: 150,
+//                y: 500,
+//                radius: 10
+//            });
+//            base.objects.push(planet);
             var player = Player.init(base, {
-                x: 300,
-                y: 300
+                x: 200,
+                y: 200
             });
             base.objects.push(player);
             base.mobile_objects.push(player);
@@ -83,6 +79,9 @@ define([
         },
         logic: function () {
             var base = this;
+
+
+
             for (var k in base.objects) {
                 base.objects[k].logic(base);
             }

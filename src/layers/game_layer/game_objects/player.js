@@ -7,7 +7,7 @@ define([
     Player.extend({
         states: {
             FLYING: 0,
-            WALKING : 1
+            WALKING: 1
         }
     });
 
@@ -19,13 +19,20 @@ define([
             base.traits = {
                 x: 0,
                 y: 0,
+                speed: 0,
                 speedX: 0,
                 speedY: 0,
                 accelerationX: 0,
                 accelerationY: 0,
-                mass: 10,
-                angle: 0
+                mass: 1,
+                angle: 0,
+                speed_control: 0,
+                accel_jet: 0,
+                radius : 10,
+                offsetx: 0,
+                offsety: 0
             };
+            base.running = false;
             base.current_planet = undefined;
             base.state = Player.states.FLYING;
 
@@ -49,22 +56,28 @@ define([
 
             base.accelOffsetX = 0;
             base.accelOffsetY = 0;
-            if (base.inputs.keyPressed(65)) {
-                base.accelOffsetX = -0.05;
-            }
-            if (base.inputs.keyPressed(68)) {
-                base.accelOffsetX = 0.05;
-            }
+
             if (base.inputs.keyPressed(87)) {
-                base.accelOffsetY = -0.05;
+                base.running = true;
+                base.traits.accel_jet = 0.1;
             }
-            if (base.inputs.keyPressed(83)) {
-                base.accelOffsetY = 0.05;
+            else if (base.inputs.keyPressed(83)) {
+                base.running = true;
+                base.traits.accel_jet -= 0.01;
+            }
+            else {
+                base.running = false;
+                base.traits.accel_jet = 0;
             }
 
 
-
-
+            if (base.inputs.keyPressed(69)) {
+                base.traits.angle += 0.1;
+            }
+            if (base.inputs.keyPressed(81)) {
+                base.traits.angle -= 0.1;
+            }
+            base.closest_distance = -1;
 
 
         },
@@ -73,36 +86,23 @@ define([
             gengine.drawCircle({
                 x: base.traits.x,
                 y: base.traits.y,
-                radius: 10
+                radius: base.traits.radius,
+                angle: base.traits.angle
             });
-
 
 
         },
         physics: function (layer) {
             var base = this;
 
-            base.traits.x += base.traits.speedX;
-            base.traits.y += base.traits.speedY;
-
-            if (base.state == Player.states.FLYING) {
-
-
-                base.traits.speedX += base.traits.accelerationX + base.accelOffsetX;
-                base.traits.speedY += base.traits.accelerationY + base.accelOffsetY;
-            } else {
-                base.traits.speedX = 0;
-                base.traits.speedY = 0;
-
-            }
-
-
-
-
-
-
+            base.traits.speedX += base.traits.accelerationX + Math.cos(base.traits.angle) * base.traits.accel_jet;
+            base.traits.speedY += base.traits.accelerationY + Math.sin(base.traits.angle) * base.traits.accel_jet;
+            base.traits.x += base.traits.speedX + base.traits.offsetx;
+            base.traits.y += base.traits.speedY + base.traits.offsety;
             base.traits.accelerationX = 0;
             base.traits.accelerationY = 0;
+            base.traits.offsetx = 0;
+            base.traits.offsety = 0;
 
             var context = base.layer.game.context;
             context.lineWidth = 2;

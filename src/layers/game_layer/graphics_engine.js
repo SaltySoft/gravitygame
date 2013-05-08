@@ -41,8 +41,21 @@ define([
             if (params.stroke_style)
                 context.strokeStyle = params.stroke_style;
             else
-                context.strokeStyle = "#000000"
+                context.strokeStyle = "#000000";
+
             context.stroke();
+            if (params.angle !== undefined ) {
+                context.beginPath();
+                context.moveTo(params.x - base.layer.camera.x, params.y - base.layer.camera.y);
+                var x = Math.cos(params.angle) * params.radius;
+                var y = Math.sin(params.angle) * params.radius;
+                context.lineTo(params.x - base.layer.camera.x + x, params.y - base.layer.camera.y + y);
+                context.strokeStyle = "black";
+                context.lineWidth = 3;
+                context.stroke();
+            }
+
+
         },
         drawImage: function () {
 

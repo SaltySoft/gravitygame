@@ -13,8 +13,8 @@ define([
             var base = this;
 
             base.canvas = document.createElement("canvas");
-            base.canvas.width = 800;
-            base.canvas.height = 600;
+            base.canvas.width = 1000;
+            base.canvas.height = 1000;
 
             base.layers = [];
             $(container).append(base.canvas);
@@ -30,8 +30,12 @@ define([
         },
         animate: function (timestamp) {
             var base = this;
-            window.requestAnimationFrame(base.animate.bind(base));
-            base.layers[base.layers.length - 1].run();
+
+            setTimeout(function () {
+                window.requestAnimationFrame(base.animate.bind(base));
+                base.layers[base.layers.length - 1].run();
+            }, 1);
+
         },
         run: function () {
             var base = this;

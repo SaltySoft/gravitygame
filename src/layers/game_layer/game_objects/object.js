@@ -42,15 +42,15 @@ define([
         gravityTo: function (object) {
             var base = this;
             var distance = base.distanceTo(object);
-            var force = (base.traits.mass + object.traits.mass) / (distance * distance * 1000);
+            var force = (6.6438 * 0.0001 * base.traits.mass + object.traits.mass) / 25;
             return force;
         },
         unitVectorTo: function (object) {
             var base = this;
             var x = (base.traits.x - object.traits.x);
             var y = (base.traits.y - object.traits.y);
-            var unitx = x / (x * x + y * y);
-            var unity = y / (x * x + y * y);
+            var unitx = x / Math.sqrt(x * x + y * y);
+            var unity = y / Math.sqrt(x * x + y * y);
             return {
                 x: unitx,
                 y: unity
@@ -64,6 +64,13 @@ define([
                 x: unit.x * force,
                 y: unit.y * force
             };
+        },
+        getSpeed: function () {
+            var base = this;
+            return Math.sqrt(base.traits.speedX * base.traits.speedX + base.traits.speedY * base.traits.speedY);
+        },
+        calcSpeed: function (speedX, speedY) {
+            return Math.sqrt(speedX * speedX + speedY * speedY);
         }
     });
 
