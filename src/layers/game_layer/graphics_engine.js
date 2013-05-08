@@ -31,7 +31,8 @@ define([
             var base = this;
             var context = base.context;
             context.beginPath();
-            context.arc(params.x - base.layer.camera.x, params.y - base.layer.camera.y, params.radius, 0, 2 * Math.PI, false);
+            var zoom = 1;
+            context.arc(params.x * zoom - base.layer.camera.x * zoom, params.y * zoom - base.layer.camera.y * zoom, params.radius * zoom, 0, 2 * Math.PI, false);
             if (params.fill_style)
                 context.fillStyle = params.fill_style;
             else

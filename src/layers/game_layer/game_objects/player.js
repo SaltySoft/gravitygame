@@ -101,7 +101,8 @@ define([
                 x: base.traits.x,
                 y: base.traits.y,
                 radius: base.traits.radius,
-                angle: base.traits.angle
+                angle: base.traits.angle,
+                fill_style: "white"
             });
             var context = base.layer.game.context;
             context.lineWidth = 2;
