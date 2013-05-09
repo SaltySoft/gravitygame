@@ -116,6 +116,9 @@ define([
             var radius = base.traits.radius;
             var ctx = base.layer.game.context;
             var screen_pos = base.getScreenPos();
+
+//            var rad = gengine.createRadialGradient();
+
             var radgrad = ctx.createRadialGradient(screen_pos.x, screen_pos.y, radius + 500, screen_pos.x, screen_pos.y, 0);
             radgrad.addColorStop(0, 'rgba(255, 255, 255, 0)');
             radgrad.addColorStop(0.1, 'rgba(255, 255, 255, 0.2)');

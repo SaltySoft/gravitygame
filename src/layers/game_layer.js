@@ -18,7 +18,8 @@ define([
                 y: 0,
                 distance: 100,
                 speedX: 0,
-                speedY: 0
+                speedY: 0,
+                zoom : 1
             };
             base.inputs_engine = InputsEngine.init(base);
             base.physics_engine = PhysicsEngine.init(base);
@@ -37,12 +38,12 @@ define([
             base.mobile_objects = [];
 
 //
-//            var planet =  Planet.init(base, {
-//                x: 233,
-//                y: 300,
-//                radius: 10
-//            });
-//            base.objects.push(planet);
+            var planet =  Planet.init(base, {
+                x: 3000,
+                y: 3000,
+                radius: 100
+            });
+            base.objects.push(planet);
 //            var planet =  Planet.init(base, {
 //                x: 243,
 //                y: 100,
@@ -106,6 +107,15 @@ define([
             if (base.player.traits.y > base.camera.y + base.game.canvas.height - 30) {
                 base.camera.y = base.player.traits.y + 30 - base.game.canvas.height;
             }
+            if (base.inputs_engine.buttonPressed(2)) {
+                if (base.inputs_engine.mouse_move.y < 0) {
+                    base.camera.zoom -= 0.01;
+                }
+                if (base.inputs_engine.mouse_move.y > 0) {
+                    base.camera.zoom += 0.01;
+                }
+            }
+
 
             base.physics_engine.run();
         },

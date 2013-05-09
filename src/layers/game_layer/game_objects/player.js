@@ -104,22 +104,22 @@ define([
                 angle: base.traits.angle,
                 fill_style: "white"
             });
-            var context = base.layer.game.context;
-            context.lineWidth = 2;
-            context.strokeStyle = "black";
-            context.beginPath();
-            context.strokeStyle = "black";
-            var screen_pos = base.getScreenPos();
-            context.moveTo(screen_pos.x, screen_pos.y);
-            context.lineTo(screen_pos.x + base.traits.speedX * 10, screen_pos.y + base.traits.speedY * 10);
-            context.stroke();
-            context.closePath();
-            context.beginPath();
-            context.moveTo(screen_pos.x, screen_pos.y);
-            context.strokeStyle = "blue";
-            context.lineTo(screen_pos.x + base.traits.accelerationX * 1000, screen_pos.y + base.traits.accelerationY * 1000);
-            context.stroke();
-            context.closePath();
+            var screen_pos = base.traits;
+
+            gengine.beginPath();
+            gengine.moveTo({x: screen_pos.x, y: screen_pos.y});
+            gengine.lineTo({
+                x: screen_pos.x + base.traits.accelerationX * 1000,
+                y: screen_pos.y + base.traits.accelerationY * 1000
+            }, "blue", 2);
+            gengine.closePath();
+            gengine.beginPath();
+            gengine.moveTo({x: screen_pos.x, y: screen_pos.y});
+            gengine.lineTo({
+                x: screen_pos.x + base.traits.speedX * 20,
+                y: screen_pos.y + base.traits.speedY * 20
+            }, "green", 2);
+            gengine.closePath();
             base.traits.accelerationX = 0;
             base.traits.accelerationY = 0;
         },

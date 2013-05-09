@@ -11,7 +11,7 @@ define([
         init: function (layer) {
             var base = this;
             base.layer = layer;
-
+            base.camera = layer.camera;
         },
 
         run: function () {
@@ -31,7 +31,7 @@ define([
             var base = this;
             var context = base.context;
             context.beginPath();
-            var zoom = 1;
+            var zoom = base.camera.zoom;
             context.arc(params.x * zoom - base.layer.camera.x * zoom, params.y * zoom - base.layer.camera.y * zoom, params.radius * zoom, 0, 2 * Math.PI, false);
             if (params.fill_style)
                 context.fillStyle = params.fill_style;
@@ -49,18 +49,50 @@ define([
                 context.strokeStyle = "#000000";
             if (params.line_width)
                 context.stroke();
-            if (params.angle !== undefined ) {
+            if (params.angle !== undefined) {
                 context.beginPath();
-                context.moveTo(params.x - base.layer.camera.x, params.y - base.layer.camera.y);
+                context.moveTo((params.x - base.layer.camera.x) * zoom, (params.y - base.layer.camera.y) * zoom);
                 var x = Math.cos(params.angle) * params.radius;
                 var y = Math.sin(params.angle) * params.radius;
-                context.lineTo(params.x - base.layer.camera.x + x, params.y - base.layer.camera.y + y);
+                context.lineTo((params.x - base.layer.camera.x + x) * zoom,(params.y - base.layer.camera.y + y) * zoom);
                 context.strokeStyle = "black";
                 context.lineWidth = 3;
                 context.stroke();
             }
 
 
+        },
+        beginPath: function () {
+            var base = this;
+            base.context.beginPath();
+        },
+        moveTo: function (vector) {
+            var base = this;
+            var context = base.context;
+
+            context.moveTo((vector.x - base.camera.x) * base.camera.zoom, (vector.y - base.camera.y) * base.camera.zoom);
+//            context.moveTo(vector.x, vector.y);
+        },
+        lineTo: function (vector, color, line_width) {
+            var base = this;
+            var context = base.context;
+
+            context.lineWidth = line_width !== undefined ? line_width : 3;
+            context.strokeStyle = color !== undefined ? color : "green";
+//            console.log(context);
+            context.lineTo((vector.x - base.camera.x) * base.camera.zoom, (vector.y - base.camera.y) * base.camera.zoom);
+//            context.lineTo(vector.x, vector.y);
+            context.stroke();
+        },
+        createRadialGradient: function () {
+            ctx.createRadialGradient(screen_pos.x, screen_pos.y, radius + 500, screen_pos.x, screen_pos.y, 0);
+            radgrad.addColorStop(0, 'rgba(255, 255, 255, 0)');
+            radgrad.addColorStop(0.1, 'rgba(255, 255, 255, 0.2)');
+            radgrad.addColorStop(1, 'rgba(255, 255, 255, 0.7)');
+        },
+        closePath: function () {
+            var base = this;
+            base.context.closePath();
         },
         drawImage: function () {
 
