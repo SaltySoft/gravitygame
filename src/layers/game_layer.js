@@ -26,6 +26,7 @@ define([
             base.graphics_engine = GraphicsEngine.init(base);
 
             base.objects = [];
+            base.planets = [];
             console.log(game);
             var planet = Planet.init(base, {
                 x: 500,
@@ -33,7 +34,7 @@ define([
                 radius: 100
             });
             base.objects.push(planet);
-
+            base.planets.push(planet);
 
             base.mobile_objects = [];
 
@@ -44,13 +45,24 @@ define([
                 radius: 100
             });
             base.objects.push(planet);
-//            var planet =  Planet.init(base, {
-//                x: 243,
-//                y: 100,
-//                radius: 10
-//
-//            });
-//            base.objects.push(planet);
+            base.planets.push(planet);
+            var planet =  Planet.init(base, {
+                x: 50,
+                y: 50,
+                radius: 80
+
+            });
+            base.objects.push(planet);
+            base.planets.push(planet);
+
+            var planet =  Planet.init(base, {
+                x: 1500,
+                y: 1500,
+                radius: 200
+
+            });
+            base.objects.push(planet);
+            base.planets.push(planet);
 //            var planet =  Planet.init(base, {
 //                x: 675,
 //                y: 344,
@@ -64,8 +76,8 @@ define([
 //            });
 //            base.objects.push(planet);
             base.player = Player.init(base, {
-                x: 400,
-                y: 400
+                x: 250,
+                y: 250
             });
 
             base.objects.push(base.player);
@@ -110,7 +122,9 @@ define([
             }
 
             if (base.inputs_engine.buttonPressed(2)) {
-                base.camera.zoom += base.inputs_engine.mouse_move.y / 500;
+                var new_zoom = base.camera.zoom + base.inputs_engine.mouse_move.y / 500;
+                if (new_zoom <= 5 && new_zoom >= 0.1)
+                    base.camera.zoom = new_zoom;
             }
             if (base.inputs_engine.buttonPressed(3)) {
                 base.camera.x = (base.player.traits.x) - (base.game.canvas.width / 2) / base.camera.zoom;
