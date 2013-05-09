@@ -67,7 +67,6 @@ define([
                     x: base.mouse_position.x - base.last_position.x,
                     y: base.mouse_position.y - base.last_position.y
                 };
-                console.log("stuff");
 
             });
 
@@ -101,7 +100,6 @@ define([
                     x: 0,
                     y: 0
                 };
-                console.log("test");
             }
             base.last_position = base.mouse_position;
         }

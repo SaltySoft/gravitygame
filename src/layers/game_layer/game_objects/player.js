@@ -162,8 +162,6 @@ define([
                     var unit = base.unitVectorTo(base.closest_planet);
                     base.traits.x += (base.closest_planet.traits.radius - distance) * unit.x;
                     base.traits.y += (base.closest_planet.traits.radius - distance) * unit.y;
-                } else {
-                    console.log("not in planet");
                 }
             }
 
@@ -177,7 +175,7 @@ define([
             base.center_count = 0;
             base.angle_sum = 0;
             base.angle_correction = false;
-
+            base.closest_distance = -1;
         }
     });
 

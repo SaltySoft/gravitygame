@@ -28,8 +28,8 @@ define([
         getScreenPos: function () {
             var base = this;
             return {
-                x: Math.round(base.traits.x - base.layer.camera.x),
-                y: Math.round(base.traits.y - base.layer.camera.y)
+                x: Math.round(base.traits.x - base.layer.camera.x) * base.layer.camera.zoom,
+                y: Math.round(base.traits.y - base.layer.camera.y) * base.layer.camera.zoom
             };
         },
         distanceTo: function (object) {

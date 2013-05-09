@@ -84,11 +84,14 @@ define([
 //            context.lineTo(vector.x, vector.y);
             context.stroke();
         },
-        createRadialGradient: function () {
-            ctx.createRadialGradient(screen_pos.x, screen_pos.y, radius + 500, screen_pos.x, screen_pos.y, 0);
-            radgrad.addColorStop(0, 'rgba(255, 255, 255, 0)');
-            radgrad.addColorStop(0.1, 'rgba(255, 255, 255, 0.2)');
-            radgrad.addColorStop(1, 'rgba(255, 255, 255, 0.7)');
+        createRadialGradient: function (x, y, radius) {
+            var base = this;
+            var ctx = this.context;
+            var rad = ctx.createRadialGradient((x - base.camera.x) *base.camera.zoom, (y - base.camera.y) * base.camera.zoom, radius * base.camera.zoom, (x - base.camera.x) *base.camera.zoom, (y - base.camera.y) * base.camera.zoom, 0);
+            rad.addColorStop(0, 'rgba(255, 255, 255, 0)');
+            rad.addColorStop(0.1, 'rgba(255, 255, 255, 0.2)');
+            rad.addColorStop(1, 'rgba(255, 255, 255, 0.7)');
+            return rad;
         },
         closePath: function () {
             var base = this;

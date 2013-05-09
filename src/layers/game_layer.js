@@ -19,7 +19,7 @@ define([
                 distance: 100,
                 speedX: 0,
                 speedY: 0,
-                zoom : 1
+                zoom: 1
             };
             base.inputs_engine = InputsEngine.init(base);
             base.physics_engine = PhysicsEngine.init(base);
@@ -38,7 +38,7 @@ define([
             base.mobile_objects = [];
 
 //
-            var planet =  Planet.init(base, {
+            var planet = Planet.init(base, {
                 x: 3000,
                 y: 3000,
                 radius: 100
@@ -93,27 +93,28 @@ define([
         },
         physics: function () {
             var base = this;
-
-            if (base.player.traits.x < base.camera.x - 30) {
-                base.camera.x = base.player.traits.x - 30;
-            }
-            if (base.player.traits.x > base.camera.x + base.game.canvas.width + 30) {
-                base.camera.x = base.player.traits.x + 30 - base.game.canvas.width;
+            if ((base.player.traits.x) < base.camera.x + 50) {
+                base.camera.x = (base.player.traits.x) - 50;
             }
 
-            if (base.player.traits.y < base.camera.y - 30) {
-                base.camera.y = base.player.traits.y - 30;
+            if ((base.player.traits.y) < base.camera.y + 50) {
+                base.camera.y = (base.player.traits.y) - 50;
             }
-            if (base.player.traits.y > base.camera.y + base.game.canvas.height - 30) {
-                base.camera.y = base.player.traits.y + 30 - base.game.canvas.height;
+
+            if ((base.player.traits.x) > base.camera.x + base.game.canvas.width / base.camera.zoom - 50) {
+                base.camera.x = (base.player.traits.x) - base.game.canvas.width / base.camera.zoom + 50;
             }
+
+            if ((base.player.traits.y) > base.camera.y + base.game.canvas.height / base.camera.zoom - 50) {
+                base.camera.y = (base.player.traits.y) - base.game.canvas.height / base.camera.zoom + 50;
+            }
+
             if (base.inputs_engine.buttonPressed(2)) {
-                if (base.inputs_engine.mouse_move.y < 0) {
-                    base.camera.zoom -= 0.01;
-                }
-                if (base.inputs_engine.mouse_move.y > 0) {
-                    base.camera.zoom += 0.01;
-                }
+                base.camera.zoom += base.inputs_engine.mouse_move.y / 500;
+            }
+            if (base.inputs_engine.buttonPressed(3)) {
+                base.camera.x = (base.player.traits.x) - (base.game.canvas.width / 2) / base.camera.zoom;
+                base.camera.y = (base.player.traits.y) - (base.game.canvas.height / 2) / base.camera.zoom;
             }
 
 

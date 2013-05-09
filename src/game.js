@@ -19,6 +19,7 @@ define([
             $(base.canvas).css("background-color", "black");
             base.canvas.width = $(document).width() - 15;
             base.canvas.height = $(document).height() - 15;
+            $(base.canvas).attr("oncontextmenu", "return false;");
 
             base.layers = [];
             $(container).append(base.canvas);

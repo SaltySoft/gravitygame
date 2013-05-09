@@ -42,6 +42,7 @@ define([
                     main_grav = true;
                     object.closest_distance = distance;
                     object.closest_planet = base;
+                    console.log(object.closest_distance);
                 }
                 if (!layer.inputs_engine.keyPressed(32)) {
 
@@ -108,28 +109,20 @@ define([
 
                 }
             }
+
         },
         predraw: function (gengine) {
             var base = this;
             var x = base.traits.x;
             var y = base.traits.y;
             var radius = base.traits.radius;
-            var ctx = base.layer.game.context;
-            var screen_pos = base.getScreenPos();
-
-//            var rad = gengine.createRadialGradient();
-
-            var radgrad = ctx.createRadialGradient(screen_pos.x, screen_pos.y, radius + 500, screen_pos.x, screen_pos.y, 0);
-            radgrad.addColorStop(0, 'rgba(255, 255, 255, 0)');
-            radgrad.addColorStop(0.1, 'rgba(255, 255, 255, 0.2)');
-            radgrad.addColorStop(1, 'rgba(255, 255, 255, 0.7)');
-
+            var rad = gengine.createRadialGradient(base.traits.x, base.traits.y, radius + 500);
 
             gengine.drawCircle({
                 x: x,
                 y: y,
                 radius: radius + 500,
-                fill_style: radgrad
+                fill_style: rad
             });
         },
         draw: function (gengine) {
