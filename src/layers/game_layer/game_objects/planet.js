@@ -19,7 +19,7 @@ define([
                 radius: obj.radius,
                 mass: 10,
                 color: "red",
-                influence: 500
+                influence: obj.influence || 500
             };
 
         },

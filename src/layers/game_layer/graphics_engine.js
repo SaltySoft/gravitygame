@@ -79,9 +79,7 @@ define([
 
             context.lineWidth = line_width !== undefined ? line_width : 3;
             context.strokeStyle = color !== undefined ? color : "green";
-//            console.log(context);
             context.lineTo((vector.x - base.camera.x) * base.camera.zoom, (vector.y - base.camera.y) * base.camera.zoom);
-//            context.lineTo(vector.x, vector.y);
             context.stroke();
         },
         arcTo: function (from, to, color, line_width) {

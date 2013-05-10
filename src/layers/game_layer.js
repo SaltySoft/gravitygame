@@ -14,12 +14,12 @@ define([
             var base = this;
             base.game = game;
             base.camera = {
-                x: 0,
-                y: 0,
+                x: -500,
+                y: -500,
                 distance: 100,
                 speedX: 0,
                 speedY: 0,
-                zoom: 1
+                zoom: 0.5
             };
             base.inputs_engine = InputsEngine.init(base);
             base.physics_engine = PhysicsEngine.init(base);

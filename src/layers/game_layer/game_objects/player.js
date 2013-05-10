@@ -50,6 +50,7 @@ define([
                 base.traits.x = obj.x;
                 base.traits.y = obj.y;
             }
+            base.just_inversed = false;
         },
         addAngle: function (angle, weight) {
             var base = this;
@@ -96,8 +97,18 @@ define([
                 base.traits.angle -= 0.2;
             }
 
+            if (base.inputs.keyPressed(49)) {
+                if (!base.just_inversed)
+                    base.inverse = !base.inverse;
+                base.just_inversed = true;
+            } else {
+                base.just_inversed = false;
+            }
+
             if (base.inputs.buttonPressed(1)) {
-                base.inverse = !base.inverse;
+                base.mouse_angle = true;
+            } else {
+                base.mouse_angle = false;
             }
             base.closest_distance = -1;
 
@@ -150,8 +161,22 @@ define([
                 base.interractWith(layer, layer.planets[k]);
             }
 
-
-            if (base.distanceTo(base.closest_planet) > base.closest_planet.traits.radius + 50 && base.getSpeed() != 0) {
+            if (base.mouse_angle) {
+                var inputs = layer.inputs_engine;
+                var vector = {
+                    x: (inputs.mouse_position.x / layer.camera.zoom + layer.camera.x),
+                    y: (inputs.mouse_position.y / layer.camera.zoom + layer.camera.y)
+                }
+                var unit = base.unitVectorToVector(vector);
+                var angle = Math.atan(-unit.x / unit.y);
+                base.traits.angle = angle;
+                if (unit.y < 0)
+                    base.traits.angle += Math.PI;
+                if (-unit.x < 0)
+                    base.traits.angle += 2 * Math.PI;
+                if (base.inverse)
+                    base.traits.angle += Math.PI;
+            } else if (base.distanceTo(base.closest_planet) > base.closest_planet.traits.radius + 50 && base.getSpeed() != 0) {
 
                 base.traits.angle = Math.atan(base.traits.speedY / base.traits.speedX);
                 if (base.traits.speedX < 0)
@@ -164,8 +189,7 @@ define([
                 if (base.center.x) {
                     var unit = base.unitVectorTo(base.closest_planet);
                     var angle = Math.atan(-unit.x / unit.y);
-//                    base.traits.angle = angsle;
-                    base.traits.angle =angle;
+                    base.traits.angle = angle;
                     if (unit.y < 0)
                         base.traits.angle += Math.PI;
                     if (-unit.x < 0)
