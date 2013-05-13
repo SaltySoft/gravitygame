@@ -13,21 +13,19 @@ define([
             var base = this;
             base.layer = layer;
             base.extend(obj);
-            base.traits = {
-                x: obj.x ? obj.x : 0,
-                y: obj.y ? obj.y : 0,
-                radius: obj.radius,
-                mass: 10,
-                color: "red",
-                influence: obj.influence || 500
-            };
+            base.x = obj.x ? obj.x : 0;
+            base.y =  obj.y ? obj.y : 0;
+            base.radius = obj.radius;
+            base.mass = 10;
+            base.color = "red";
+            base.influence = obj.influence || 500;
 
         },
-        settraits: function (x, y) {
+        setVector: function (x, y) {
             var base = this;
 
-            base.traits.x = x;
-            base.traits.y = y;
+            base.x = x;
+            base.y = y;
         },
         setRadius: function (r) {
             var base = this;
@@ -40,23 +38,23 @@ define([
         predraw: function (gengine) {
             var base = this;
 
-            var x = base.traits.x;
-            var y = base.traits.y;
-            var radius = base.traits.radius;
-            var rad = gengine.createRadialGradient(base.traits.x, base.traits.y, radius + 500, "white", "rgba(255,255,0,0.5)");
+            var x = base.x;
+            var y = base.y;
+            var radius = base.radius;
+            var rad = gengine.createRadialGradient(base.x, base.y, radius + 500, "white", "rgba(255,255,0,0.5)");
 
             gengine.drawCircle({
                 x: x,
                 y: y,
-                radius: radius + base.traits.influence,
+                radius: radius + base.influence,
                 fill_style: rad
             });
         },
         draw: function (gengine) {
             var base = this;
-            var x = base.traits.x;
-            var y = base.traits.y;
-            var radius = base.traits.radius;
+            var x = base.x;
+            var y = base.y;
+            var radius = base.radius;
 
             gengine.drawCircle({
                 x: x,
@@ -72,7 +70,7 @@ define([
                 radius: radius,
                 line_width: 3,
                 stroke_style: 'green',
-                fill_style: base.traits.color
+                fill_style: base.color
             });
 
 

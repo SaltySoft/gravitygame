@@ -105,20 +105,20 @@ define([
         },
         physics: function () {
             var base = this;
-            if ((base.player.traits.x) < base.camera.x + 50) {
-                base.camera.x = (base.player.traits.x) - 50;
+            if ((base.player.x) < base.camera.x + 50) {
+                base.camera.x = (base.player.x) - 50;
             }
 
-            if ((base.player.traits.y) < base.camera.y + 50) {
-                base.camera.y = (base.player.traits.y) - 50;
+            if ((base.player.y) < base.camera.y + 50) {
+                base.camera.y = (base.player.y) - 50;
             }
 
-            if ((base.player.traits.x) > base.camera.x + base.game.canvas.width / base.camera.zoom - 50) {
-                base.camera.x = (base.player.traits.x) - base.game.canvas.width / base.camera.zoom + 50;
+            if ((base.player.x) > base.camera.x + base.game.canvas.width / base.camera.zoom - 50) {
+                base.camera.x = (base.player.x) - base.game.canvas.width / base.camera.zoom + 50;
             }
 
-            if ((base.player.traits.y) > base.camera.y + base.game.canvas.height / base.camera.zoom - 50) {
-                base.camera.y = (base.player.traits.y) - base.game.canvas.height / base.camera.zoom + 50;
+            if ((base.player.y) > base.camera.y + base.game.canvas.height / base.camera.zoom - 50) {
+                base.camera.y = (base.player.y) - base.game.canvas.height / base.camera.zoom + 50;
             }
 
             if (base.inputs_engine.buttonPressed(2)) {
@@ -127,8 +127,8 @@ define([
                     base.camera.zoom = new_zoom;
             }
             if (base.inputs_engine.buttonPressed(3)) {
-                base.camera.x = (base.player.traits.x) - (base.game.canvas.width / 2) / base.camera.zoom;
-                base.camera.y = (base.player.traits.y) - (base.game.canvas.height / 2) / base.camera.zoom;
+                base.camera.x = (base.player.x) - (base.game.canvas.width / 2) / base.camera.zoom;
+                base.camera.y = (base.player.y) - (base.game.canvas.height / 2) / base.camera.zoom;
             }
 
 

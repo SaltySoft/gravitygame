@@ -17,22 +17,22 @@ define([
         init: function (layer, obj) {
             var base = this;
             base.layer = layer;
-            base.traits = {
-                x: 0,
-                y: 0,
-                speed: 0,
-                speedX: 0,
-                speedY: 0,
-                accelerationX: 0,
-                accelerationY: 0,
-                mass: 1,
-                angle: 0,
-                speed_control: 0,
-                accel_jet: 0,
-                radius: 10,
-                offsetx: 0,
-                offsety: 0
-            };
+
+            base.x = 0;
+            base.y = 0;
+            base.speed = 0;
+            base.speedX = 0;
+            base.speedY = 0;
+            base.accelerationX = 0;
+            base.accelerationY = 0;
+            base.mass = 1;
+            base.angle = 0;
+            base.speed_control = 0;
+            base.accel_jet = 0;
+            base.radius = 10;
+            base.offsetx = 0;
+            base.offsety = 0;
+
             base.inverse = false;
             base.angle_count = 0;
             base.angle_sum = 0;
@@ -47,8 +47,8 @@ define([
             base.center_count = 0;
 
             if (obj !== undefined && obj.x !== undefined && obj.y !== undefined) {
-                base.traits.x = obj.x;
-                base.traits.y = obj.y;
+                base.x = obj.x;
+                base.y = obj.y;
             }
             base.just_inversed = false;
         },
@@ -78,23 +78,23 @@ define([
 
             if (base.inputs.keyPressed(87)) {
                 base.running = true;
-                base.traits.accel_jet = 0.15;
+                base.accel_jet = 0.15;
             }
             else if (base.inputs.keyPressed(83)) {
                 base.running = true;
-                base.traits.accel_jet = -0.15;
+                base.accel_jet = -0.15;
             }
             else {
                 base.running = false;
-                base.traits.accel_jet = 0;
+                base.accel_jet = 0;
             }
 
 
             if (base.inputs.keyPressed(69)) {
-                base.traits.angle += 0.2;
+                base.angle += 0.2;
             }
             if (base.inputs.keyPressed(81)) {
-                base.traits.angle -= 0.2;
+                base.angle -= 0.2;
             }
 
             if (base.inputs.keyPressed(49)) {
@@ -117,34 +117,34 @@ define([
         draw: function (gengine) {
             var base = this;
             gengine.drawCircle({
-                x: base.traits.x,
-                y: base.traits.y,
-                radius: base.traits.radius,
-                angle: base.traits.angle,
+                x: base.x,
+                y: base.y,
+                radius: base.radius,
+                angle: base.angle,
                 fill_style: "white"
             });
-            var screen_pos = base.traits;
+            var screen_pos = base;
 
             gengine.beginPath();
             gengine.moveTo({x: screen_pos.x, y: screen_pos.y});
             gengine.lineTo({
-                x: screen_pos.x + base.traits.accelerationX * 1000,
-                y: screen_pos.y + base.traits.accelerationY * 1000
+                x: screen_pos.x + base.accelerationX * 1000,
+                y: screen_pos.y + base.accelerationY * 1000
             }, "blue", 2);
             gengine.closePath();
             gengine.beginPath();
             gengine.moveTo({x: screen_pos.x, y: screen_pos.y});
             gengine.lineTo({
-                x: screen_pos.x + base.traits.speedX * 20,
-                y: screen_pos.y + base.traits.speedY * 20
+                x: screen_pos.x + base.speedX * 20,
+                y: screen_pos.y + base.speedY * 20
             }, "green", 2);
             gengine.closePath();
 
 
             base.forces = [];
 
-            base.traits.accelerationX = 0;
-            base.traits.accelerationY = 0;
+            base.accelerationX = 0;
+            base.accelerationY = 0;
         },
 
         physics: function (layer) {
@@ -169,55 +169,55 @@ define([
                 }
                 var unit = base.unitVectorToVector(vector);
                 var angle = Math.atan(-unit.x / unit.y);
-                base.traits.angle = angle;
+                base.angle = angle;
                 if (unit.y < 0)
-                    base.traits.angle += Math.PI;
+                    base.angle += Math.PI;
                 if (-unit.x < 0)
-                    base.traits.angle += 2 * Math.PI;
+                    base.angle += 2 * Math.PI;
                 if (base.inverse)
-                    base.traits.angle += Math.PI;
-            } else if (base.distanceTo(base.closest_planet) > base.closest_planet.traits.radius + 50 && base.getSpeed() != 0) {
+                    base.angle += Math.PI;
+            } else if (base.distanceTo(base.closest_planet) > base.closest_planet.radius + 50 && base.getSpeed() != 0) {
 
-                base.traits.angle = Math.atan(base.traits.speedY / base.traits.speedX);
-                if (base.traits.speedX < 0)
-                    base.traits.angle += Math.PI;
-                if (base.traits.speedY < 0)
-                    base.traits.angle += 2 * Math.PI;
+                base.angle = Math.atan(base.speedY / base.speedX);
+                if (base.speedX < 0)
+                    base.angle += Math.PI;
+                if (base.speedY < 0)
+                    base.angle += 2 * Math.PI;
             } else {
                 base.center.x /= base.center_count;
                 base.center.y /= base.center_count;
                 if (base.center.x) {
                     var unit = base.unitVectorTo(base.closest_planet);
                     var angle = Math.atan(-unit.x / unit.y);
-                    base.traits.angle = angle;
+                    base.angle = angle;
                     if (unit.y < 0)
-                        base.traits.angle += Math.PI;
+                        base.angle += Math.PI;
                     if (-unit.x < 0)
-                        base.traits.angle += 2 * Math.PI;
+                        base.angle += 2 * Math.PI;
                     if (base.inverse)
-                        base.traits.angle += Math.PI;
+                        base.angle += Math.PI;
                 }
             }
 
 
-            base.traits.speedX += base.traits.accelerationX + Math.cos(base.traits.angle) * base.traits.accel_jet;
-            base.traits.speedY += base.traits.accelerationY + Math.sin(base.traits.angle) * base.traits.accel_jet;
+            base.speedX += base.accelerationX + Math.cos(base.angle) * base.accel_jet;
+            base.speedY += base.accelerationY + Math.sin(base.angle) * base.accel_jet;
 
 
-            base.traits.x += base.traits.speedX + base.traits.offsetx;
-            base.traits.y += base.traits.speedY + base.traits.offsety;
+            base.x += base.speedX + base.offsetx;
+            base.y += base.speedY + base.offsety;
 
             if (base.closest_planet) {
                 var distance = base.distanceTo(base.closest_planet);
-                if (distance < base.closest_planet.traits.radius) {
+                if (distance < base.closest_planet.radius) {
                     var unit = base.unitVectorTo(base.closest_planet);
-                    base.traits.x += (base.closest_planet.traits.radius - distance) * unit.x;
-                    base.traits.y += (base.closest_planet.traits.radius - distance) * unit.y;
+                    base.x += (base.closest_planet.radius - distance) * unit.x;
+                    base.y += (base.closest_planet.radius - distance) * unit.y;
                 }
             }
 
-            base.traits.offsetx = 0;
-            base.traits.offsety = 0;
+            base.offsetx = 0;
+            base.offsety = 0;
             base.angle_count = 0;
             base.center = {
                 x: 0,

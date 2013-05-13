@@ -10,10 +10,8 @@ define([
     Obj.include({
         init: function (layer, obj) {
             var base = this;
-            base.traits = {
-                x: obj.x ? obj.x : 0,
-                y: obj.y ? obj.y : 0
-            };
+            base.x = obj.x ? obj.x : 0;
+            base.y = obj.y ? obj.y : 0;
             base.layer = layer;
         },
         logic: function () {
@@ -28,21 +26,21 @@ define([
         getScreenPos: function () {
             var base = this;
             return {
-                x: Math.round(base.traits.x - base.layer.camera.x) * base.layer.camera.zoom,
-                y: Math.round(base.traits.y - base.layer.camera.y) * base.layer.camera.zoom
+                x: Math.round(base.x - base.layer.camera.x) * base.layer.camera.zoom,
+                y: Math.round(base.y - base.layer.camera.y) * base.layer.camera.zoom
             };
         },
         distanceTo: function (object) {
             var base = this;
-            var x = (base.traits.x - object.traits.x);
-            var y = (base.traits.y - object.traits.y);
+            var x = (base.x - object.x);
+            var y = (base.y - object.y);
             var distance = Math.sqrt(x * x + y * y);
             return distance;
         },
         distanceToVector: function (vector) {
             var base = this;
-            var x = (base.traits.x - vector.x);
-            var y = (base.traits.y - vector.y);
+            var x = (base.x - vector.x);
+            var y = (base.y - vector.y);
             var distance = Math.sqrt(x * x + y * y);
             return distance;
         },
@@ -54,13 +52,13 @@ define([
             } else {
                 var coeff = 200;
             }
-            var force = (0.9 * base.traits.mass + object.traits.mass) / coeff;
+            var force = (0.9 * base.mass + object.mass) / coeff;
             return force;
         },
         unitVectorTo: function (object) {
             var base = this;
-            var x = (base.traits.x - object.traits.x);
-            var y = (base.traits.y - object.traits.y);
+            var x = (base.x - object.x);
+            var y = (base.y - object.y);
             var unitx = x / Math.sqrt(x * x + y * y);
             var unity = y / Math.sqrt(x * x + y * y);
             return {
@@ -70,8 +68,8 @@ define([
         },
         unitVectorToVector: function (vector) {
             var base = this;
-            var x = (base.traits.x - vector.x);
-            var y = (base.traits.y - vector.y);
+            var x = (base.x - vector.x);
+            var y = (base.y - vector.y);
             var unitx = x / Math.sqrt(x * x + y * y);
             var unity = y / Math.sqrt(x * x + y * y);
             return {
@@ -90,7 +88,7 @@ define([
         },
         getSpeed: function () {
             var base = this;
-            return Math.sqrt(base.traits.speedX * base.traits.speedX + base.traits.speedY * base.traits.speedY);
+            return Math.sqrt(base.speedX * base.speedX + base.speedY * base.speedY);
         },
         calcSpeed: function (speedX, speedY) {
             return Math.sqrt(speedX * speedX + speedY * speedY);
@@ -130,24 +128,24 @@ define([
                     y: unit.x
                 };
 
-                var active_planet = distance < base.traits.radius + 500 ||  object.closest_planet.distanceTo(base) < 1000 &&
-                    (distance < base.traits.radius + 500 || object.closest_distance < object.closest_planet.traits.radius + 500);
+                var active_planet = distance < base.radius + 500 || object.closest_planet.distanceTo(base) < 1000 &&
+                    (distance < base.radius + 500 || object.closest_distance < object.closest_planet.radius + 500);
 
                 if (active_planet && !layer.inputs_engine.keyPressed(192)) {
                     var angle = Math.atan(tangent.y / tangent.x);
                     object.addAngle(angle, 1 / distance);
                     object.addCenter({
-                        x: base.traits.x,
-                        y: base.traits.y
+                        x: base.x,
+                        y: base.y
                     });
                 }
 
                 if (active_planet) {
-                    object.traits.accelerationX += addx;
-                    object.traits.accelerationY += addy
-                    if (base.traits.radius + 50 > distance) {
-                        object.traits.speedX *= 0.95 + (0.05 * (distance) / (base.traits.radius + 100));
-                        object.traits.speedY *= 0.95 + (0.05 * (distance) / (base.traits.radius + 100));
+                    object.accelerationX += addx;
+                    object.accelerationY += addy
+                    if (base.radius + 50 > distance) {
+                        object.speedX *= 0.95 + (0.05 * (distance) / (base.radius + 100));
+                        object.speedY *= 0.95 + (0.05 * (distance) / (base.radius + 100));
                     }
                 }
             }
