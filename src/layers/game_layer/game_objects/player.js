@@ -16,23 +16,9 @@ define([
 
         init: function (layer, obj) {
             var base = this;
-            base.layer = layer;
-
-            base.x = 0;
-            base.y = 0;
-            base.speed = 0;
-            base.speedX = 0;
-            base.speedY = 0;
-            base.accelerationX = 0;
-            base.accelerationY = 0;
-            base.mass = 1;
-            base.angle = 0;
-            base.speed_control = 0;
-            base.accel_jet = 0;
+            $.proxy(base.father.init, base)(layer, obj);
             base.radius = 10;
-            base.offsetx = 0;
-            base.offsety = 0;
-
+            console.log(base);
             base.inverse = false;
             base.angle_count = 0;
             base.angle_sum = 0;
@@ -167,7 +153,7 @@ define([
                     x: (inputs.mouse_position.x / layer.camera.zoom + layer.camera.x),
                     y: (inputs.mouse_position.y / layer.camera.zoom + layer.camera.y)
                 }
-                var unit = base.unitVectorToVector(vector);
+                var unit = base.unitVectorTo(vector);
                 var angle = Math.atan(-unit.x / unit.y);
                 base.angle = angle;
                 if (unit.y < 0)

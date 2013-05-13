@@ -10,8 +10,22 @@ define([
     Obj.include({
         init: function (layer, obj) {
             var base = this;
-            base.x = obj.x ? obj.x : 0;
-            base.y = obj.y ? obj.y : 0;
+            base.x = obj && obj.x ? obj.x : 0;
+            base.y = obj && obj.y ? obj.y : 0;
+
+
+            base.speed = obj && obj.speed ? obj.speed : 0;
+            base.speedX = obj && obj.speedX ? obj.speedX : 0;
+            base.speedY = obj && obj.speedY ? obj.speedY : 0;
+            base.accelerationX = obj && obj.accelerationX ? obj.accelerationX : 0;
+            base.accelerationY = obj && obj.accelerationY ? obj.accelerationY : 0;
+            base.mass = obj && obj.mass ? obj.mass : 0;
+            base.angle = obj && obj.angle ? obj.angle : 0;
+            base.speed_control = obj && obj.speed_control ? obj.speed_control : 0;
+            base.accel_jet = obj && obj.accel_jet ? obj.accel_jet : 0;
+            base.radius = obj && obj.radius ? obj.radius : 50;
+            base.offsetx = obj && obj.offsetx ? obj.offsetx : 50;
+            base.offsety = obj && obj.offsety ? obj.offsety : 50;
             base.layer = layer;
         },
         logic: function () {
@@ -37,13 +51,6 @@ define([
             var distance = Math.sqrt(x * x + y * y);
             return distance;
         },
-        distanceToVector: function (vector) {
-            var base = this;
-            var x = (base.x - vector.x);
-            var y = (base.y - vector.y);
-            var distance = Math.sqrt(x * x + y * y);
-            return distance;
-        },
         gravityTo: function (object) {
             var base = this;
             var distance = base.distanceTo(object);
@@ -66,17 +73,7 @@ define([
                 y: unity
             };
         },
-        unitVectorToVector: function (vector) {
-            var base = this;
-            var x = (base.x - vector.x);
-            var y = (base.y - vector.y);
-            var unitx = x / Math.sqrt(x * x + y * y);
-            var unity = y / Math.sqrt(x * x + y * y);
-            return {
-                x: unitx,
-                y: unity
-            };
-        },
+
         gravityVectorTo: function (object) {
             var base = this;
             var unit = base.unitVectorTo(object);

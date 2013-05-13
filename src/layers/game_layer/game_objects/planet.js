@@ -11,10 +11,9 @@ define([
         type: "planet",
         init: function (layer, obj) {
             var base = this;
-            base.layer = layer;
+            $.proxy(base.father.init, base)();
+
             base.extend(obj);
-            base.x = obj.x ? obj.x : 0;
-            base.y =  obj.y ? obj.y : 0;
             base.radius = obj.radius;
             base.mass = 10;
             base.color = "red";
