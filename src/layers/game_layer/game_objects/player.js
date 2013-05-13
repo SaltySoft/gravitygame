@@ -123,22 +123,22 @@ define([
                 angle: base.traits.angle,
                 fill_style: "white"
             });
-//            var screen_pos = base.traits;
-//
-//            gengine.beginPath();
-//            gengine.moveTo({x: screen_pos.x, y: screen_pos.y});
-//            gengine.lineTo({
-//                x: screen_pos.x + base.traits.accelerationX * 1000,
-//                y: screen_pos.y + base.traits.accelerationY * 1000
-//            }, "blue", 2);
-//            gengine.closePath();
-//            gengine.beginPath();
-//            gengine.moveTo({x: screen_pos.x, y: screen_pos.y});
-//            gengine.lineTo({
-//                x: screen_pos.x + base.traits.speedX * 20,
-//                y: screen_pos.y + base.traits.speedY * 20
-//            }, "green", 2);
-//            gengine.closePath();
+            var screen_pos = base.traits;
+
+            gengine.beginPath();
+            gengine.moveTo({x: screen_pos.x, y: screen_pos.y});
+            gengine.lineTo({
+                x: screen_pos.x + base.traits.accelerationX * 1000,
+                y: screen_pos.y + base.traits.accelerationY * 1000
+            }, "blue", 2);
+            gengine.closePath();
+            gengine.beginPath();
+            gengine.moveTo({x: screen_pos.x, y: screen_pos.y});
+            gengine.lineTo({
+                x: screen_pos.x + base.traits.speedX * 20,
+                y: screen_pos.y + base.traits.speedY * 20
+            }, "green", 2);
+            gengine.closePath();
 
 
             base.forces = [];

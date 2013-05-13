@@ -28,13 +28,13 @@ define([
             base.objects = [];
             base.planets = [];
             console.log(game);
-            var planet = Planet.init(base, {
-                x: 500,
-                y: 500,
-                radius: 100
-            });
-            base.objects.push(planet);
-            base.planets.push(planet);
+//            var planet = Planet.init(base, {
+//                x: 500,
+//                y: 500,
+//                radius: 100
+//            });
+//            base.objects.push(planet);
+//            base.planets.push(planet);
 
             base.mobile_objects = [];
 

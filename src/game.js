@@ -42,8 +42,6 @@ define([
 
             setTimeout(function () {
                 base.anfunc.call(window, base.animate.bind(base));
-
-
                 base.layers[base.layers.length - 1].run();
             }, 1);
 
