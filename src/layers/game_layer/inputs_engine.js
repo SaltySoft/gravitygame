@@ -57,15 +57,39 @@ define([
                 x: 0,
                 y: 0
             };
+            base.scr_last_position = {
+                x: 0,
+                y: 0
+            };
+            base.scr_mouse_position = {
+                x: 0,
+                y: 0
+            };
+
+            base.scr_mouse_move = {
+                x: 0,
+                y: 0
+            };
             $(layer.game.canvas).mousemove(function (e) {
-                base.mouse_position = {
+                base.scr_mouse_position = {
                     x: e.pageX - $(base.layer.game.canvas).offset().left,
                     y: e.pageY - $(base.layer.game.canvas).offset().top
+                };
+
+
+                base.mouse_position = {
+                    x: (e.pageX - $(base.layer.game.canvas).offset().left) / base.layer.camera.zoom + base.layer.camera.x,
+                    y: (e.pageY - $(base.layer.game.canvas).offset().top) / base.layer.camera.zoom + base.layer.camera.x
                 };
 
                 base.mouse_move = {
                     x: base.mouse_position.x - base.last_position.x,
                     y: base.mouse_position.y - base.last_position.y
+                };
+
+                base.scr_mouse_move = {
+                    x: base.scr_mouse_position.x - base.scr_last_position.x,
+                    y: base.scr_mouse_position.y - base.scr_last_position.y
                 };
 
             });
@@ -101,7 +125,15 @@ define([
                     y: 0
                 };
             }
+
+            if (base.scr_mouse_position.x == base.scr_last_position.x && base.scr_mouse_position.y == base.scr_last_position.y) {
+                base.scr_mouse_move = {
+                    x: 0,
+                    y: 0
+                };
+            }
             base.last_position = base.mouse_position;
+            base.scr_last_position = base.scr_mouse_position;
         }
     });
 

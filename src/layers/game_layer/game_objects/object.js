@@ -1,6 +1,7 @@
 define([
-    'class'
-], function (Class) {
+    'class',
+    'vector'
+], function (Class, Vector) {
     var Obj = Class.create();
 
     Obj.extend({
@@ -27,6 +28,8 @@ define([
             base.offsetx = obj && obj.offsetx ? obj.offsetx : 50;
             base.offsety = obj && obj.offsety ? obj.offsety : 50;
             base.layer = layer;
+
+            base.forces = [];
         },
         logic: function () {
 
@@ -105,6 +108,7 @@ define([
                 var addx = g.x;
                 var addy = g.y;
 
+
                 var screen_pos = object.getScreenPos();
                 var lineto = {
                     x: Math.round(screen_pos.x + (force * unitx) * 10000),
@@ -138,12 +142,19 @@ define([
                 }
 
                 if (active_planet) {
-                    object.accelerationX += addx;
-                    object.accelerationY += addy
-                    if (base.radius + 50 > distance) {
-                        object.speedX *= 0.95 + (0.05 * (distance) / (base.radius + 100));
-                        object.speedY *= 0.95 + (0.05 * (distance) / (base.radius + 100));
+
+                    if (base.radius >= distance) {
+                        addx = 0;
+                        addy = 0;
                     }
+
+                    object.accelerationX += addx;
+                    object.accelerationY += addy;
+
+                    base.forces.push({
+                        x: addx,
+                        y: addy
+                    });
                 }
             }
         }

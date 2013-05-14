@@ -1,8 +1,9 @@
 define([
     'jquery',
     'class',
-    './object'
-], function ($, Class, Obj) {
+    './object',
+    'vector'
+], function ($, Class, Obj, Vector) {
     var Player = Obj.create();
 
     Player.extend({
@@ -37,6 +38,10 @@ define([
                 base.y = obj.y;
             }
             base.just_inversed = false;
+
+
+            base.mouse_attracted = false;
+            base.mouse_position = { x: 0, y: 0 };
         },
         addAngle: function (angle, weight) {
             var base = this;
@@ -92,9 +97,10 @@ define([
             }
 
             if (base.inputs.buttonPressed(1)) {
-                base.mouse_angle = true;
+                base.mouse_attracted = true;
+                base.mouse_position = base.inputs.mouse_position;
             } else {
-                base.mouse_angle = false;
+                base.mouse_attracted = false;
             }
             base.closest_distance = -1;
 
@@ -114,8 +120,8 @@ define([
             gengine.beginPath();
             gengine.moveTo({x: screen_pos.x, y: screen_pos.y});
             gengine.lineTo({
-                x: screen_pos.x + base.accelerationX * 1000,
-                y: screen_pos.y + base.accelerationY * 1000
+                x: screen_pos.x + base.accelerationX * 100,
+                y: screen_pos.y + base.accelerationY * 100
             }, "blue", 2);
             gengine.closePath();
             gengine.beginPath();
@@ -125,6 +131,16 @@ define([
                 y: screen_pos.y + base.speedY * 20
             }, "green", 2);
             gengine.closePath();
+
+            for (var k in base.forces) {
+                gengine.beginPath();
+                gengine.moveTo({x: base.x, y: base.y});
+                gengine.lineTo({
+                    x: base.x + base.forces[k].x * 100,
+                    y: base.y + base.forces[k].y * 100
+                }, "red", 2);
+                gengine.closePath();
+            }
 
 
             base.forces = [];
@@ -147,22 +163,7 @@ define([
                 base.interractWith(layer, layer.planets[k]);
             }
 
-            if (base.mouse_angle) {
-                var inputs = layer.inputs_engine;
-                var vector = {
-                    x: (inputs.mouse_position.x / layer.camera.zoom + layer.camera.x),
-                    y: (inputs.mouse_position.y / layer.camera.zoom + layer.camera.y)
-                }
-                var unit = base.unitVectorTo(vector);
-                var angle = Math.atan(-unit.x / unit.y);
-                base.angle = angle;
-                if (unit.y < 0)
-                    base.angle += Math.PI;
-                if (-unit.x < 0)
-                    base.angle += 2 * Math.PI;
-                if (base.inverse)
-                    base.angle += Math.PI;
-            } else if (base.distanceTo(base.closest_planet) > base.closest_planet.radius + 50 && base.getSpeed() != 0) {
+            if (base.layer.inputs_engine.keyPressed(16)) {
 
                 base.angle = Math.atan(base.speedY / base.speedX);
                 if (base.speedX < 0)
@@ -185,22 +186,55 @@ define([
                 }
             }
 
+            if (base.mouse_attracted) {
+                var vector_to_mouse = {
+                    x: base.mouse_position.x - base.x,
+                    y: base.mouse_position.y - base.y
+                };
+
+                vector_to_mouse = Vector.normalize(vector_to_mouse);
+                var distance = Vector.distance(base, base.mouse_position);
+                console.log(distance);
+                vector_to_mouse = Vector.coeff_mult(vector_to_mouse, distance > 100 ? 20 / (distance) : 0.2);
+                console.log("ACCEL", vector_to_mouse);
+                base.accelerationX += vector_to_mouse.x;
+                base.accelerationY += vector_to_mouse.y;
+            }
+
 
             base.speedX += base.accelerationX + Math.cos(base.angle) * base.accel_jet;
             base.speedY += base.accelerationY + Math.sin(base.angle) * base.accel_jet;
 
 
+
             base.x += base.speedX + base.offsetx;
             base.y += base.speedY + base.offsety;
-
             if (base.closest_planet) {
                 var distance = base.distanceTo(base.closest_planet);
                 if (distance < base.closest_planet.radius) {
-                    var unit = base.unitVectorTo(base.closest_planet);
-                    base.x += (base.closest_planet.radius - distance) * unit.x;
-                    base.y += (base.closest_planet.radius - distance) * unit.y;
+                    var unit = base.closest_planet.unitVectorTo(base);
+//
+//                    var speed = Vector.lgth({
+//                        x: base.speedX,
+//                        y: base.speedY
+//                    });
+//                    base.speedX -= speed * unit.x;
+//                    base.speedY -= speed * unit.y;
+
+                    base.x -= (base.closest_planet.radius - distance) * unit.x;
+                    base.y -= (base.closest_planet.radius - distance) * unit.y;
+
+                    var speed_vect = {
+                        x: base.speedX,
+                        y: base.speedY
+                    }
+                    var unit_speed = Vector.normalize(speed_vect);
+                    base.speedX -= unit_speed.x * 0.15;
+                    base.speedY -= unit_speed.y * 0.15;
                 }
+
             }
+
 
             base.offsetx = 0;
             base.offsety = 0;

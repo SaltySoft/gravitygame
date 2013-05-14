@@ -14,12 +14,12 @@ define([
             var base = this;
             base.game = game;
             base.camera = {
-                x: -500,
-                y: -500,
+                x: -100,
+                y: -100,
                 distance: 100,
                 speedX: 0,
                 speedY: 0,
-                zoom: 0.5
+                zoom: 2
             };
             base.inputs_engine = InputsEngine.init(base);
             base.physics_engine = PhysicsEngine.init(base);
@@ -76,8 +76,8 @@ define([
 //            });
 //            base.objects.push(planet);
             base.player = Player.init(base, {
-                x: 250,
-                y: 250
+                x: 100,
+                y: 100
             });
 
             base.objects.push(base.player);
@@ -122,13 +122,9 @@ define([
             }
 
             if (base.inputs_engine.buttonPressed(2)) {
-                var new_zoom = base.camera.zoom + base.inputs_engine.mouse_move.y / 500;
-                if (new_zoom <= 5 && new_zoom >= 0.1)
+                var new_zoom = base.camera.zoom + base.inputs_engine.scr_mouse_move.y / 500;
+                if (new_zoom <= 2 && new_zoom >= 0.01)
                     base.camera.zoom = new_zoom;
-            }
-            if (base.inputs_engine.buttonPressed(3)) {
-                base.camera.x = (base.player.x) - (base.game.canvas.width / 2) / base.camera.zoom;
-                base.camera.y = (base.player.y) - (base.game.canvas.height / 2) / base.camera.zoom;
             }
 
 
