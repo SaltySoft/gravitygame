@@ -206,11 +206,13 @@ define([
 
             base.speedX += base.accelerationX + Math.cos(base.angle) * base.accel_jet;
             base.speedY += base.accelerationY + Math.sin(base.angle) * base.accel_jet;
+            var factor = 1;
+            if (base.closest_distance && base.closest_distance > 800) {
+                factor = 4 * base.closest_distance / 500;
+            }
 
-
-
-            base.x += base.speedX + base.offsetx;
-            base.y += base.speedY + base.offsety;
+            base.x += base.speedX * factor + base.offsetx;
+            base.y += base.speedY * factor + base.offsety;
             var speed_vect = {
                 x: base.speedX,
                 y: base.speedY
@@ -244,6 +246,7 @@ define([
                 var u = base.unitVectorTo(orb);
                 if (d < 10) {
                     delete orbs[k];
+                    base.orbs_count++;
                 }
                 if (d < 200) {
                     orb.offsetx += d > 10 ? u.x * Vector.lgth(speed_vect) * 150 / (d > 100 ? d : 100) : 0;

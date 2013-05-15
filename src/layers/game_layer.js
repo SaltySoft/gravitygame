@@ -139,6 +139,11 @@ define([
             base.graphics_engine.run();
             for (var k in base.orbs)
                 base.orbs[k].draw(base.graphics_engine);
+
+            var context = base.game.context;
+            context.font="22px verdana";
+            context.fillStyle = "white";
+            context.fillText(base.player.orbs_count + " orbs collected", 10, 30);
         }
     });
 
