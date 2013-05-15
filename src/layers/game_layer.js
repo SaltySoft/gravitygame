@@ -128,7 +128,6 @@ define([
                     base.camera.zoom = new_zoom;
             }
 
-
             base.physics_engine.run();
             for (var k in base.orbs)
                 base.orbs[k].physics();

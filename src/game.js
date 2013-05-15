@@ -17,6 +17,7 @@ define([
             $("body").css("margin", "0px");
             base.canvas = document.createElement("canvas");
             $(base.canvas).css("background-color", "black");
+            $(base.canvas).css("background-image", "url('src/resources/space02.gif')");
             base.canvas.width = $(document).width() - 15;
             base.canvas.height = $(document).height() - 15;
             $(base.canvas).attr("oncontextmenu", "return false;");
