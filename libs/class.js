@@ -63,6 +63,7 @@ define([
         init: function () {
             var instance = Object.create(this.prototype);
             instance.parent = this;
+            instance.father = instance.parent.parent.fn;
             instance.init.apply(instance, arguments);
             return instance;
         },

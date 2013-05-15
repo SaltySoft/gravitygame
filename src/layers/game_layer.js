@@ -14,26 +14,28 @@ define([
             var base = this;
             base.game = game;
             base.camera = {
-                x: 0,
-                y: 0,
+                x: -500,
+                y: -500,
                 distance: 100,
                 speedX: 0,
                 speedY: 0,
-                zoom: 1
+                zoom:0.4
             };
             base.inputs_engine = InputsEngine.init(base);
             base.physics_engine = PhysicsEngine.init(base);
             base.graphics_engine = GraphicsEngine.init(base);
 
             base.objects = [];
+            base.planets = [];
+            base.orbs = [];
             console.log(game);
-            var planet = Planet.init(base, {
-                x: 500,
-                y: 500,
-                radius: 100
-            });
-            base.objects.push(planet);
-
+//            var planet = Planet.init(base, {
+//                x: 500,
+//                y: 500,
+//                radius: 100
+//            });
+//            base.objects.push(planet);
+//            base.planets.push(planet);
 
             base.mobile_objects = [];
 
@@ -44,13 +46,24 @@ define([
                 radius: 100
             });
             base.objects.push(planet);
-//            var planet =  Planet.init(base, {
-//                x: 243,
-//                y: 100,
-//                radius: 10
-//
-//            });
-//            base.objects.push(planet);
+            base.planets.push(planet);
+            var planet =  Planet.init(base, {
+                x: 50,
+                y: 50,
+                radius: 80
+
+            });
+            base.objects.push(planet);
+            base.planets.push(planet);
+
+            var planet =  Planet.init(base, {
+                x: 1500,
+                y: 1500,
+                radius: 200
+
+            });
+            base.objects.push(planet);
+            base.planets.push(planet);
 //            var planet =  Planet.init(base, {
 //                x: 675,
 //                y: 344,
@@ -64,8 +77,8 @@ define([
 //            });
 //            base.objects.push(planet);
             base.player = Player.init(base, {
-                x: 400,
-                y: 400
+                x: 100,
+                y: 100
             });
 
             base.objects.push(base.player);
@@ -93,37 +106,39 @@ define([
         },
         physics: function () {
             var base = this;
-            if ((base.player.traits.x) < base.camera.x + 50) {
-                base.camera.x = (base.player.traits.x) - 50;
+            if ((base.player.x) < base.camera.x + 50) {
+                base.camera.x = (base.player.x) - 50;
             }
 
-            if ((base.player.traits.y) < base.camera.y + 50) {
-                base.camera.y = (base.player.traits.y) - 50;
+            if ((base.player.y) < base.camera.y + 50) {
+                base.camera.y = (base.player.y) - 50;
             }
 
-            if ((base.player.traits.x) > base.camera.x + base.game.canvas.width / base.camera.zoom - 50) {
-                base.camera.x = (base.player.traits.x) - base.game.canvas.width / base.camera.zoom + 50;
+            if ((base.player.x) > base.camera.x + base.game.canvas.width / base.camera.zoom - 50) {
+                base.camera.x = (base.player.x) - base.game.canvas.width / base.camera.zoom + 50;
             }
 
-            if ((base.player.traits.y) > base.camera.y + base.game.canvas.height / base.camera.zoom - 50) {
-                base.camera.y = (base.player.traits.y) - base.game.canvas.height / base.camera.zoom + 50;
+            if ((base.player.y) > base.camera.y + base.game.canvas.height / base.camera.zoom - 50) {
+                base.camera.y = (base.player.y) - base.game.canvas.height / base.camera.zoom + 50;
             }
 
             if (base.inputs_engine.buttonPressed(2)) {
-                base.camera.zoom += base.inputs_engine.mouse_move.y / 500;
-            }
-            if (base.inputs_engine.buttonPressed(3)) {
-                base.camera.x = (base.player.traits.x) - (base.game.canvas.width / 2) / base.camera.zoom;
-                base.camera.y = (base.player.traits.y) - (base.game.canvas.height / 2) / base.camera.zoom;
+                var new_zoom = base.camera.zoom + base.inputs_engine.scr_mouse_move.y / 500;
+                if (new_zoom <= 2 && new_zoom >= 0.01)
+                    base.camera.zoom = new_zoom;
             }
 
 
             base.physics_engine.run();
+            for (var k in base.orbs)
+                base.orbs[k].physics();
         },
         draw: function () {
             var base = this;
 
             base.graphics_engine.run();
+            for (var k in base.orbs)
+                base.orbs[k].draw(base.graphics_engine);
         }
     });
 

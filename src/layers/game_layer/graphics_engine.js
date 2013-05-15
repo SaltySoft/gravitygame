@@ -79,18 +79,24 @@ define([
 
             context.lineWidth = line_width !== undefined ? line_width : 3;
             context.strokeStyle = color !== undefined ? color : "green";
-//            console.log(context);
             context.lineTo((vector.x - base.camera.x) * base.camera.zoom, (vector.y - base.camera.y) * base.camera.zoom);
-//            context.lineTo(vector.x, vector.y);
             context.stroke();
         },
-        createRadialGradient: function (x, y, radius) {
+        arcTo: function (from, to, color, line_width) {
+            var base = this;
+            var context = base.context;
+            context.lineWidth = line_width !== undefined ? line_width : 3;
+            context.strokeStyle = color !== undefined ? color : "green";
+            context.arcTo(from.x, from.y, to.x, to.y, 2);
+            context.stroke();
+        },
+        createRadialGradient: function (x, y, radius, color1, color2) {
             var base = this;
             var ctx = this.context;
             var rad = ctx.createRadialGradient((x - base.camera.x) *base.camera.zoom, (y - base.camera.y) * base.camera.zoom, radius * base.camera.zoom, (x - base.camera.x) *base.camera.zoom, (y - base.camera.y) * base.camera.zoom, 0);
             rad.addColorStop(0, 'rgba(255, 255, 255, 0)');
-            rad.addColorStop(0.1, 'rgba(255, 255, 255, 0.2)');
-            rad.addColorStop(1, 'rgba(255, 255, 255, 0.7)');
+            rad.addColorStop(0.5, color2);
+            rad.addColorStop(1, color1);
             return rad;
         },
         closePath: function () {
