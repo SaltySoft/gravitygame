@@ -1,7 +1,8 @@
 define([
     './object',
-    './player'
-], function (Obj, Player) {
+    './player',
+    './energy_orb'
+], function (Obj, Player, EnergyOrb) {
     var Planet = Obj.create();
 
     Planet.extend({
@@ -18,6 +19,16 @@ define([
             base.mass = 10;
             base.color = "red";
             base.influence = obj.influence || 500;
+
+            for (var i = 0; i < 50; i++) {
+                var orb = EnergyOrb.init(layer, {
+                    x : base.x + Math.cos(i / 25 * Math.PI) * (base.radius + 50 + Math.random() * 300),
+                    y : base.y + Math.sin(i / 25 * Math.PI) * (base.radius + 50 + Math.random() * 300),
+                    radius : 10,
+                    center: base
+                });
+                layer.orbs.push(orb);
+            }
 
         },
         setVector: function (x, y) {
@@ -71,7 +82,9 @@ define([
                 stroke_style: 'green',
                 fill_style: base.color
             });
-
+            for (var k in base.orbs) {
+//                base.orbs[k].draw(gengine);
+            }
 
         }
     });

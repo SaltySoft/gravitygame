@@ -14,12 +14,12 @@ define([
             var base = this;
             base.game = game;
             base.camera = {
-                x: -100,
-                y: -100,
+                x: -500,
+                y: -500,
                 distance: 100,
                 speedX: 0,
                 speedY: 0,
-                zoom: 2
+                zoom:0.4
             };
             base.inputs_engine = InputsEngine.init(base);
             base.physics_engine = PhysicsEngine.init(base);
@@ -27,6 +27,7 @@ define([
 
             base.objects = [];
             base.planets = [];
+            base.orbs = [];
             console.log(game);
 //            var planet = Planet.init(base, {
 //                x: 500,
@@ -129,11 +130,15 @@ define([
 
 
             base.physics_engine.run();
+            for (var k in base.orbs)
+                base.orbs[k].physics();
         },
         draw: function () {
             var base = this;
 
             base.graphics_engine.run();
+            for (var k in base.orbs)
+                base.orbs[k].draw(base.graphics_engine);
         }
     });
 

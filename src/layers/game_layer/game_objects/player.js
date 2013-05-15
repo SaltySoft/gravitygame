@@ -42,6 +42,8 @@ define([
 
             base.mouse_attracted = false;
             base.mouse_position = { x: 0, y: 0 };
+
+            base.orbs_count = 0;
         },
         addAngle: function (angle, weight) {
             var base = this;
@@ -209,6 +211,10 @@ define([
 
             base.x += base.speedX + base.offsetx;
             base.y += base.speedY + base.offsety;
+            var speed_vect = {
+                x: base.speedX,
+                y: base.speedY
+            }
             if (base.closest_planet) {
                 var distance = base.distanceTo(base.closest_planet);
                 if (distance < base.closest_planet.radius) {
@@ -224,14 +230,26 @@ define([
                     base.x -= (base.closest_planet.radius - distance) * unit.x;
                     base.y -= (base.closest_planet.radius - distance) * unit.y;
 
-                    var speed_vect = {
-                        x: base.speedX,
-                        y: base.speedY
-                    }
+
                     var unit_speed = Vector.normalize(speed_vect);
                     base.speedX -= unit_speed.x * 0.15;
                     base.speedY -= unit_speed.y * 0.15;
                 }
+
+            }
+            var orbs = base.layer.orbs;
+            for (var k in orbs) {
+                var orb = orbs[k];
+                var d = base.distanceTo(orb);
+                var u = base.unitVectorTo(orb);
+                if (d < 10) {
+                    delete orbs[k];
+                }
+                if (d < 200) {
+                    orb.offsetx += d > 10 ? u.x * Vector.lgth(speed_vect) * 150 / (d > 100 ? d : 100) : 0;
+                    orb.offsety += d > 10 ? u.y * Vector.lgth(speed_vect) * 150 / (d > 100 ? d : 100) : 0;
+                }
+
 
             }
 

@@ -15,6 +15,10 @@ define([
             base.y = obj && obj.y ? obj.y : 0;
 
 
+            for (var k in obj) {
+                base[k] = obj[k];
+            }
+
             base.speed = obj && obj.speed ? obj.speed : 0;
             base.speedX = obj && obj.speedX ? obj.speedX : 0;
             base.speedY = obj && obj.speedY ? obj.speedY : 0;
@@ -27,7 +31,11 @@ define([
             base.radius = obj && obj.radius ? obj.radius : 50;
             base.offsetx = obj && obj.offsetx ? obj.offsetx : 50;
             base.offsety = obj && obj.offsety ? obj.offsety : 50;
+
+
             base.layer = layer;
+
+
 
             base.forces = [];
         },
