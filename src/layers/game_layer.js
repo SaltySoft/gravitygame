@@ -41,8 +41,8 @@ define([
 
 //
             var planet = Planet.init(base, {
-                x: 3000,
-                y: 3000,
+                x: 500,
+                y: 500,
                 radius: 100
             });
             base.objects.push(planet);
@@ -50,8 +50,9 @@ define([
             var planet =  Planet.init(base, {
                 x: 50,
                 y: 50,
-                radius: 80
-
+                radius: 80,
+                center : planet,
+                orbit_distance: 1000
             });
             base.objects.push(planet);
             base.planets.push(planet);
@@ -59,7 +60,9 @@ define([
             var planet =  Planet.init(base, {
                 x: 1500,
                 y: 1500,
-                radius: 200
+                radius: 200,
+                center : planet,
+                orbit_distance: 2000
 
             });
             base.objects.push(planet);
@@ -103,6 +106,7 @@ define([
         inputs: function () {
             var base = this;
             base.inputs_engine.run();
+
         },
         physics: function () {
             var base = this;
@@ -126,9 +130,13 @@ define([
                 var new_zoom = base.camera.zoom + base.inputs_engine.scr_mouse_move.y / 500;
                 if (new_zoom <= 2 && new_zoom >= 0.01)
                     base.camera.zoom = new_zoom;
+                console.log(base.inputs_engine.scr_mouse_position);
             }
 
             base.physics_engine.run();
+            for (var k in base.planets)
+                base.planets[k].physics();
+
             for (var k in base.orbs)
                 base.orbs[k].physics();
         },

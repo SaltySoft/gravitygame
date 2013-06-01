@@ -93,7 +93,7 @@ define([
         createRadialGradient: function (x, y, radius, color1, color2) {
             var base = this;
             var ctx = this.context;
-            var rad = ctx.createRadialGradient((x - base.camera.x) *base.camera.zoom, (y - base.camera.y) * base.camera.zoom, radius * base.camera.zoom, (x - base.camera.x) *base.camera.zoom, (y - base.camera.y) * base.camera.zoom, 0);
+            var rad = ctx.createRadialGradient((x - base.camera.x) * base.camera.zoom, (y - base.camera.y) * base.camera.zoom, radius * base.camera.zoom, (x - base.camera.x) *base.camera.zoom, (y - base.camera.y) * base.camera.zoom, 0);
             rad.addColorStop(0, 'rgba(255, 255, 255, 0)');
             rad.addColorStop(0.5, color2);
             rad.addColorStop(1, color1);

@@ -122,8 +122,8 @@ define([
             gengine.beginPath();
             gengine.moveTo({x: screen_pos.x, y: screen_pos.y});
             gengine.lineTo({
-                x: screen_pos.x + base.accelerationX * 100,
-                y: screen_pos.y + base.accelerationY * 100
+                x: screen_pos.x + base.accelerationX * 1000,
+                y: screen_pos.y + base.accelerationY * 1000
             }, "blue", 2);
             gengine.closePath();
             gengine.beginPath();
@@ -199,20 +199,16 @@ define([
                 console.log(distance);
                 vector_to_mouse = Vector.coeff_mult(vector_to_mouse, distance > 100 ? 20 / (distance) : 0.2);
                 console.log("ACCEL", vector_to_mouse);
-                base.accelerationX += vector_to_mouse.x;
-                base.accelerationY += vector_to_mouse.y;
+                base.speedX += vector_to_mouse.x * 5;
+                base.speedY += vector_to_mouse.y * 5;
             }
 
 
             base.speedX += base.accelerationX + Math.cos(base.angle) * base.accel_jet;
             base.speedY += base.accelerationY + Math.sin(base.angle) * base.accel_jet;
-            var factor = 1;
-            if (base.closest_distance && base.closest_distance > 800) {
-                factor = 4 * base.closest_distance / 500;
-            }
 
-            base.x += base.speedX * factor + base.offsetx;
-            base.y += base.speedY * factor + base.offsety;
+            base.x += base.speedX + base.offsetx;
+            base.y += base.speedY + base.offsety;
             var speed_vect = {
                 x: base.speedX,
                 y: base.speedY

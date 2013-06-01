@@ -18,7 +18,8 @@ define([
             base.radius = obj.radius;
             base.mass = 10;
             base.color = "red";
-            base.influence = obj.influence || 500;
+            base.influence = obj.influence || 300;
+            base.speed = 0.0005;
 
             for (var i = 0; i < 50; i++) {
                 var orb = EnergyOrb.init(layer, {
@@ -29,7 +30,14 @@ define([
                 });
                 layer.orbs.push(orb);
             }
+            if (base.center && base.center.x && base.center.y) {
+                base.x = base.center.x + Math.cos(i / 25 * Math.PI) * (base.orbit_distance);
+                base.y = base.center.y + Math.sin(i / 25 * Math.PI) * (base.orbit_distance);
+                console.log("init", base.x, base.y);
+            }
 
+
+            base.angle = Math.random() * Math.PI * 2;
         },
         setVector: function (x, y) {
             var base = this;
@@ -43,7 +51,13 @@ define([
         },
         physics: function (layer) {
             var base = this;
-
+            if (base.center !== undefined) {
+                if (base.center.x && base.center.y) {
+                    base.x = base.center.x + Math.cos(base.angle) * ( base.orbit_distance);
+                    base.y = base.center.y + Math.sin(base.angle) * ( base.orbit_distance);
+                }
+                base.angle +=base.speed;
+            }
         },
         predraw: function (gengine) {
             var base = this;
@@ -51,7 +65,7 @@ define([
             var x = base.x;
             var y = base.y;
             var radius = base.radius;
-            var rad = gengine.createRadialGradient(base.x, base.y, radius + 500, "white", "rgba(255,255,0,0.5)");
+             var rad = gengine.createRadialGradient(base.x, base.y, radius + 500, "white", "rgba(255,255,0,0.5)");
 
             gengine.drawCircle({
                 x: x,
@@ -66,14 +80,14 @@ define([
             var y = base.y;
             var radius = base.radius;
 
-            gengine.drawCircle({
-                x: x,
-                y: y,
-                radius: radius + 50,
-                line_width: 3,
-                stroke_style: 'black',
-                fill_style: "grey"
-            });
+//            gengine.drawCircle({
+//                x: x,
+//                y: y,
+//                radius: radius + 50,
+//                line_width: 3,
+//                stroke_style: 'black',
+//                fill_style: "grey"
+//            });
             gengine.drawCircle({
                 x: x,
                 y: y,

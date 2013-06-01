@@ -137,8 +137,10 @@ define([
                     y: unit.x
                 };
 
-                var active_planet = distance < base.radius + 500 || object.closest_planet.distanceTo(base) < 1000 &&
-                    (distance < base.radius + 500 || object.closest_distance < object.closest_planet.radius + 500);
+//                var active_planet = distance < base.radius + 500 || object.closest_planet.distanceTo(base) < 1000 &&
+//                    (distance < base.radius + 500 || object.closest_distance < object.closest_planet.radius + 500);
+
+                var active_planet = distance < base.radius + base.influence;
 
                 if (active_planet && !layer.inputs_engine.keyPressed(192)) {
                     var angle = Math.atan(tangent.y / tangent.x);
