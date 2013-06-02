@@ -18,6 +18,8 @@ define([
         init: function (layer, obj) {
             var base = this;
             $.proxy(base.father.init, base)(layer, obj);
+            base.x = 0;
+            base.y = 0;
             base.radius = 10;
             console.log(base);
             base.inverse = false;
@@ -47,6 +49,7 @@ define([
             base.mouse_position = { x: 0, y: 0 };
 
             base.orbs_count = 100;
+            base.moved = false;
         },
         addAngle: function (angle, weight) {
             var base = this;
@@ -104,6 +107,7 @@ define([
             if (base.inputs.buttonPressed(1)) {
                 base.mouse_attracted = true;
                 base.mouse_position = base.inputs.mouse_position;
+                base.moved = true;
             } else {
                 base.mouse_attracted = false;
             }
@@ -123,13 +127,13 @@ define([
             });
 
 
-            gengine.beginPath();
-            gengine.moveTo({x: base.x, y: base.y});
-            gengine.lineTo({
-                x: base.x + base.accelerationX * 1000,
-                y: base.y + base.accelerationY * 1000
-            }, "blue", 2);
-            gengine.closePath();
+//            gengine.beginPath();
+//            gengine.moveTo({x: base.x, y: base.y});
+//            gengine.lineTo({
+//                x: base.x + base.accelerationX * 1000,
+//                y: base.y + base.accelerationY * 1000
+//            }, "blue", 2);
+//            gengine.closePath();
             gengine.beginPath();
             gengine.moveTo({x: base.x, y: base.y});
             gengine.lineTo({
@@ -148,6 +152,7 @@ define([
 
             base.accelerationX = 0;
             base.accelerationY = 0;
+
         },
 
         physics: function (layer) {
@@ -249,9 +254,23 @@ define([
                     else
                         base.temperature = 20;
                 }
-
-
             }
+
+            if (base.closest_planet) {
+                if (base.closest_planet.destination) {
+                    if (base.layer.inputs_engine.keyPressed(13)) {
+                        base.closest_planet.color = "white";
+                    }
+
+
+                }
+                if (base.layer.inputs_engine.keyPressed(71)) {
+                    console.log("HAHAHA");
+                    base.layer.camera.x = base.closest_planet.x - (base.layer.game.canvas.width / 2) / base.layer.camera.zoom;
+                    base.layer.camera.y = base.closest_planet.y - (base.layer.game.canvas.height / 2) / base.layer.camera.zoom;
+                }
+            }
+
             var orbs = base.layer.orbs;
             for (var k in orbs) {
                 var orb = orbs[k];
@@ -267,6 +286,8 @@ define([
                 }
             }
 
+
+
             base.offsetx = 0;
             base.offsety = 0;
             base.angle_count = 0;
@@ -278,6 +299,12 @@ define([
             base.angle_sum = 0;
             base.angle_correction = false;
             base.closest_distance = -1;
+            if (base.planet && !base.moved) {
+                base.x = base.planet.x + base.planet.radius + 100;
+                base.y = base.planet.y + base.planet.radius + 100;
+                base.speedX = 0;
+                base.speedY = 0;
+            }
         }
     });
 

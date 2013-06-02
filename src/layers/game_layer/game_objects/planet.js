@@ -13,13 +13,16 @@ define([
         init: function (layer, obj) {
             var base = this;
             $.proxy(base.father.init, base)();
-
             base.extend(obj);
             base.radius = obj.radius;
             base.mass = 10;
             base.color = "red";
             base.influence = obj.influence || 300;
             base.speed = 0.0005 * (obj.speed_factor ? obj.speed_factor : 1);
+            base.destination = obj.destination ? obj.destination : false;
+            if (base.destination) {
+                base.color = "blue"
+            }
 
             for (var i = 0; i < 50; i++) {
                 var orb = EnergyOrb.init(layer, {
@@ -38,6 +41,7 @@ define([
 
 
             base.angle = Math.random() * Math.PI * 2;
+
         },
         setVector: function (x, y) {
             var base = this;
@@ -92,7 +96,7 @@ define([
                 x: x,
                 y: y,
                 radius: radius,
-                line_width: 3,
+                line_width: 1,
                 stroke_style: 'green',
                 fill_style: base.color
             });

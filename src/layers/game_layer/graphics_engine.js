@@ -39,18 +39,18 @@ define([
                 context.fillStyle = 'gray';
 
             context.fill();
-            if (params.line_width)
-                context.lineWidth = params.line_width;
-            else
-                context.lineWidth = 1;
-            if (params.stroke_style)
-                context.strokeStyle = params.stroke_style;
-            else
-                context.strokeStyle = "#000000";
-            if (params.line_width)
-                context.stroke();
+//            if (params.line_width)
+//                context.lineWidth = params.line_width;
+//            else
+//                context.lineWidth = 1;
+//            if (params.stroke_style)
+//                context.strokeStyle = params.stroke_style;
+//            else
+//                context.strokeStyle = "#000000";
+//            if (params.line_width)
+//                context.stroke();
+            context.closePath();
             if (params.angle !== undefined) {
-                console.log("DRAWING LINE");
                 context.beginPath();
                 context.moveTo((params.x - base.layer.camera.x) * zoom, (params.y - base.layer.camera.y) * zoom);
                 var x = Math.cos(params.angle) * params.radius;
