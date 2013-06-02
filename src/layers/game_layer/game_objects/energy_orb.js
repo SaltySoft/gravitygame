@@ -26,7 +26,8 @@ define([
             base.offsetx = 0;
             base.offsety = 0;
             console.log("angle", base.angle);
-            base.distance = (base.center.radius + 50 + Math.random() * 300)
+            base.distance_factor = Math.random();
+            base.distance = (base.center.radius + 50 + base.distance_factor * base.center.influence);
             base.speed = Math.random() * 0.005 + 0.001;
         },
         physics: function () {
@@ -38,6 +39,7 @@ define([
 
                 base.angle +=base.speed;
             }
+            base.distance = (base.center.radius + 50 + base.distance_factor * base.center.influence);
         },
         draw: function (gengine) {
             var base = this;

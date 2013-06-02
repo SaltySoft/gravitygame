@@ -161,8 +161,8 @@ define([
             for (var k in base.planets)
                 base.planets[k].physics();
 
-            for (var k in base.orbs)
-                base.orbs[k].physics();
+//            for (var k in base.orbs)
+//                base.orbs[k].physics();
         },
         draw: function () {
             var base = this;

@@ -50,6 +50,8 @@ define([
 
             base.orbs_count = 100;
             base.moved = false;
+            base.orbs = [];
+            base.orbs_consumption = 0;
         },
         addAngle: function (angle, weight) {
             var base = this;
@@ -159,7 +161,7 @@ define([
             var base = this;
             for (var k in layer.planets) {
                 layer.planets[k].closest = false;
-                var distance = base.distanceTo(layer.planets[k]);
+                var distance = base.distanceTo(layer.planets[k]) - layer.planets[k].radius;
                 if (distance < base.closest_distance || base.closest_distance == -1) {
                     base.closest_distance = distance;
                     base.closest_planet = layer.planets[k];
@@ -213,7 +215,9 @@ define([
 
                 mouse_add.x = vector_to_mouse.x * 5;
                 mouse_add.y = vector_to_mouse.y * 5;
+
                 base.orbs_count -= 0.1;
+
             }
 
 
@@ -259,33 +263,28 @@ define([
             if (base.closest_planet) {
                 if (base.closest_planet.destination) {
                     if (base.layer.inputs_engine.keyPressed(13)) {
-                        base.closest_planet.color = "white";
+                        if (base.orbs_count >= 25) {
+                            base.closest_planet.addOrb();
+                            base.orbs_count--;
+                        }
                     }
-
-
-                }
-                if (base.layer.inputs_engine.keyPressed(71)) {
-                    console.log("HAHAHA");
-                    base.layer.camera.x = base.closest_planet.x - (base.layer.game.canvas.width / 2) / base.layer.camera.zoom;
-                    base.layer.camera.y = base.closest_planet.y - (base.layer.game.canvas.height / 2) / base.layer.camera.zoom;
                 }
             }
 
-            var orbs = base.layer.orbs;
+            var orbs = base.closest_planet.orbs;
             for (var k in orbs) {
                 var orb = orbs[k];
                 var d = base.distanceTo(orb);
                 var u = base.unitVectorTo(orb);
-                if (d < 10) {
-                    delete orbs[k];
+                if (d < 15) {
                     base.orbs_count++;
+                    orbs.splice(k, 1);
                 }
                 if (d < 200) {
-                    orb.offsetx += d > 10 ? u.x * Vector.lgth(speed_vect) * 150 / (d > 100 ? d : 100) : 0;
-                    orb.offsety += d > 10 ? u.y * Vector.lgth(speed_vect) * 150 / (d > 100 ? d : 100) : 0;
+                    orb.offsetx += d > 10 ? u.x * 10 * 150 / (d > 100 ? d : 100) : 0;
+                    orb.offsety += d > 10 ? u.y * 10 * 150 / (d > 100 ? d : 100) : 0;
                 }
             }
-
 
 
             base.offsetx = 0;

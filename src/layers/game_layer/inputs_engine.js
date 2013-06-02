@@ -227,7 +227,8 @@ define([
             base.layer.graphics_engine.drawCircle({
                 x: base.mouse_position.x,
                 y: base.mouse_position.y,
-                radius: 50
+                fill_style: "white",
+                radius: 5 / base.layer.camera.zoom
             });
         }
     });
