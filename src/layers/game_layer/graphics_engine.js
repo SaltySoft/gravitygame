@@ -50,6 +50,7 @@ define([
             if (params.line_width)
                 context.stroke();
             if (params.angle !== undefined) {
+                console.log("DRAWING LINE");
                 context.beginPath();
                 context.moveTo((params.x - base.layer.camera.x) * zoom, (params.y - base.layer.camera.y) * zoom);
                 var x = Math.cos(params.angle) * params.radius;

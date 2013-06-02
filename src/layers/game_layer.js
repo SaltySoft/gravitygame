@@ -19,7 +19,7 @@ define([
                 distance: 100,
                 speedX: 0,
                 speedY: 0,
-                zoom:0.4
+                zoom:0.3
             };
             base.inputs_engine = InputsEngine.init(base);
             base.physics_engine = PhysicsEngine.init(base);
@@ -127,10 +127,9 @@ define([
             }
 
             if (base.inputs_engine.buttonPressed(2)) {
-                var new_zoom = base.camera.zoom + base.inputs_engine.scr_mouse_move.y / 500;
+                var new_zoom = base.camera.zoom + base.inputs_engine.mouse_move.y / 500;
                 if (new_zoom <= 2 && new_zoom >= 0.01)
                     base.camera.zoom = new_zoom;
-                console.log(base.inputs_engine.scr_mouse_position);
             }
 
             base.physics_engine.run();
@@ -151,6 +150,7 @@ define([
             context.font="22px verdana";
             context.fillStyle = "white";
             context.fillText(base.player.orbs_count + " orbs collected", 10, 30);
+            base.inputs_engine.draw();
         }
     });
 

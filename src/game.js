@@ -15,13 +15,17 @@ define([
             $("body").css("padding", "0px");
             $("html").css("margin", "0px");
             $("body").css("margin", "0px");
+            $("html").css("overflow", "hidden");
+            $("body").css("overflow", "hidden");
             base.canvas = document.createElement("canvas");
-            $(base.canvas).css("background-color", "black");
-            $(base.canvas).css("background-image", "url('src/resources/space02.gif')");
-            base.canvas.width = $(document).width() - 15;
-            base.canvas.height = $(document).height() - 15;
-            $(base.canvas).attr("oncontextmenu", "return false;");
 
+            $(base.canvas).css("background-color", "black");
+
+            $(base.canvas).css("background-image", "url('src/resources/space02.gif')");
+            base.canvas.width = $(document).width();
+            base.canvas.height = $(document).height();
+            $(base.canvas).attr("oncontextmenu", "return false;");
+            $(document).css("overflow", "hidden");
             base.layers = [];
             $(container).append(base.canvas);
             base.context = base.canvas.getContext('2d');

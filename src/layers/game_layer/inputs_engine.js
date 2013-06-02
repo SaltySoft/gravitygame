@@ -20,9 +20,14 @@ define([
             };
 
             base.mouse_position = {
-                x: 0,
-                y: 0
+                x: layer.game.canvas.width / 2,
+                y: layer.game.canvas.height / 2
             };
+
+            base.mouse_position_scr = {
+                x: layer.game.canvas.width / 2,
+                y: layer.game.canvas.height / 2
+            }
             $("body").keydown(function (e) {
                 if ($.inArray(e.keyCode, base.pressed_keys) == -1) {
                     base.pressed_keys.push(e.keyCode);
@@ -53,48 +58,50 @@ define([
                 }
                 base.pressed_buttons = new_pressed_keys;
             });
-            base.last_position = {
-                x: 0,
-                y: 0
-            };
-            base.scr_last_position = {
-                x: 0,
-                y: 0
-            };
-            base.scr_mouse_position = {
-                x: 0,
-                y: 0
-            };
+//            base.last_position = {
+//                x: 0,
+//                y: 0
+//            };
+//            base.scr_last_position = {
+//                x: 0,
+//                y: 0
+//            };
+//            base.scr_mouse_position = {
+//                x: 0,
+//                y: 0
+//            };
+//
+//            base.scr_mouse_move = {
+//                x: 0,
+//                y: 0
+//            };
+//            $(layer.game.canvas).mousemove(function (e) {
+//                base.scr_mouse_position = {
+//                    x: e.pageX - $(base.layer.game.canvas).offset().left,
+//                    y: e.pageY - $(base.layer.game.canvas).offset().top
+//                };
+//
+//
+//                base.mouse_position = {
+//                    x: (e.pageX - $(base.layer.game.canvas).offset().left) / base.layer.camera.zoom + base.layer.camera.x,
+//                    y: (e.pageY - $(base.layer.game.canvas).offset().top) / base.layer.camera.zoom + base.layer.camera.x
+//                };
+//
+//                base.mouse_move = {
+//                    x: base.mouse_position.x - base.last_position.x,
+//                    y: base.mouse_position.y - base.last_position.y
+//                };
+//
+//                base.scr_mouse_move = {
+//                    x: base.scr_mouse_position.x - base.scr_last_position.x,
+//                    y: base.scr_mouse_position.y - base.scr_last_position.y
+//                };
+//
+//            });
 
-            base.scr_mouse_move = {
-                x: 0,
-                y: 0
-            };
-            $(layer.game.canvas).mousemove(function (e) {
-                base.scr_mouse_position = {
-                    x: e.pageX - $(base.layer.game.canvas).offset().left,
-                    y: e.pageY - $(base.layer.game.canvas).offset().top
-                };
-
-
-                base.mouse_position = {
-                    x: (e.pageX - $(base.layer.game.canvas).offset().left) / base.layer.camera.zoom + base.layer.camera.x,
-                    y: (e.pageY - $(base.layer.game.canvas).offset().top) / base.layer.camera.zoom + base.layer.camera.x
-                };
-
-                base.mouse_move = {
-                    x: base.mouse_position.x - base.last_position.x,
-                    y: base.mouse_position.y - base.last_position.y
-                };
-
-                base.scr_mouse_move = {
-                    x: base.scr_mouse_position.x - base.scr_last_position.x,
-                    y: base.scr_mouse_position.y - base.scr_last_position.y
-                };
-
+            $(layer.game.canvas).click(function () {
+                base.lockMouse();
             });
-
-
         },
         keyPressed: function (keyCode) {
             var base = this;
@@ -119,21 +126,109 @@ define([
         },
         run: function () {
             var base = this;
-            if (base.mouse_position.x == base.last_position.x && base.mouse_position.y == base.last_position.y) {
-                base.mouse_move = {
-                    x: 0,
-                    y: 0
-                };
+//            if (base.mouse_position.x == base.last_position.x && base.mouse_position.y == base.last_position.y) {
+//                base.mouse_move = {
+//                    x: 0,
+//                    y: 0
+//                };
+//            }
+//
+//            if (base.scr_mouse_position.x == base.scr_last_position.x && base.scr_mouse_position.y == base.scr_last_position.y) {
+//                base.scr_mouse_move = {
+//                    x: 0,
+//                    y: 0
+//                };
+//            }
+//            base.last_position = base.mouse_position;
+//            base.scr_last_position = base.scr_mouse_position;
+
+            var camera = base.layer.camera;
+            base.mouse_position = {
+                x: (base.mouse_position_scr.x / base.layer.camera.zoom + camera.x),
+                y: (base.mouse_position_scr.y / base.layer.camera.zoom + camera.y)
+            };
+
+        },
+        fullscreenChange: function () {
+            var base = this;
+            var elem = base.layer.game.canvas;
+            if (document.webkitFullscreenElement === elem ||
+                document.mozFullscreenElement === elem ||
+                document.mozFullScreenElement === elem) { // Older API upper case 'S'.
+                // Element is fullscreen, now we can request pointer lock
+                elem.requestPointerLock = elem.requestPointerLock ||
+                    elem.mozRequestPointerLock ||
+                    elem.webkitRequestPointerLock;
+                elem.requestPointerLock();
+            }
+        },
+        pointerLockChange: function () {
+            var base = this;
+
+            var elem = base.layer.game.canvas;
+            if (document.mozPointerLockElement === elem ||
+                document.webkitPointerLockElement === elem) {
+                console.log("Pointer Lock was successful.");
+            } else {
+                console.log("Pointer Lock was lost.");
+            }
+        },
+        lockMouse: function () {
+            var base = this;
+            var elem = base.layer.game.canvas;
+
+            if (!base.locked) {
+                document.addEventListener("mousemove", function (e) {
+                    var movementX = e.movementX ||
+                            e.mozMovementX ||
+                            e.webkitMovementX ||
+                            0,
+                        movementY = e.movementY ||
+                            e.mozMovementY ||
+                            e.webkitMovementY ||
+                            0;
+                    base.mouse_move = {
+                        x: movementX,
+                        y: movementY
+                    };
+                    if (base.mouse_position_scr.x + movementX > 0 && base.mouse_position_scr.x + movementX < base.layer.game.canvas.width)
+                        base.mouse_position_scr.x += movementX;
+                    if (base.mouse_position_scr.y + movementY > 0 && base.mouse_position_scr.y + movementY < base.layer.game.canvas.height)
+                        base.mouse_position_scr.y += movementY;
+                }, false);
             }
 
-            if (base.scr_mouse_position.x == base.scr_last_position.x && base.scr_mouse_position.y == base.scr_last_position.y) {
-                base.scr_mouse_move = {
-                    x: 0,
-                    y: 0
-                };
-            }
-            base.last_position = base.mouse_position;
-            base.scr_last_position = base.scr_mouse_position;
+            base.locked = true;
+            document.addEventListener('fullscreenchange', $.proxy(base.fullscreenChange, base), false);
+            document.addEventListener('mozfullscreenchange', $.proxy(base.fullscreenChange, base), false);
+            document.addEventListener('webkitfullscreenchange', $.proxy(base.fullscreenChange, base), false);
+
+            document.addEventListener('pointerlockchange', $.proxy(base.pointerLockChange, base), false);
+            document.addEventListener('mozpointerlockchange', $.proxy(base.pointerLockChange, base), false);
+            document.addEventListener('webkitpointerlockchange', $.proxy(base.pointerLockChange, base), false);
+
+            // Start by going fullscreen with the element.  Current implementations
+            // require the element to be in fullscreen before requesting pointer
+            // lock--something that will likely change in the future.
+//            elem.requestFullscreen = elem.requestFullscreen ||
+//                elem.mozRequestFullscreen ||
+//                elem.mozRequestFullScreen || // Older API upper case 'S'.
+//                elem.webkitRequestFullscreen;
+//            elem.requestFullscreen();
+
+            elem.requestPointerLock = elem.requestPointerLock ||
+                elem.mozRequestPointerLock ||
+                elem.webkitRequestPointerLock;
+            // Ask the browser to lock the pointer
+            elem.requestPointerLock();
+        },
+        draw: function () {
+            var base = this;
+            base.layer.graphics_engine.drawCircle({
+                x: base.mouse_position.x,
+                y: base.mouse_position.y,
+                radius: 50
+            });
         }
     });
 

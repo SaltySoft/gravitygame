@@ -31,6 +31,9 @@ define([
                 x: undefined,
                 y: undefined
             };
+
+            base.temperature = 0;
+
             base.center_count = 0;
 
             if (obj !== undefined && obj.x !== undefined && obj.y !== undefined) {
@@ -115,34 +118,30 @@ define([
                 y: base.y,
                 radius: base.radius,
                 angle: base.angle,
-                fill_style: "white"
+                fill_style: "#FFFF00",
+                stroke_style: "black"
             });
-            var screen_pos = base;
+
 
             gengine.beginPath();
-            gengine.moveTo({x: screen_pos.x, y: screen_pos.y});
+            gengine.moveTo({x: base.x, y: base.y});
             gengine.lineTo({
-                x: screen_pos.x + base.accelerationX * 1000,
-                y: screen_pos.y + base.accelerationY * 1000
+                x: base.x + base.accelerationX * 1000,
+                y: base.y + base.accelerationY * 1000
             }, "blue", 2);
             gengine.closePath();
             gengine.beginPath();
-            gengine.moveTo({x: screen_pos.x, y: screen_pos.y});
+            gengine.moveTo({x: base.x, y: base.y});
             gengine.lineTo({
-                x: screen_pos.x + base.speedX * 20,
-                y: screen_pos.y + base.speedY * 20
+                x: base.x + base.speedX * 20,
+                y: base.y + base.speedY * 20
             }, "green", 2);
             gengine.closePath();
 
-            for (var k in base.forces) {
-                gengine.beginPath();
-                gengine.moveTo({x: base.x, y: base.y});
-                gengine.lineTo({
-                    x: base.x + base.forces[k].x * 100,
-                    y: base.y + base.forces[k].y * 100
-                }, "red", 2);
-                gengine.closePath();
-            }
+            var context = base.layer.game.context;
+            context.font = "22px verdana";
+            context.fillStyle = "white";
+            context.fillText(Math.round(base.temperature) + " degrees", 10, 60);
 
 
             base.forces = [];
@@ -188,6 +187,12 @@ define([
                 }
             }
 
+
+            var mouse_add = {
+                x: 0,
+                y: 0
+            };
+
             if (base.mouse_attracted) {
                 var vector_to_mouse = {
                     x: base.mouse_position.x - base.x,
@@ -196,16 +201,16 @@ define([
 
                 vector_to_mouse = Vector.normalize(vector_to_mouse);
                 var distance = Vector.distance(base, base.mouse_position);
-                console.log(distance);
-                vector_to_mouse = Vector.coeff_mult(vector_to_mouse, distance > 100 ? 20 / (distance) : 0.2);
-                console.log("ACCEL", vector_to_mouse);
-                base.speedX += vector_to_mouse.x * 5;
-                base.speedY += vector_to_mouse.y * 5;
+
+                vector_to_mouse = Vector.coeff_mult(vector_to_mouse, /*distance > 100 ? 20 / (distance) : 0.2*/ 0.05);
+
+                mouse_add.x = vector_to_mouse.x * 5;
+                mouse_add.y = vector_to_mouse.y * 5;
             }
 
 
-            base.speedX += base.accelerationX + Math.cos(base.angle) * base.accel_jet;
-            base.speedY += base.accelerationY + Math.sin(base.angle) * base.accel_jet;
+            base.speedX += base.accelerationX + Math.cos(base.angle) * base.accel_jet + mouse_add.x;
+            base.speedY += base.accelerationY + Math.sin(base.angle) * base.accel_jet + mouse_add.y;
 
             base.x += base.speedX + base.offsetx;
             base.y += base.speedY + base.offsety;
@@ -234,6 +239,24 @@ define([
                     base.speedY -= unit_speed.y * 0.15;
                 }
 
+                if (distance > base.closest_planet.influence + base.closest_planet.radius) {
+                    if (base.temperature > -273)
+                        base.temperature -= 1;
+                }
+
+                else if (distance < 10 + base.closest_planet.radius) {
+                    if (base.temperature < 500)
+                        base.temperature += 1;
+                }
+                else {
+                    if (base.temperature < 22 || base.temperature > 22)
+                        base.temperature += base.temperature < 22 ? 2 : 2;
+                    else
+                        base.temperature = 20;
+
+                }
+
+
             }
             var orbs = base.layer.orbs;
             for (var k in orbs) {
@@ -248,10 +271,7 @@ define([
                     orb.offsetx += d > 10 ? u.x * Vector.lgth(speed_vect) * 150 / (d > 100 ? d : 100) : 0;
                     orb.offsety += d > 10 ? u.y * Vector.lgth(speed_vect) * 150 / (d > 100 ? d : 100) : 0;
                 }
-
-
             }
-
 
             base.offsetx = 0;
             base.offsety = 0;
