@@ -40,18 +40,18 @@ define([
             base.mobile_objects = [];
 
 //
-            var planet = Planet.init(base, {
+            var center = Planet.init(base, {
                 x: 500,
                 y: 500,
                 radius: 100
             });
-            base.objects.push(planet);
-            base.planets.push(planet);
+            base.objects.push(center);
+            base.planets.push(center);
             var planet =  Planet.init(base, {
                 x: 50,
                 y: 50,
                 radius: 80,
-                center : planet,
+                center : center,
                 orbit_distance: 1000
             });
             base.objects.push(planet);
@@ -61,24 +61,25 @@ define([
                 x: 1500,
                 y: 1500,
                 radius: 200,
-                center : planet,
+                center : center,
                 orbit_distance: 2000
 
             });
             base.objects.push(planet);
             base.planets.push(planet);
-//            var planet =  Planet.init(base, {
-//                x: 675,
-//                y: 344,
-//                radius: 10
-//            });
-//            base.objects.push(planet);
-//            var planet =  Planet.init(base, {
-//                x: 150,
-//                y: 500,
-//                radius: 10
-//            });
-//            base.objects.push(planet);
+
+            var planet =  Planet.init(base, {
+                x: 1500,
+                y: 1500,
+                radius: 150,
+                center : center,
+                orbit_distance: 1500,
+                speed_factor: 3
+
+            });
+            base.objects.push(planet);
+            base.planets.push(planet);
+
             base.player = Player.init(base, {
                 x: 100,
                 y: 100
@@ -128,8 +129,16 @@ define([
 
             if (base.inputs_engine.buttonPressed(2)) {
                 var new_zoom = base.camera.zoom + base.inputs_engine.mouse_move.y / 500;
+
+                
                 if (new_zoom <= 2 && new_zoom >= 0.01)
                     base.camera.zoom = new_zoom;
+            }
+
+            if (base.inputs_engine.buttonPressed(3)) {
+                base.camera.x -= base.inputs_engine.mouse_move.x / base.camera.zoom;
+                base.camera.y -= base.inputs_engine.mouse_move.y / base.camera.zoom;
+
             }
 
             base.physics_engine.run();

@@ -19,7 +19,7 @@ define([
             base.mass = 10;
             base.color = "red";
             base.influence = obj.influence || 300;
-            base.speed = 0.0005;
+            base.speed = 0.0005 * (obj.speed_factor ? obj.speed_factor : 1);
 
             for (var i = 0; i < 50; i++) {
                 var orb = EnergyOrb.init(layer, {
