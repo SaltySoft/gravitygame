@@ -46,7 +46,7 @@ define([
             base.mouse_attracted = false;
             base.mouse_position = { x: 0, y: 0 };
 
-            base.orbs_count = 0;
+            base.orbs_count = 100;
         },
         addAngle: function (angle, weight) {
             var base = this;
@@ -193,7 +193,7 @@ define([
                 y: 0
             };
 
-            if (base.mouse_attracted) {
+            if (base.mouse_attracted && base.orbs_count > 0) {
                 var vector_to_mouse = {
                     x: base.mouse_position.x - base.x,
                     y: base.mouse_position.y - base.y
@@ -206,6 +206,7 @@ define([
 
                 mouse_add.x = vector_to_mouse.x * 5;
                 mouse_add.y = vector_to_mouse.y * 5;
+                base.orbs_count -= 0.1;
             }
 
 
@@ -222,38 +223,29 @@ define([
                 var distance = base.distanceTo(base.closest_planet);
                 if (distance < base.closest_planet.radius) {
                     var unit = base.closest_planet.unitVectorTo(base);
-//
-//                    var speed = Vector.lgth({
-//                        x: base.speedX,
-//                        y: base.speedY
-//                    });
-//                    base.speedX -= speed * unit.x;
-//                    base.speedY -= speed * unit.y;
-
                     base.x -= (base.closest_planet.radius - distance) * unit.x;
                     base.y -= (base.closest_planet.radius - distance) * unit.y;
-
-
                     var unit_speed = Vector.normalize(speed_vect);
                     base.speedX -= unit_speed.x * 0.15;
                     base.speedY -= unit_speed.y * 0.15;
                 }
 
                 if (distance > base.closest_planet.influence + base.closest_planet.radius) {
-                    if (base.temperature > -273)
+                    if (base.temperature > -273) {
                         base.temperature -= 1;
+                    }
                 }
-
                 else if (distance < 10 + base.closest_planet.radius) {
-                    if (base.temperature < 500)
+                    if (base.temperature < 500) {
                         base.temperature += 1;
+                    }
+
                 }
                 else {
-                    if (base.temperature < 22 || base.temperature > 22)
-                        base.temperature += base.temperature < 22 ? 2 : 2;
+                    if (base.temperature < 20 || base.temperature > 24)
+                        base.temperature += base.temperature < 22 ? 2 : -2;
                     else
                         base.temperature = 20;
-
                 }
 
 

@@ -149,7 +149,7 @@ define([
             var context = base.game.context;
             context.font="22px verdana";
             context.fillStyle = "white";
-            context.fillText(base.player.orbs_count + " orbs collected", 10, 30);
+            context.fillText("Energy orbs (fuel) : " + (base.player.orbs_count).toFixed(2), 10, 30);
             base.inputs_engine.draw();
         }
     });
