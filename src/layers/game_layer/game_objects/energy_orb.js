@@ -31,7 +31,7 @@ define([
         },
         physics: function () {
             var base = this;
-            if (base.center) {
+            if (base.center && base.center.closest) {
                 base.x = base.center.x + Math.cos(base.angle) * (20 * (Math.cos(base.angle * base.distance / 20) + 1) + base.distance) + base.offsetx;
                 base.y = base.center.y + Math.sin(base.angle) * (20 * (Math.cos(base.angle * base.distance / 20) + 1) + base.distance ) + base.offsety;
 
@@ -41,17 +41,20 @@ define([
         },
         draw: function (gengine) {
             var base = this;
-            var rad = gengine.createRadialGradient(base.x, base.y, base.radius, "rgba(100,100,255,0.5)", "white");
-            gengine.beginPath();
+            if (base.center && base.center.closest) {
+                var rad = gengine.createRadialGradient(base.x, base.y, base.radius, "rgba(100,100,255,0.5)", "white");
+                gengine.beginPath();
 
-            gengine.drawCircle({
-                x: base.x,
-                y: base.y,
-                radius: base.radius,
-                fill_style: rad
-            });
+                gengine.drawCircle({
+                    x: base.x,
+                    y: base.y,
+                    radius: base.radius,
+                    fill_style: rad
+                });
 
-            gengine.closePath();
+                gengine.closePath();
+            }
+
         }
     });
 

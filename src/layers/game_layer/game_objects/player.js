@@ -153,12 +153,14 @@ define([
         physics: function (layer) {
             var base = this;
             for (var k in layer.planets) {
+                layer.planets[k].closest = false;
                 var distance = base.distanceTo(layer.planets[k]);
                 if (distance < base.closest_distance || base.closest_distance == -1) {
                     base.closest_distance = distance;
                     base.closest_planet = layer.planets[k];
                 }
             }
+            base.closest_planet.closest = true;
 
             for (var k in layer.planets) {
                 base.interractWith(layer, layer.planets[k]);

@@ -65,7 +65,7 @@ define([
             var x = base.x;
             var y = base.y;
             var radius = base.radius;
-             var rad = gengine.createRadialGradient(base.x, base.y, radius + 500, "white", "rgba(255,255,0,0.5)");
+             var rad = gengine.createRadialGradient(base.x, base.y, radius + base.influence, "white", "rgba(255,255,0,0.5)");
 
             gengine.drawCircle({
                 x: x,

@@ -5,8 +5,9 @@ define([
     './game_layer/physics_engine',
     './game_layer/graphics_engine',
     './game_layer/game_objects/planet',
-    './game_layer/game_objects/player'
-], function (Class, Layer, InputsEngine, PhysicsEngine, GraphicsEngine, Planet, Player) {
+    './game_layer/game_objects/player',
+    './game_layer/level_generator'
+], function (Class, Layer, InputsEngine, PhysicsEngine, GraphicsEngine, Planet, Player, LevelGenerator) {
     var GameLayer = Layer.create();
 
     GameLayer.include({
@@ -40,53 +41,68 @@ define([
             base.mobile_objects = [];
 
 //
-            var center = Planet.init(base, {
-                x: 500,
-                y: 500,
-                radius: 100
+//            var center = Planet.init(base, {
+//                x: 500,
+//                y: 500,
+//                radius: 100
+//            });
+//            base.objects.push(center);
+//            base.planets.push(center);
+//            var planet =  Planet.init(base, {
+//                x: 50,
+//                y: 50,
+//                radius: 80,
+//                center : center,
+//                orbit_distance: 1000
+//            });
+//            base.objects.push(planet);
+//            base.planets.push(planet);
+//
+//            var planet =  Planet.init(base, {
+//                x: 1500,
+//                y: 1500,
+//                radius: 200,
+//                center : center,
+//                orbit_distance: 2000
+//
+//            });
+//            base.objects.push(planet);
+//            base.planets.push(planet);
+//
+//            var planet =  Planet.init(base, {
+//                x: 1500,
+//                y: 1500,
+//                radius: 150,
+//                center : center,
+//                orbit_distance: 1500,
+//                speed_factor: 3
+//
+//            });
+//            base.objects.push(planet);
+//            base.planets.push(planet);
+//
+//
+//            base.player = Player.init(base, {
+//                x: 100,
+//                y: 100
+//            });
+//
+//            base.objects.push(base.player);
+//            base.mobile_objects.push(base.player);
+
+            var level = LevelGenerator.generate(base, {
+                planets: 10
             });
-            base.objects.push(center);
-            base.planets.push(center);
-            var planet =  Planet.init(base, {
-                x: 50,
-                y: 50,
-                radius: 80,
-                center : center,
-                orbit_distance: 1000
-            });
-            base.objects.push(planet);
-            base.planets.push(planet);
 
-            var planet =  Planet.init(base, {
-                x: 1500,
-                y: 1500,
-                radius: 200,
-                center : center,
-                orbit_distance: 2000
-
-            });
-            base.objects.push(planet);
-            base.planets.push(planet);
-
-            var planet =  Planet.init(base, {
-                x: 1500,
-                y: 1500,
-                radius: 150,
-                center : center,
-                orbit_distance: 1500,
-                speed_factor: 3
-
-            });
-            base.objects.push(planet);
-            base.planets.push(planet);
-
-            base.player = Player.init(base, {
-                x: 100,
-                y: 100
-            });
-
+            base.player = level.player;
             base.objects.push(base.player);
             base.mobile_objects.push(base.player);
+
+            for (var k in level.planets) {
+                base.objects.push(level.planets[k]);
+                base.planets.push(level.planets[k]);
+            }
+
         },
         cameraPos: function (params) {
             var base = this;
@@ -130,7 +146,7 @@ define([
             if (base.inputs_engine.buttonPressed(2)) {
                 var new_zoom = base.camera.zoom + base.inputs_engine.mouse_move.y / 500;
 
-                
+
                 if (new_zoom <= 2 && new_zoom >= 0.01)
                     base.camera.zoom = new_zoom;
             }
