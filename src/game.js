@@ -18,10 +18,10 @@ define([
             $("html").css("overflow", "hidden");
             $("body").css("overflow", "hidden");
             base.canvas = document.createElement("canvas");
-
+            base.context = base.canvas.getContext("2d");
             $(base.canvas).css("background-color", "black");
 
-            $(base.canvas).css("background-image", "url('src/resources/space02.gif')");
+//            $(base.canvas).css("background-image", "url('src/resources/space02.gif')");
             base.canvas.width = $(document).width();
             base.canvas.height = $(document).height();
             $(base.canvas).attr("oncontextmenu", "return false;");
@@ -47,7 +47,10 @@ define([
 
             setTimeout(function () {
                 base.anfunc.call(window, base.animate.bind(base));
-                base.layers[base.layers.length - 1].run();
+                base.context.clearRect(0, 0, base.canvas.width, base.canvas.height);
+                if (base.layers.length > 0) {
+                    base.layers[base.layers.length - 1].run();
+                }
             }, 1);
 
         },

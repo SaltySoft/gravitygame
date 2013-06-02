@@ -20,7 +20,7 @@ define([
                 distance: 100,
                 speedX: 0,
                 speedY: 0,
-                zoom:0.3
+                zoom:0.1
             };
             base.inputs_engine = InputsEngine.init(base);
             base.physics_engine = PhysicsEngine.init(base);
@@ -30,77 +30,19 @@ define([
             base.planets = [];
             base.orbs = [];
             console.log(game);
-//            var planet = Planet.init(base, {
-//                x: 500,
-//                y: 500,
-//                radius: 100
-//            });
-//            base.objects.push(planet);
-//            base.planets.push(planet);
-
             base.mobile_objects = [];
 
-//
-//            var center = Planet.init(base, {
-//                x: 500,
-//                y: 500,
-//                radius: 100
-//            });
-//            base.objects.push(center);
-//            base.planets.push(center);
-//            var planet =  Planet.init(base, {
-//                x: 50,
-//                y: 50,
-//                radius: 80,
-//                center : center,
-//                orbit_distance: 1000
-//            });
-//            base.objects.push(planet);
-//            base.planets.push(planet);
-//
-//            var planet =  Planet.init(base, {
-//                x: 1500,
-//                y: 1500,
-//                radius: 200,
-//                center : center,
-//                orbit_distance: 2000
-//
-//            });
-//            base.objects.push(planet);
-//            base.planets.push(planet);
-//
-//            var planet =  Planet.init(base, {
-//                x: 1500,
-//                y: 1500,
-//                radius: 150,
-//                center : center,
-//                orbit_distance: 1500,
-//                speed_factor: 3
-//
-//            });
-//            base.objects.push(planet);
-//            base.planets.push(planet);
-//
-//
-//            base.player = Player.init(base, {
-//                x: 100,
-//                y: 100
-//            });
-//
-//            base.objects.push(base.player);
-//            base.mobile_objects.push(base.player);
-
-            var level = LevelGenerator.generate(base, {
+            base.level = LevelGenerator.generate(base, {
                 planets: 10
             });
 
-            base.player = level.player;
+            base.player = base.level.player;
             base.objects.push(base.player);
             base.mobile_objects.push(base.player);
 
-            for (var k in level.planets) {
-                base.objects.push(level.planets[k]);
-                base.planets.push(level.planets[k]);
+            for (var k in base.level.planets) {
+                base.objects.push(base.level.planets[k]);
+                base.planets.push(base.level.planets[k]);
             }
 
         },
@@ -119,6 +61,17 @@ define([
             for (var k in base.objects) {
                 base.objects[k].logic(base);
             }
+
+            for (var k in base.planets) {
+
+            }
+
+            if (base.level.sun.orbs.length > 1000) {
+                alert("you won");
+                base.game.layers.pop();
+                base.game.layers.pop();
+            }
+
         },
         inputs: function () {
             var base = this;

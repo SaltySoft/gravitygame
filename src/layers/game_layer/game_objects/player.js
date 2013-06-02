@@ -122,10 +122,9 @@ define([
             gengine.drawCircle({
                 x: base.x,
                 y: base.y,
-                radius: base.radius,
-                angle: base.angle,
-                fill_style: "#FFFF00",
-                stroke_style: "black"
+                radius: 5 / base.layer.camera.zoom,
+                fill_style: "#FFAA88",
+                stroke_style: "#FFAA88"
             });
 
 
@@ -136,13 +135,13 @@ define([
 //                y: base.y + base.accelerationY * 1000
 //            }, "blue", 2);
 //            gengine.closePath();
-            gengine.beginPath();
-            gengine.moveTo({x: base.x, y: base.y});
-            gengine.lineTo({
-                x: base.x + base.speedX * 20,
-                y: base.y + base.speedY * 20
-            }, "green", 2);
-            gengine.closePath();
+//            gengine.beginPath();
+//            gengine.moveTo({x: base.x, y: base.y});
+//            gengine.lineTo({
+//                x: base.x + base.speedX * 20,
+//                y: base.y + base.speedY * 20
+//            }, "green", 2);
+//            gengine.closePath();
 
             var context = base.layer.game.context;
             context.font = "22px verdana";
@@ -165,6 +164,27 @@ define([
                 if (distance < base.closest_distance || base.closest_distance == -1) {
                     base.closest_distance = distance;
                     base.closest_planet = layer.planets[k];
+                }
+                var planet = layer.planets;
+                if (distance > planet.influence + planet.radius) {
+                    if (base.temperature > -273) {
+                        base.temperature -= 1;
+                    }
+                }
+                else if (distance < 10 + planet.radius) {
+                    if (base.temperature < 500) {
+                        base.temperature += 1;
+
+                    }
+                    base.speedX *= 0.95;
+                    base.speedY *= 0.95;
+                }
+                else {
+                    if (base.temperature < 20 || base.temperature > 24)
+                        base.temperature += base.temperature < 22 ? 2 : -2;
+                    else
+                        base.temperature = 20;
+
                 }
             }
             base.closest_planet.closest = true;
@@ -211,12 +231,12 @@ define([
                 vector_to_mouse = Vector.normalize(vector_to_mouse);
                 var distance = Vector.distance(base, base.mouse_position);
 
-                vector_to_mouse = Vector.coeff_mult(vector_to_mouse, /*distance > 100 ? 20 / (distance) : 0.2*/ 0.05);
+                vector_to_mouse = Vector.coeff_mult(vector_to_mouse, 1/*distance > 100 ? (distance) / 5000 : 0.2*/);
 
-                mouse_add.x = vector_to_mouse.x * 5;
-                mouse_add.y = vector_to_mouse.y * 5;
+                mouse_add.x = vector_to_mouse.x * 2;
+                mouse_add.y = vector_to_mouse.y * 1;
 
-                base.orbs_count -= 0.1;
+                base.orbs_count -= 0.01;
 
             }
 
@@ -241,23 +261,7 @@ define([
                     base.speedY -= unit_speed.y * 0.15;
                 }
 
-                if (distance > base.closest_planet.influence + base.closest_planet.radius) {
-                    if (base.temperature > -273) {
-                        base.temperature -= 1;
-                    }
-                }
-                else if (distance < 10 + base.closest_planet.radius) {
-                    if (base.temperature < 500) {
-                        base.temperature += 1;
-                    }
 
-                }
-                else {
-                    if (base.temperature < 20 || base.temperature > 24)
-                        base.temperature += base.temperature < 22 ? 2 : -2;
-                    else
-                        base.temperature = 20;
-                }
             }
 
             if (base.closest_planet) {
@@ -265,7 +269,8 @@ define([
                     if (base.layer.inputs_engine.keyPressed(13)) {
                         if (base.orbs_count >= 25) {
                             base.closest_planet.addOrb();
-                            base.orbs_count--;
+                            base.closest_planet.addOrb();
+                            base.orbs_count -= 2;
                         }
                     }
                 }
@@ -280,9 +285,9 @@ define([
                     base.orbs_count++;
                     orbs.splice(k, 1);
                 }
-                if (d < 200) {
-                    orb.offsetx += d > 10 ? u.x * 10 * 150 / (d > 100 ? d : 100) : 0;
-                    orb.offsety += d > 10 ? u.y * 10 * 150 / (d > 100 ? d : 100) : 0;
+                if (d < 500) {
+                    orb.offsetx += d > 10 ? u.x * 30 * 150 / (d > 100 ? d : 100) : 0;
+                    orb.offsety += d > 10 ? u.y * 30 * 150 / (d > 100 ? d : 100) : 0;
                 }
             }
 

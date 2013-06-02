@@ -18,7 +18,7 @@ define([
             var base = this;
             var canvas = base.layer.game.canvas;
             base.context = base.layer.game.context;
-            base.context.clearRect(0, 0, canvas.width, canvas.height);
+
             for (var k in base.layer.objects) {
                 if (base.layer.objects[k].predraw)
                     base.layer.objects[k].predraw(base);

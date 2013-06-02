@@ -14,9 +14,9 @@ define([
             var base = this;
             i = i !== undefined ? i : 0;
             var orb = EnergyOrb.init(base.layer, {
-                x : base.x + Math.cos(i / 25 * Math.PI) * (base.radius + 50 + Math.random() * 300),
-                y : base.y + Math.sin(i / 25 * Math.PI) * (base.radius + 50 + Math.random() * 300),
-                radius : 10,
+                x: base.x + Math.cos(i / 25 * Math.PI) * (base.radius + 50 + Math.random() * 300),
+                y: base.y + Math.sin(i / 25 * Math.PI) * (base.radius + 50 + Math.random() * 300),
+                radius: 20,
                 center: base
             });
             base.orbs.push(orb);
@@ -28,15 +28,21 @@ define([
             base.extend(obj);
             base.radius = obj.radius;
             base.mass = 10;
-//            base.color = "red";
+
+            base.planet_type = obj.planet_type ? obj.planet_type : "normal";
             base.influence = obj.influence || 300;
             base.speed = 0.0005 * (obj.speed_factor ? obj.speed_factor : 1);
             base.destination = obj.destination ? obj.destination : false;
-//            if (base.destination) {
-//                base.color = "blue"
-//            }
             base.orbs = [];
-            for (var i = 0; i < 50; i++) {
+            var origin_orb = 0;
+
+            if (base.planet_type == "normal") {
+                origin_orb = 50;
+            } else {
+                origin_orb = 0;
+            }
+
+            for (var i = 0; i < origin_orb; i++) {
                 base.addOrb(i);
             }
             if (base.center && base.center.x && base.center.y) {
@@ -62,14 +68,18 @@ define([
         physics: function (layer) {
             var base = this;
 
-            base.temperature = base.orbs.length > base.radius / 2 ? 1000 : base.orbs.length / (base.radius / 2) * 1000 ;
-            base.influence = 100 + base.orbs.length * 10;
+            base.temperature = base.orbs.length > base.radius / 2 ? 1000 : base.orbs.length / (base.radius / 2) * 1000;
+            if (base.destination)
+                base.influence = 150 + base.orbs.length * 50;
+            else
+                base.influence = 150 + base.orbs.length * 10;
+
             if (base.center !== undefined) {
                 if (base.center.x && base.center.y) {
                     base.x = base.center.x + Math.cos(base.angle) * ( base.orbit_distance);
                     base.y = base.center.y + Math.sin(base.angle) * ( base.orbit_distance);
                 }
-                base.angle +=base.speed;
+                base.angle += base.speed;
             }
             for (var k in base.orbs) {
                 base.orbs[k].physics();
@@ -81,7 +91,7 @@ define([
             var x = base.x;
             var y = base.y;
             var radius = base.radius;
-             var rad = gengine.createRadialGradient(base.x, base.y, radius + base.influence, "white", "rgba(255,255,0,0.5)");
+            var rad = gengine.createRadialGradient(base.x, base.y, radius + base.influence, "white", "rgba(255,255,0,0.5)");
 
             gengine.drawCircle({
                 x: x,
@@ -104,15 +114,18 @@ define([
 //                stroke_style: 'black',
 //                fill_style: "grey"
 //            });
-            base.color = "rgb(" + Math.round(255 * (base.temperature / 1000))+", " + Math.round(255 * (base.temperature / 1000))+", " +   Math.round( 255 * (base.temperature / 1000))+ ")";
-
+            if (base.destination)
+                base.color = "rgb(" + Math.round(255 * (base.temperature / 1000)) + ", " + Math.round(255 * (base.temperature / 1000)) + ", " + Math.round(255 * ( base.temperature / 1000)) + ")";
+            else {
+                base.color = "rgb(150, 200, 150)";
+            }
             gengine.drawCircle({
                 x: x,
                 y: y,
                 radius: radius,
                 line_width: 1,
                 stroke_style: 'green',
-                fill_style:base.color
+                fill_style: base.color
             });
             for (var k in base.orbs) {
                 base.orbs[k].draw(gengine);
