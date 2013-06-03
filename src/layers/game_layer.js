@@ -101,7 +101,7 @@ define([
 
 
                 if (base.inputs_engine.buttonPressed(2)) {
-                    var new_zoom = base.camera.zoom + base.inputs_engine.mouse_move.y / 500;
+                    var new_zoom = base.camera.zoom + (base.inputs_engine.mouse_move.y > 0 ? 0.001 : -0.001);
                     if (new_zoom <= 2 && new_zoom >= 0.01) {
                         base.camera.x += base.game.canvas.width / (base.camera.zoom) / 2 - base.game.canvas.width / (new_zoom) / 2;
                         base.camera.y += base.game.canvas.height / (base.camera.zoom) / 2 - base.game.canvas.height / (new_zoom) / 2;
@@ -158,6 +158,18 @@ define([
             context.font = "22px verdana";
             context.fillStyle = "white";
             context.fillText("Energy orbs (fuel) : " + (base.player.orbs_count).toFixed(2), 10, 30);
+            var context = base.game.context;
+            context.font = "22px verdana";
+            context.fillStyle = "white";
+            context.fillText("Water orbs : " + (base.player.water_orbs).toFixed(2), 10, 60);
+
+            context.font = "22px verdana";
+            context.fillStyle = "white";
+            context.fillText("Aminate acid orbs : " + (base.player.acid_orbs).toFixed(2), 10, 90);
+
+            context.font = "22px verdana";
+            context.fillStyle = "white";
+            context.fillText("Shield orbs : " + (base.player.shield_orbs).toFixed(2), 10, 120);
 
             context.font = "20px verdana";
             context.fillStyle = "white";

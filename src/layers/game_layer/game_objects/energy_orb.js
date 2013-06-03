@@ -29,6 +29,7 @@ define([
             base.distance_factor = Math.random();
             base.distance = (base.center.radius + 50 + base.distance_factor * base.center.influence);
             base.speed = Math.random() * 0.005 + 0.001;
+            base.type = obj.type ? obj.type : "energy";
         },
         physics: function () {
             var base = this;
@@ -44,7 +45,26 @@ define([
         draw: function (gengine) {
             var base = this;
             if (base.center && base.center.closest) {
+
+
+
                 var rad = gengine.createRadialGradient(base.x, base.y, base.radius, "rgba(100,100,255,0.5)", "white");
+
+                switch (base.type) {
+                    case "water" :
+                        rad = gengine.createRadialGradient(base.x, base.y, base.radius, "rgba(100,100,255,0.5)", "blue");
+                        break;
+                    case "acid" :
+                        rad = gengine.createRadialGradient(base.x, base.y, base.radius, "rgba(100,100,255,0.5)", "green");
+                        break;
+                    case "shield" :
+                        rad = gengine.createRadialGradient(base.x, base.y, base.radius, "rgba(100,100,255,0.5)", "violet");
+                        break;
+
+                    default :
+                        break;
+                };
+
                 gengine.beginPath();
 
                 gengine.drawCircle({

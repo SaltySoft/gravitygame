@@ -49,6 +49,9 @@ define([
             base.mouse_position = { x: 0, y: 0 };
 
             base.orbs_count = 3;
+            base.water_orbs = 0;
+            base.acid_orbs = 0;
+            base.shield_orbs = 0;
             base.moved = false;
             base.orbs = [];
             base.orbs_consumption = 0;
@@ -147,7 +150,7 @@ define([
             var context = base.layer.game.context;
             context.font = "22px verdana";
             context.fillStyle = "white";
-            context.fillText(Math.round(base.temperature) + " degrees", 10, 60);
+            context.fillText(Math.round(base.temperature) + " degrees", 500, 60);
 
 
             base.forces = [];
@@ -169,8 +172,7 @@ define([
                 }
                 var planet = layer.planets[k];
 
-                if (distance <= planet.influence + planet.radius && distance >= 10 + planet.radius)
-                {
+                if (distance <= planet.influence + planet.radius && distance >= 10 + planet.radius) {
                     if (base.temperature < 20 || base.temperature > 24)
                         base.temperature += base.temperature < 22 ? 2 : -2;
                     else
@@ -287,13 +289,27 @@ define([
                 var orb = orbs[k];
                 var d = base.distanceTo(orb);
                 var u = base.unitVectorTo(orb);
-                if (d < 15) {
-                    base.orbs_count++;
-                    orbs.splice(k, 1);
-                }
                 if (d < 500) {
                     orb.offsetx += d > 10 ? u.x * 30 * 150 / (d > 100 ? d : 100) : 0;
                     orb.offsety += d > 10 ? u.y * 30 * 150 / (d > 100 ? d : 100) : 0;
+                }
+                if (d < 15) {
+                    if (orb.type === "energy") {
+                        base.orbs_count++;
+
+                    }
+                    if (orb.type == "water") {
+                        base.water_orbs++;
+                        base.closest_planet.water_counts--;
+                    }
+                    if (orb.type == "acid") {
+                        base.acid_orbs++;
+                        base.closest_planet.acid_counts--;
+                    }
+                    if (orb.type == "shield") {
+                        base.shield_orbs++;
+                    }
+                    orbs.splice(k, 1);
                 }
             }
 
