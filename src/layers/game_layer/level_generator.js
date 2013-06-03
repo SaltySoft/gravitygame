@@ -19,7 +19,7 @@ define([
 
 
         if (params !== undefined && params.planets !== undefined) {
-            for (var i = 0; i < 50; i++) {
+            for (var i = 0; i < 10; i++) {
 
                 var planet = Planet.init(layer, {
                     center: center,

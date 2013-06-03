@@ -98,10 +98,11 @@ define([
 //                };
 //
 //            });
-
+            base.lockMouse();
             $(layer.game.canvas).click(function () {
-                base.lockMouse();
+                base.requestLocks();
             });
+
         },
         keyPressed: function (keyCode) {
             var base = this;
@@ -161,6 +162,7 @@ define([
                     elem.webkitRequestPointerLock;
                 elem.requestPointerLock();
             }
+            base.layer.game.resetSize();
         },
         pointerLockChange: function () {
             var base = this;
@@ -210,11 +212,19 @@ define([
             // Start by going fullscreen with the element.  Current implementations
             // require the element to be in fullscreen before requesting pointer
             // lock--something that will likely change in the future.
-//            elem.requestFullscreen = elem.requestFullscreen ||
-//                elem.mozRequestFullscreen ||
-//                elem.mozRequestFullScreen || // Older API upper case 'S'.
-//                elem.webkitRequestFullscreen;
-//            elem.requestFullscreen();
+
+        },
+        requestLocks: function () {
+            var base = this;
+            var elem = base.layer.game.canvas;
+            if (base.mouse_position_scr.x > base.layer.game.canvas.width - 500 && base.mouse_position_scr.y > base.layer.game.canvas.height - 500) {
+                elem.requestFullscreen = elem.requestFullscreen ||
+                    elem.mozRequestFullscreen ||
+                    elem.mozRequestFullScreen || // Older API upper case 'S'.
+                    elem.webkitRequestFullscreen;
+                elem.requestFullscreen();
+
+            }
 
             elem.requestPointerLock = elem.requestPointerLock ||
                 elem.mozRequestPointerLock ||
@@ -225,12 +235,12 @@ define([
         draw: function () {
             var base = this;
 //            if (base.pressed_buttons.length > 0)
-                base.layer.graphics_engine.drawCircle({
-                    x: base.mouse_position.x,
-                    y: base.mouse_position.y,
-                    fill_style: "white",
-                    radius: 5 / base.layer.camera.zoom
-                });
+            base.layer.graphics_engine.drawCircle({
+                x: base.mouse_position.x,
+                y: base.mouse_position.y,
+                fill_style: "white",
+                radius: 5 / base.layer.camera.zoom
+            });
         }
     });
 

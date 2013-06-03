@@ -45,7 +45,7 @@ define([
                 base.objects.push(base.level.planets[k]);
                 base.planets.push(base.level.planets[k]);
             }
-
+            base.running = true;
         },
         cameraPos: function (params) {
             var base = this;
@@ -82,44 +82,47 @@ define([
         },
         physics: function () {
             var base = this;
-            if ((base.player.x) < base.camera.x + 50) {
-                base.camera.x = (base.player.x) - 50;
-            }
-
-            if ((base.player.y) < base.camera.y + 50) {
-                base.camera.y = (base.player.y) - 50;
-            }
-
-            if ((base.player.x) > base.camera.x + base.game.canvas.width / base.camera.zoom - 50) {
-                base.camera.x = (base.player.x) - base.game.canvas.width / base.camera.zoom + 50;
-            }
-
-            if ((base.player.y) > base.camera.y + base.game.canvas.height / base.camera.zoom - 50) {
-                base.camera.y = (base.player.y) - base.game.canvas.height / base.camera.zoom + 50;
-            }
-
-            if (base.inputs_engine.buttonPressed(2)) {
-                var new_zoom = base.camera.zoom + base.inputs_engine.mouse_move.y / 500;
-                if (new_zoom <= 2 && new_zoom >= 0.01) {
-                    base.camera.x += base.game.canvas.width / (base.camera.zoom) / 2 - base.game.canvas.width / (new_zoom) / 2;
-                    base.camera.y += base.game.canvas.height / (base.camera.zoom) / 2 - base.game.canvas.height / (new_zoom) / 2;
-
-
-                    base.camera.zoom = new_zoom;
+            if (base.running) {
+                if ((base.player.x) < base.camera.x + 50) {
+                    base.camera.x = (base.player.x) - 50;
                 }
 
+                if ((base.player.y) < base.camera.y + 50) {
+                    base.camera.y = (base.player.y) - 50;
+                }
 
+                if ((base.player.x) > base.camera.x + base.game.canvas.width / base.camera.zoom - 50) {
+                    base.camera.x = (base.player.x) - base.game.canvas.width / base.camera.zoom + 50;
+                }
+
+                if ((base.player.y) > base.camera.y + base.game.canvas.height / base.camera.zoom - 50) {
+                    base.camera.y = (base.player.y) - base.game.canvas.height / base.camera.zoom + 50;
+                }
+
+                if (base.inputs_engine.buttonPressed(2)) {
+                    var new_zoom = base.camera.zoom + base.inputs_engine.mouse_move.y / 500;
+                    if (new_zoom <= 2 && new_zoom >= 0.01) {
+                        base.camera.x += base.game.canvas.width / (base.camera.zoom) / 2 - base.game.canvas.width / (new_zoom) / 2;
+                        base.camera.y += base.game.canvas.height / (base.camera.zoom) / 2 - base.game.canvas.height / (new_zoom) / 2;
+
+
+                        base.camera.zoom = new_zoom;
+                    }
+
+
+                }
+
+                if (base.inputs_engine.buttonPressed(3)) {
+                    base.camera.x -= base.inputs_engine.mouse_move.x / base.camera.zoom;
+                    base.camera.y -= base.inputs_engine.mouse_move.y / base.camera.zoom;
+
+                }
+
+                base.physics_engine.run();
+                for (var k in base.planets)
+                    base.planets[k].physics();
             }
 
-            if (base.inputs_engine.buttonPressed(3)) {
-                base.camera.x -= base.inputs_engine.mouse_move.x / base.camera.zoom;
-                base.camera.y -= base.inputs_engine.mouse_move.y / base.camera.zoom;
-
-            }
-
-            base.physics_engine.run();
-            for (var k in base.planets)
-                base.planets[k].physics();
         },
         draw: function () {
             var base = this;
@@ -132,6 +135,12 @@ define([
             context.font = "22px verdana";
             context.fillStyle = "white";
             context.fillText("Energy orbs (fuel) : " + (base.player.orbs_count).toFixed(2), 10, 30);
+
+            context.font = "20px verdana";
+            context.fillStyle = "white";
+            context.fillText("FullScreen", base.game.canvas.width - 120, base.game.canvas.height - 15);
+
+
             base.inputs_engine.draw();
         }
     });
