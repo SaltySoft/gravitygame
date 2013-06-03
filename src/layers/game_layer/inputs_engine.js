@@ -127,22 +127,6 @@ define([
         },
         run: function () {
             var base = this;
-//            if (base.mouse_position.x == base.last_position.x && base.mouse_position.y == base.last_position.y) {
-//                base.mouse_move = {
-//                    x: 0,
-//                    y: 0
-//                };
-//            }
-//
-//            if (base.scr_mouse_position.x == base.scr_last_position.x && base.scr_mouse_position.y == base.scr_last_position.y) {
-//                base.scr_mouse_move = {
-//                    x: 0,
-//                    y: 0
-//                };
-//            }
-//            base.last_position = base.mouse_position;
-//            base.scr_last_position = base.scr_mouse_position;
-
             var camera = base.layer.camera;
             base.mouse_position = {
                 x: (base.mouse_position_scr.x / base.layer.camera.zoom + camera.x),
