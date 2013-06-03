@@ -23,10 +23,12 @@ define([
             $(base.canvas).css("background-color", "black");
 
 //            $(base.canvas).css("background-image", "url('src/resources/space02.gif')");
-            base.canvas.width = $(document).width();
-            base.canvas.height = $(document).height();
+            base.resetSize();
             $(base.canvas).attr("oncontextmenu", "return false;");
             $(document).css("overflow", "hidden");
+            $(window).resize(function () {
+                base.resetSize();
+            });
             base.layers = [];
             $(container).append(base.canvas);
             base.context = base.canvas.getContext('2d');
@@ -35,6 +37,11 @@ define([
                 base.anfunc = window.mozRequestAnimationFrame;
             else if (window.requestAnimationFrame)
                 base.anfunc = window.requestAnimationFrame;
+        },
+        resetSize: function () {
+            var base = this;
+            base.canvas.width = $(document).width();
+            base.canvas.height = $(document).height();
         },
         won: function () {
             var base = this;
