@@ -40,7 +40,7 @@ define([
             var context = base.game.context;
             context.font="100px verdana";
             context.fillStyle = "white";
-            context.fillText("You won ", base.game.canvas.width / 2, base.game.canvas.height / 2);
+            context.fillText("You won ", base.game.canvas.width / 2 - 200, base.game.canvas.height / 2);
         }
     });
 

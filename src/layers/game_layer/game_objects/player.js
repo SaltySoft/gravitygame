@@ -48,7 +48,7 @@ define([
             base.mouse_attracted = false;
             base.mouse_position = { x: 0, y: 0 };
 
-            base.orbs_count = 100;
+            base.orbs_count = 3;
             base.moved = false;
             base.orbs = [];
             base.orbs_consumption = 0;
@@ -186,7 +186,7 @@ define([
                 }
                 if (!in_influence) {
                     if (base.temperature > -273) {
-                        base.temperature -= 0.002;
+                        base.temperature -= 0.02;
                     }
                 } else {
                     base.color = "blue";

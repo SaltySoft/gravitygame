@@ -9,9 +9,9 @@ define([
         var player;
 
         var center = Planet.init(layer, {
-            x: 500,
-            y: 500,
-            radius: 500,
+            x: layer.game.canvas.width / 2 / layer.camera.zoom,
+            y: layer.game.canvas.height / 2 / layer.camera.zoom,
+            radius: 300,
             destination: true,
             planet_type: "sun"
         });
@@ -19,7 +19,7 @@ define([
 
 
         if (params !== undefined && params.planets !== undefined) {
-            for (var i = 0; i < params.planets; i++) {
+            for (var i = 0; i < 50; i++) {
 
                 var planet = Planet.init(layer, {
                     center: center,
@@ -32,7 +32,7 @@ define([
             }
             planets.push(planet);
         }
-        var last_planet = planets[planets.length - 1];
+
         player = Player.init(layer, {
             planet: center
         });

@@ -21,7 +21,7 @@ define([
                 distance: 100,
                 speedX: 0,
                 speedY: 0,
-                zoom:0.1
+                zoom: 0.1
             };
             base.inputs_engine = InputsEngine.init(base);
             base.physics_engine = PhysicsEngine.init(base);
@@ -100,10 +100,15 @@ define([
 
             if (base.inputs_engine.buttonPressed(2)) {
                 var new_zoom = base.camera.zoom + base.inputs_engine.mouse_move.y / 500;
+                if (new_zoom <= 2 && new_zoom >= 0.01) {
+                    base.camera.x += base.game.canvas.width / (base.camera.zoom) / 2 - base.game.canvas.width / (new_zoom) / 2;
+                    base.camera.y += base.game.canvas.height / (base.camera.zoom) / 2 - base.game.canvas.height / (new_zoom) / 2;
 
 
-                if (new_zoom <= 2 && new_zoom >= 0.01)
                     base.camera.zoom = new_zoom;
+                }
+
+
             }
 
             if (base.inputs_engine.buttonPressed(3)) {
@@ -115,9 +120,6 @@ define([
             base.physics_engine.run();
             for (var k in base.planets)
                 base.planets[k].physics();
-
-//            for (var k in base.orbs)
-//                base.orbs[k].physics();
         },
         draw: function () {
             var base = this;
@@ -127,7 +129,7 @@ define([
                 base.orbs[k].draw(base.graphics_engine);
 
             var context = base.game.context;
-            context.font="22px verdana";
+            context.font = "22px verdana";
             context.fillStyle = "white";
             context.fillText("Energy orbs (fuel) : " + (base.player.orbs_count).toFixed(2), 10, 30);
             base.inputs_engine.draw();
