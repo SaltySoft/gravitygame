@@ -1,8 +1,9 @@
 define([
     './object',
     './player',
-    './energy_orb'
-], function (Obj, Player, EnergyOrb) {
+    './energy_orb',
+    '../vector'
+], function (Obj, Player, EnergyOrb, Vector) {
     var Planet = Obj.create();
 
     Planet.extend({
@@ -10,13 +11,13 @@ define([
     });
     Planet.include({
         type: "planet",
-        addOrb: function (i, type) {
+        addOrb: function (type, i) {
             var base = this;
             type = type ? type : "energy";
             i = i !== undefined ? i : 0;
             var orb = EnergyOrb.init(base.layer, {
-                x: base.x + Math.cos(i / 25 * Math.PI) * (base.radius + 50 + Math.random() * 300),
-                y: base.y + Math.sin(i / 25 * Math.PI) * (base.radius + 50 + Math.random() * 300),
+                x: base.x + Math.cos(Math.random() * 2 * Math.PI) * (base.radius + 50 + Math.random() * 300),
+                y: base.y + Math.sin(Math.random() * 2 * Math.PI) * (base.radius + 50 + Math.random() * 300),
                 radius: 20,
                 center: base,
                 type: type
@@ -53,10 +54,11 @@ define([
             base.orbs = [];
             base.origin_orbs = 0;
             base.grav_influence = 900;
+            base.alive = false;
             var orb_type = "energy";
             switch (base.planet_type) {
                 case "water":
-                    base.origin_orbs = 5 + 5 * Math.random();
+                    base.origin_orbs = 5 + 10 * Math.random();
                     orb_type = "water";
                     break;
                 case "energy":
@@ -64,12 +66,16 @@ define([
                     orb_type = "energy";
                     break;
                 case "acid":
-                    base.origin_orbs = 5 + 5 * Math.random();
+                    base.origin_orbs = 5 + 10 * Math.random();
                     orb_type = "acid";
                     break;
                 case "shield":
-                    base.origin_orbs = 5 + 5 * Math.random();
+                    base.origin_orbs = 5 + 10 * Math.random();
                     orb_type = "shield";
+                    break;
+                case "earth":
+                    base.origin_orbs = 5 + 10 * Math.random();
+                    orb_type = "earth";
                     break;
                 case "life":
                     base.origin_orbs = 0;
@@ -86,12 +92,12 @@ define([
             }
 
             for (var i = 0; i < base.origin_orbs; i++) {
-                base.addOrb(i, orb_type);
+                base.addOrb(orb_type, i);
             }
             if (base.center && base.center.x && base.center.y) {
                 base.x = base.center.x + Math.cos(i / 25 * Math.PI) * (base.orbit_distance);
                 base.y = base.center.y + Math.sin(i / 25 * Math.PI) * (base.orbit_distance);
-                console.log("init", base.x, base.y);
+
             }
 
 
@@ -112,13 +118,19 @@ define([
             var base = this;
             if (base.planet_type == "sun")
                 base.temperature = base.orbs.length > base.radius / 2 ? 1000 : base.orbs.length / (base.radius / 2) * 1000;
-            else
+            else if (base.planet_type == "life") {
+                base.temperature = base.water_counts / 10;
+            } else {
                 base.temperature = base.origin_orbs > 0 ? base.orbs.length / base.origin_orbs * 1000 : 0;
+            }
+
             if (base.destination)
                 base.influence = base.orbs.length * 50;
-            else
-                base.influence = base.origin_orbs > 0 ?  base.orbs.length / base.origin_orbs * 1000 : 0;
-
+            else if (base.planet_type == "life") {
+                base.influence = (base.water_counts / 10 + base.acid_counts / 10 + base.earth_counts / 10 ) / 3 * 500;
+            } else {
+                base.influence = base.origin_orbs > 0 ? base.orbs.length / base.origin_orbs * 1000 : 0;
+            }
             if (base.center !== undefined) {
                 if (base.center.x && base.center.y) {
                     base.x = base.center.x + Math.cos(base.angle) * ( base.orbit_distance);
@@ -129,6 +141,12 @@ define([
             for (var k in base.orbs) {
                 base.orbs[k].physics();
             }
+
+            if (base.planet_type == "life" && base.center && Vector.distance(base.center, base) < base.center.influence &&
+                base.water_counts >= 10 && base.earth_counts >= 10 && base.acid_counts >= 10) {
+                base.alive = true;
+            }
+
         },
         predraw: function (gengine) {
             var base = this;
@@ -137,7 +155,7 @@ define([
             var y = base.y;
             var radius = base.radius;
             var rad = gengine.createRadialGradient(base.x, base.y, radius + base.influence, "white", "rgba(255,255,0,0.5)");
-            console.log(base.planet_type);
+
             switch (base.planet_type) {
                 case "energy":
                     rad = gengine.createRadialGradient(base.x, base.y, radius + base.influence, "white", "rgba(255,255,100,0.5)");
@@ -155,12 +173,15 @@ define([
                     rad = gengine.createRadialGradient(base.x, base.y, radius + base.influence, "white", "rgba(255,0,255,0.5)");
                     base.color = "rgb(0, " + (255 * base.temperature / 1000) + ", " + (255 * base.temperature / 1000) + ")";
                     break;
+                case "earth":
+                    rad = gengine.createRadialGradient(base.x, base.y, radius + base.influence, "white", "rgba(255,0,255,0.5)");
+                    base.color = "rgb(0, " + (255 * base.temperature / 1000) + ", " + (255 * base.temperature / 1000) + ")";
+                    break;
                 case "life":
-                    rad = gengine.createRadialGradient(base.x, base.y, radius + base.influence, "white", "rgba(255,255,255,0.5)");
-                    base.color = "rgb(" + (255 * base.temperature / 1000) + ", " + (255 * base.temperature / 1000) + ", " + (255 * base.temperature / 1000) + ")";
+                    rad = base.alive ? gengine.createRadialGradient(base.x, base.y, radius + base.influence, "white", "rgb(100, 255, 255)") : gengine.createRadialGradient(base.x, base.y, radius + base.influence, "white", "rgb(255, 255, 255)");
+                    base.color = base.alive ? "white" : "rgb(" + (100 * base.earth_counts / 10 + 50 ) + ", " + (100 * base.acid_counts / 10 + 50) + ", " + (100 * base.water_counts / 10 + 50) + ")";
                     break;
                 default:
-//                    base.color = "white";
                     break;
             }
             ;
@@ -172,8 +193,6 @@ define([
                 fill_style: rad
             });
 
-
-            var rad2 = gengine.createRadialGradient(base.x, base.y, radius + base.grav_influence, "rgba(0,0,255,0.1)", "rgba(0,0,255,0.5)");
             gengine.drawCircle({
                 x: x,
                 y: y,
@@ -212,7 +231,7 @@ define([
                 radius: radius,
                 fill_style: base.color
             });
-            if (base.planet_type != "life")
+            if (base.planet_type != "life" || !base.alive)
                 for (var k in base.orbs) {
                     base.orbs[k].draw(gengine);
                 }

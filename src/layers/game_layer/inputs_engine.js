@@ -154,9 +154,6 @@ define([
             var elem = base.layer.game.canvas;
             if (document.mozPointerLockElement === elem ||
                 document.webkitPointerLockElement === elem) {
-                console.log("Pointer Lock was successful.");
-            } else {
-                console.log("Pointer Lock was lost.");
             }
         },
         lockMouse: function () {
@@ -201,14 +198,14 @@ define([
         requestLocks: function () {
             var base = this;
             var elem = base.layer.game.canvas;
-            if (base.mouse_position_scr.x > base.layer.game.canvas.width - 500 && base.mouse_position_scr.y > base.layer.game.canvas.height - 500) {
-                elem.requestFullscreen = elem.requestFullscreen ||
-                    elem.mozRequestFullscreen ||
-                    elem.mozRequestFullScreen || // Older API upper case 'S'.
-                    elem.webkitRequestFullscreen;
-                elem.requestFullscreen();
-
-            }
+//            if (base.mouse_position_scr.x > base.layer.game.canvas.width - 500 && base.mouse_position_scr.y > base.layer.game.canvas.height - 500) {
+//                elem.requestFullscreen = elem.requestFullscreen ||
+//                    elem.mozRequestFullscreen ||
+//                    elem.mozRequestFullScreen || // Older API upper case 'S'.
+//                    elem.webkitRequestFullscreen;
+//                elem.requestFullscreen();
+//
+//            }
 
             elem.requestPointerLock = elem.requestPointerLock ||
                 elem.mozRequestPointerLock ||

@@ -65,7 +65,7 @@ define([
             var won = true;
             for (var k in base.planets) {
                 var planet = base.planets[k];
-                if (Vector.distance(planet, base.level.sun) > base.level.sun.influence) {
+                if (!planet.alive && planet.planet_type == "life") {
                     won = false;
                 }
             }
@@ -124,17 +124,17 @@ define([
                         y: base.camera.y + base.game.canvas.height / 2 / base.camera.zoom
                     };
                     var distance = Vector.distance(cplanet, vector);
-
-                    if (distance > 500) {
+                    base.camera.speedX *= 0.9;
+                    base.camera.speedY *= 0.9;
+                    if (distance > 100 / base.camera.zoom) {
                         var unit_to_planet = cplanet.unitVectorTo(vector);
                         if (Vector.lgth({ x: base.camera.speedX, y: base.camera.speedY}) < 20) {
-                            base.camera.speedX = unit_to_planet.x * 5;
-                            base.camera.speedY = unit_to_planet.y * 5;
+                            if (base.camera.speedX < (5 + base.player.closest_planet.speed * base.player.closest_planet.orbit_distance) / base.camera.zoom)
+                                base.camera.speedX += unit_to_planet.x;
+                            if (base.camera.speedX < (5 + base.player.closest_planet.speed * base.player.closest_planet.orbit_distance)  / base.camera.zoom)
+                                base.camera.speedY += unit_to_planet.y;
                         }
                         console.log(unit_to_planet);
-                    } else {
-                        base.camera.speedX = 0;
-                        base.camera.speedY = 0;
                     }
                 }
 

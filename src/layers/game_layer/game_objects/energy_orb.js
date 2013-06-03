@@ -60,7 +60,9 @@ define([
                     case "shield" :
                         rad = gengine.createRadialGradient(base.x, base.y, base.radius, "rgba(100,100,255,0.5)", "violet");
                         break;
-
+                    case "earth" :
+                        rad = gengine.createRadialGradient(base.x, base.y, base.radius, "rgba(255,150,100,0.5)", "violet");
+                        break;
                     default :
                         break;
                 };

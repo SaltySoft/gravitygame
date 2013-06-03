@@ -11,7 +11,7 @@ define([
         var center = Planet.init(layer, {
             x: layer.game.canvas.width / 2 / layer.camera.zoom,
             y: layer.game.canvas.height / 2 / layer.camera.zoom,
-            radius: 700,
+            radius: 1000,
             destination: true,
             planet_type: "sun"
         });
@@ -25,19 +25,23 @@ define([
             var acids = 0;
             for (var i = 0; i < 15; i++) {
 
-                var planet_rand = Math.round(Math.random() * 6);
+                var planet_rand = Math.round(Math.random() * 7);
                 console.log(planet_rand);
                 var planet_type = "energy";
                 switch (planet_rand) {
-                    case 1, 5, 6:
+                    case 1, 2:
                         planet_type = "water";
                         waters++;
                         break;
-                    case 2:
+                    case 2, 3:
                         planet_type = "acid";
                         acids++;
                         break;
-                    case 4, 3:
+                    case 4, 5:
+                        planet_type = "earth";
+                        acids++;
+                        break;
+                    case 6:
                         planet_type = "life";
                         shields++;
                         break;
@@ -48,9 +52,9 @@ define([
 
                 var planet = Planet.init(layer, {
                     center: center,
-                    orbit_distance: i * 500 + (center.radius + 2500) + ( 2000 * (Math.random() * 1.5)),
+                    orbit_distance: i * 4000 + (center.radius + 2000) /*+ ( 500 * (Math.random()))*/,
                     speed_factor: 0.5 + (Math.random() * 1.5),
-                    radius: 100 + 200 * Math.random(),
+                    radius: 500 + 200 * Math.random(),
                     planet_type: planet_type
                 });
                 planets.push(planet);

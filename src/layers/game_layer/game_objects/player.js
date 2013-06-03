@@ -21,7 +21,7 @@ define([
             base.x = 0;
             base.y = 0;
             base.radius = 10;
-            console.log(base);
+
             base.inverse = false;
             base.angle_count = 0;
             base.angle_sum = 0;
@@ -48,10 +48,11 @@ define([
             base.mouse_attracted = false;
             base.mouse_position = { x: 0, y: 0 };
 
-            base.orbs_count = 3;
-            base.water_orbs = 0;
-            base.acid_orbs = 0;
-            base.shield_orbs = 0;
+            base.orbs_count = base.layer.game.debugging ? 1000 : 3;
+            base.water_orbs = base.layer.game.debugging ? 10 : 0;
+            base.acid_orbs = base.layer.game.debugging ? 10 : 0;
+            base.earth_orbs = base.layer.game.debugging ? 10 : 0;
+            base.shield_orbs = base.layer.game.debugging ? 10 : 0;
             base.moved = false;
             base.orbs = [];
             base.orbs_consumption = 0;
@@ -274,45 +275,69 @@ define([
             }
 
             if (base.closest_planet) {
+                console.log(base.closest_planet.influence, base.closest_planet.water_counts);
                 if (base.closest_planet.destination) {
                     if (base.layer.inputs_engine.keyPressed(13)) {
-                        if (base.orbs_count >= 25) {
+                        if (base.orbs_count > 25) {
                             base.closest_planet.addOrb();
                             base.closest_planet.addOrb();
                             base.orbs_count -= 2;
                         }
                     }
                 }
+                if (base.closest_planet.planet_type == "life") {
+                    if (base.layer.inputs_engine.keyPressed(13)) {
+                        if (base.water_orbs > 0 && base.closest_planet.water_counts < 10) {
+                            base.closest_planet.addOrb("water");
+                            base.water_orbs -= 1;
+                        }
+                        if (base.acid_orbs > 0 && base.closest_planet.acid_counts < 10) {
+                            base.closest_planet.addOrb("acid");
+                            base.acid_orbs -= 1;
+                        }
+                        if (base.earth_orbs > 0 && base.closest_planet.earth_counts < 10) {
+                            base.closest_planet.addOrb("earth");
+                            base.earth_orbs -= 1;
+                        }
+                    }
+                }
             }
 
             var orbs = base.closest_planet.orbs;
-            for (var k in orbs) {
-                var orb = orbs[k];
-                var d = base.distanceTo(orb);
-                var u = base.unitVectorTo(orb);
-                if (d < 500) {
-                    orb.offsetx += d > 10 ? u.x * 30 * 150 / (d > 100 ? d : 100) : 0;
-                    orb.offsety += d > 10 ? u.y * 30 * 150 / (d > 100 ? d : 100) : 0;
-                }
-                if (d < 15) {
-                    if (orb.type === "energy") {
-                        base.orbs_count++;
+            if (base.closest_planet.planet_type != "life") {
+                for (var k in orbs) {
+                    var orb = orbs[k];
+                    var d = base.distanceTo(orb);
+                    var u = base.unitVectorTo(orb);
+                    if (d < 500) {
+                        orb.offsetx += d > 10 ? u.x * 30 * 150 / (d > 100 ? d : 100) : 0;
+                        orb.offsety += d > 10 ? u.y * 30 * 150 / (d > 100 ? d : 100) : 0;
+                    }
+                    if (d < 15) {
+                        if (orb.type === "energy") {
+                            base.orbs_count++;
 
+                        }
+                        if (orb.type == "water") {
+                            base.water_orbs++;
+                            base.closest_planet.water_counts--;
+                        }
+                        if (orb.type == "acid") {
+                            base.acid_orbs++;
+                            base.closest_planet.acid_counts--;
+                        }
+                        if (orb.type == "earth") {
+                            base.earth_orbs++;
+                            base.closest_planet.earth_counts--;
+                        }
+                        if (orb.type == "shield") {
+                            base.shield_orbs++;
+                        }
+                        orbs.splice(k, 1);
                     }
-                    if (orb.type == "water") {
-                        base.water_orbs++;
-                        base.closest_planet.water_counts--;
-                    }
-                    if (orb.type == "acid") {
-                        base.acid_orbs++;
-                        base.closest_planet.acid_counts--;
-                    }
-                    if (orb.type == "shield") {
-                        base.shield_orbs++;
-                    }
-                    orbs.splice(k, 1);
                 }
             }
+
 
 
             base.offsetx = 0;
