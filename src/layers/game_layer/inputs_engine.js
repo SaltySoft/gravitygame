@@ -224,15 +224,16 @@ define([
         },
         draw: function () {
             var base = this;
-            base.layer.graphics_engine.drawCircle({
-                x: base.mouse_position.x,
-                y: base.mouse_position.y,
-                fill_style: "white",
-                radius: 5 / base.layer.camera.zoom
-            });
+//            if (base.pressed_buttons.length > 0)
+                base.layer.graphics_engine.drawCircle({
+                    x: base.mouse_position.x,
+                    y: base.mouse_position.y,
+                    fill_style: "white",
+                    radius: 5 / base.layer.camera.zoom
+                });
         }
     });
 
 
-    return InputsEngine
+    return InputsEngine;
 });

@@ -65,12 +65,12 @@ define([
         gravityTo: function (object) {
             var base = this;
             var distance = base.distanceTo(object);
-            if (distance > 200) {
+            if (distance > 200 + object.radius) {
                 var coeff = distance ;
             } else {
-                var coeff = 100000;
+                var coeff = distance * distance;
             }
-            var force = (100 * base.mass + object.mass) / coeff;
+            var force = (50 * base.mass + object.mass) / coeff;
             return force;
         },
         unitVectorTo: function (object) {
@@ -140,16 +140,16 @@ define([
 //                var active_planet = distance < base.radius + 500 || object.closest_planet.distanceTo(base) < 1000 &&
 //                    (distance < base.radius + 500 || object.closest_distance < object.closest_planet.radius + 500);
 
-                var active_planet = distance < base.radius + 1000;
+                var active_planet = distance < base.radius + base.grav_influence;
 
-                if (active_planet && !layer.inputs_engine.keyPressed(192)) {
-                    var angle = Math.atan(tangent.y / tangent.x);
-                    object.addAngle(angle, 1 / distance);
-                    object.addCenter({
-                        x: base.x,
-                        y: base.y
-                    });
-                }
+//                if (active_planet && !layer.inputs_engine.keyPressed(192)) {
+//                    var angle = Math.atan(tangent.y / tangent.x);
+//                    object.addAngle(angle, 1 / distance);
+//                    object.addCenter({
+//                        x: base.x,
+//                        y: base.y
+//                    });
+//                }
 
                 if (active_planet) {
 

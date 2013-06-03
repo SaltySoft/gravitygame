@@ -35,6 +35,7 @@ define([
             base.destination = obj.destination ? obj.destination : false;
             base.orbs = [];
             var origin_orb = 0;
+            base.grav_influence = 900;
 
             if (base.planet_type == "normal") {
                 origin_orb = 50;
@@ -99,6 +100,15 @@ define([
                 radius: radius + base.influence,
                 fill_style: rad
             });
+
+
+            var rad2 = gengine.createRadialGradient(base.x, base.y, radius + base.grav_influence, "rgba(0,0,255,0.1)", "rgba(0,0,255,0.5)");
+            gengine.drawCircle({
+                x: x,
+                y: y,
+                radius: radius +  base.grav_influence,
+                line_width: 1
+            });
         },
         draw: function (gengine) {
             var base = this;
@@ -124,7 +134,6 @@ define([
                 y: y,
                 radius: radius,
                 line_width: 1,
-                stroke_style: 'green',
                 fill_style: base.color
             });
             for (var k in base.orbs) {

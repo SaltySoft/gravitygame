@@ -6,8 +6,9 @@ define([
     './game_layer/graphics_engine',
     './game_layer/game_objects/planet',
     './game_layer/game_objects/player',
-    './game_layer/level_generator'
-], function (Class, Layer, InputsEngine, PhysicsEngine, GraphicsEngine, Planet, Player, LevelGenerator) {
+    './game_layer/level_generator',
+    './game_layer/vector'
+], function (Class, Layer, InputsEngine, PhysicsEngine, GraphicsEngine, Planet, Player, LevelGenerator, Vector) {
     var GameLayer = Layer.create();
 
     GameLayer.include({
@@ -61,15 +62,16 @@ define([
             for (var k in base.objects) {
                 base.objects[k].logic(base);
             }
-
+            var won = true;
             for (var k in base.planets) {
-
+                var planet = base.planets[k];
+                if (Vector.distance(planet, base.level.sun) > base.level.sun.influence) {
+                    won = false;
+                }
             }
 
-            if (base.level.sun.orbs.length > 1000) {
-                alert("you won");
-                base.game.layers.pop();
-                base.game.layers.pop();
+            if (won) {
+                base.game.won();
             }
 
         },

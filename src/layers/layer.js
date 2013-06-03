@@ -19,11 +19,13 @@ define([
         },
         logic: function () {
         },
-        run: function () {
+        run: function (last) {
             var base = this;
-            base.inputs();
-            base.logic();
-            base.physics();
+            if (last) {
+                base.inputs();
+                base.logic();
+                base.physics();
+            }
             base.draw();
         }
     });

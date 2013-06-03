@@ -1,8 +1,9 @@
 define([
     'jquery',
     'class',
-    './layers/game_layer'
-], function ($, Class, GameLayer) {
+    './layers/game_layer',
+    './layers/menu_layer'
+], function ($, Class, GameLayer, MenuLayer) {
     var Game = Class.create();
 
     Game.extend({
@@ -29,12 +30,25 @@ define([
             base.layers = [];
             $(container).append(base.canvas);
             base.context = base.canvas.getContext('2d');
-            var game_layer = GameLayer.init(base)
-            base.addLayer(game_layer);
+            base.newGame();
             if (window.mozRequestAnimationFrame)
                 base.anfunc = window.mozRequestAnimationFrame;
             else if (window.requestAnimationFrame)
                 base.anfunc = window.requestAnimationFrame;
+        },
+        won: function () {
+            var base = this;
+            var layer = MenuLayer.init(base);
+            base.addLayer(layer);
+        },
+        newGame: function () {
+            var base = this;
+            var game_layer = GameLayer.init(base)
+            base.addLayer(game_layer);
+        },
+        clearLayers: function () {
+            var base = this;
+            base.layers = [];
         },
         addLayer: function (layer) {
             this.layers.push(layer);
@@ -48,8 +62,12 @@ define([
             setTimeout(function () {
                 base.anfunc.call(window, base.animate.bind(base));
                 base.context.clearRect(0, 0, base.canvas.width, base.canvas.height);
-                if (base.layers.length > 0) {
-                    base.layers[base.layers.length - 1].run();
+                for (var k in base.layers) {
+                    var last = false;
+                    if (k == base.layers.length - 1) {
+                        last = true;
+                    }
+                    base.layers[k].run(last);
                 }
             }, 1);
 
