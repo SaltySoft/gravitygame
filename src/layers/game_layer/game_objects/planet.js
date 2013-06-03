@@ -117,7 +117,7 @@ define([
             if (base.destination)
                 base.influence = base.orbs.length * 50;
             else
-                base.influence = base.orbs.length * 25;
+                base.influence = base.origin_orbs > 0 ?  base.orbs.length / base.origin_orbs * 1000 : 0;
 
             if (base.center !== undefined) {
                 if (base.center.x && base.center.y) {

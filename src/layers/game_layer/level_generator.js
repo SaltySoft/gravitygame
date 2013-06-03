@@ -25,11 +25,11 @@ define([
             var acids = 0;
             for (var i = 0; i < 15; i++) {
 
-                var planet_rand = Math.round(Math.random() * 800);
+                var planet_rand = Math.round(Math.random() * 6);
                 console.log(planet_rand);
                 var planet_type = "energy";
                 switch (planet_rand) {
-                    case 1:
+                    case 1, 5, 6:
                         planet_type = "water";
                         waters++;
                         break;
@@ -37,11 +37,7 @@ define([
                         planet_type = "acid";
                         acids++;
                         break;
-                    case 3:
-                        planet_type = "shield";
-                        shields++;
-                        break;
-                    case 4:
+                    case 4, 3:
                         planet_type = "life";
                         shields++;
                         break;

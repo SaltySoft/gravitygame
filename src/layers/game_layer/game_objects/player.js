@@ -165,13 +165,16 @@ define([
             var in_influence = false;
             for (var k in layer.planets) {
                 layer.planets[k].closest = false;
+                layer.planets[k].close = false;
                 var distance = base.distanceTo(layer.planets[k]) - layer.planets[k].radius;
                 if (distance < base.closest_distance || base.closest_distance == -1) {
                     base.closest_distance = distance;
                     base.closest_planet = layer.planets[k];
                 }
                 var planet = layer.planets[k];
-
+                if (distance < planet.grav_influence + planet.radius) {
+                    planet.close = true;
+                }
                 if (distance <= planet.influence + planet.radius && distance >= 10 + planet.radius) {
                     if (base.temperature < 20 || base.temperature > 24)
                         base.temperature += base.temperature < 22 ? 2 : -2;
@@ -182,9 +185,7 @@ define([
                 else if (distance < 10 + planet.radius) {
                     if (base.temperature < 500) {
                         base.temperature += 1;
-
                     }
-                    in_influence = true;
                 }
                 if (!in_influence) {
                     if (base.temperature > -273) {
