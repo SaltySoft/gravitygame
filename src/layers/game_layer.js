@@ -45,7 +45,7 @@ define([
                 base.objects.push(base.level.planets[k]);
                 base.planets.push(base.level.planets[k]);
             }
-            base.running = true;
+            base.running = false;
         },
         cameraPos: function (params) {
             var base = this;
@@ -175,8 +175,23 @@ define([
             context.fillStyle = "white";
             context.fillText("FullScreen", base.game.canvas.width - 120, base.game.canvas.height - 15);
 
+            if (!base.running) {
+                context.font="50px verdana";
+                context.fillStyle = "white";
+                var text = "Click on the screen to play";
+                var metrics = context.measureText(text);
+                context.fillText( "Click on the screen to play", base.game.canvas.width / 2 - metrics.width / 2, base.game.canvas.height / 2 - 25);
+            }
 
             base.inputs_engine.draw();
+        },
+        pauseGame: function () {
+            var base = this;
+            base.running = false;
+        },
+        unPauseGame: function () {
+            var base = this;
+            base.running = true;
         }
     });
 

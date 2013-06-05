@@ -154,7 +154,11 @@ define([
             var elem = base.layer.game.canvas;
             if (document.mozPointerLockElement === elem ||
                 document.webkitPointerLockElement === elem) {
+                base.layer.unPauseGame();
+            } else {
+                base.layer.pauseGame();
             }
+
         },
         lockMouse: function () {
             var base = this;
@@ -170,14 +174,16 @@ define([
                             e.mozMovementY ||
                             e.webkitMovementY ||
                             0;
-                    base.mouse_move = {
-                        x: movementX,
-                        y: movementY
-                    };
-                    if (base.mouse_position_scr.x + movementX > 0 && base.mouse_position_scr.x + movementX < base.layer.game.canvas.width)
-                        base.mouse_position_scr.x += movementX;
-                    if (base.mouse_position_scr.y + movementY > 0 && base.mouse_position_scr.y + movementY < base.layer.game.canvas.height)
-                        base.mouse_position_scr.y += movementY;
+                    if (base.layer.running) {
+                        base.mouse_move = {
+                            x: movementX,
+                            y: movementY
+                        };
+                        if (base.mouse_position_scr.x + movementX > 0 && base.mouse_position_scr.x + movementX < base.layer.game.canvas.width)
+                            base.mouse_position_scr.x += movementX;
+                        if (base.mouse_position_scr.y + movementY > 0 && base.mouse_position_scr.y + movementY < base.layer.game.canvas.height)
+                            base.mouse_position_scr.y += movementY;
+                    }
                 }, false);
             }
 
