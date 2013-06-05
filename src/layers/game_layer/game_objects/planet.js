@@ -101,7 +101,7 @@ define([
             }
 
 
-            base.angle = Math.random() * Math.PI * 2;
+            base.angle = obj.angle ? obj.angle : Math.random() * Math.PI * 2;
 
         },
         setVector: function (x, y) {

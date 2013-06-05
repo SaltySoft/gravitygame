@@ -49,13 +49,15 @@ define([
                         energies++
                         break;
                 }
-
+                var radius = 500 + 200 * Math.random()
+                var speed = 0.5 + (Math.random() * 1.5);
                 var planet = Planet.init(layer, {
                     center: center,
-                    orbit_distance: i * 4000 + (center.radius + 2000) /*+ ( 500 * (Math.random()))*/,
-                    speed_factor: 0.5 + (Math.random() * 1.5),
-                    radius: 500 + 200 * Math.random(),
-                    planet_type: planet_type
+                    orbit_distance: i * 2 * radius + 8 * 900 + (center.radius + 4000) /*+ ( 500 * (Math.random()))*/,
+                    speed_factor: 0,
+                    radius: radius,
+                    planet_type: planet_type,
+                    angle: 0
                 });
                 planets.push(planet);
 
