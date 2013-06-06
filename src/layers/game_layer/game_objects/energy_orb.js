@@ -13,6 +13,7 @@ define([
             $.proxy(base.father.init, base)(layer, obj);
             var toMex = base.x - base.center.x;
             var toMey = base.y - base.center.y;
+            base.layer = layer;
             if (base.y - base.center.y != 0)
                 base.angle = Math.atan(toMey / toMex);
             else {
@@ -25,11 +26,11 @@ define([
 
             base.offsetx = 0;
             base.offsety = 0;
-            console.log("angle", base.angle);
             base.distance_factor = Math.random();
-            base.distance = (base.center.radius + 50 + base.distance_factor * base.center.influence);
+            base.distance = (base.center.radius + 50 + base.distance_factor * base.center.grav_influence);
             base.speed = Math.random() * 0.005 + 0.001;
             base.type = obj.type ? obj.type : "energy";
+            base.radius = 50;
         },
         physics: function () {
             var base = this;
@@ -40,7 +41,7 @@ define([
 
                 base.angle +=base.speed;
             }
-            base.distance = (base.center.radius + 50 + base.distance_factor * base.center.influence);
+            base.distance = (base.center.radius + 50 + base.distance_factor * base.center.grav_influence);
         },
         draw: function (gengine) {
             var base = this;

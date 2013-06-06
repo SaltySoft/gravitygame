@@ -12,6 +12,7 @@ define([
             var base = this;
             base.layer = layer;
             base.camera = layer.camera;
+            base.images = [];
         },
 
         run: function () {
@@ -29,6 +30,7 @@ define([
         },
         drawCircle: function (params) {
             var base = this;
+
             var context = base.context;
 
             var zoom = base.camera.zoom;
@@ -101,6 +103,38 @@ define([
             context.strokeStyle = color !== undefined ? color : "green";
             context.arcTo(from.x, from.y, to.x, to.y, 2);
             context.stroke();
+
+        },
+        drawImage: function (name, x, y, width, height, startx, starty, ssizex, ssizey) {
+            var base = this;
+            var context = base.context;
+            if (base.images[name] === undefined) {
+                var image = new Image();
+                image.src = "resources/" + name;
+                base.images[name] = image;
+
+            } else {
+                var image = base.images[name];
+            }
+
+            width = width ? width : image.width;
+            height = height ? height : image.height;
+            startx = startx ? startx : 0;
+            starty = starty ? starty : 0;
+            ssizex = ssizex ? ssizex : 0;
+            ssizey = ssizey ? ssizey : 0;
+
+            context.drawImage(image,
+                startx,
+                starty,
+                ssizex,
+                ssizey,
+                (x - base.camera.x) * base.camera.zoom - width * base.camera.zoom / 2,
+                (y - base.camera.y) * base.camera.zoom - height * base.camera.zoom / 2,
+                width * base.camera.zoom,
+                height * base.camera.zoom
+            );
+//            context.drawImage(image, 0, 0);
         },
         createRadialGradient: function (x, y, radius, color1, color2) {
             var base = this;
@@ -114,9 +148,6 @@ define([
         closePath: function () {
             var base = this;
             base.context.closePath();
-        },
-        drawImage: function () {
-
         }
     });
 

@@ -40,6 +40,7 @@ define([
         init: function (layer, obj) {
             var base = this;
             base.temperature = 0;
+            base.layer = layer;
             $.proxy(base.father.init, base)();
             base.extend(obj);
             base.radius = obj.radius;
@@ -53,7 +54,7 @@ define([
             base.destination = obj.destination ? obj.destination : false;
             base.orbs = [];
             base.origin_orbs = 0;
-            base.grav_influence = 900;
+            base.grav_influence = base.destination ? 10000 : 2000;
             base.alive = false;
             var orb_type = "energy";
             switch (base.planet_type) {
@@ -102,7 +103,10 @@ define([
 
 
             base.angle = obj.angle ? obj.angle : Math.random() * Math.PI * 2;
-
+            base.image_disx = 0;
+            base.image_ddx = 1;
+            base.image_disy = 0;
+            base.image_factor = 0;
         },
         setVector: function (x, y) {
             var base = this;
@@ -125,7 +129,7 @@ define([
             }
 
             if (base.destination)
-                base.influence = base.orbs.length * 50;
+                base.influence = base.orbs.length * 200;
             else if (base.planet_type == "life") {
                 base.influence = (base.water_counts / 10 + base.acid_counts / 10 + base.earth_counts / 10 ) / 3 * 500;
             } else {
@@ -154,7 +158,7 @@ define([
             var x = base.x;
             var y = base.y;
             var radius = base.radius;
-            var rad = gengine.createRadialGradient(base.x, base.y, radius + base.influence, "white", "rgba(255,255,0,0.5)");
+            var rad = gengine.createRadialGradient(base.x, base.y, radius + base.influence, "rgba(255,255,255,0.5)", "rgba(255,255,0,0.1)");
 
             switch (base.planet_type) {
                 case "energy":
@@ -192,19 +196,21 @@ define([
                 radius: radius + base.influence,
                 fill_style: rad
             });
-
             gengine.drawCircle({
                 x: x,
                 y: y,
                 radius: radius + base.grav_influence,
                 line_width: 1
             });
-            gengine.drawCircle({
-                x: x,
-                y: y,
-                radius: radius,
-                line_width: 1
-            });
+            if (!base.destination) {
+                gengine.drawCircle({
+                    x: x,
+                    y: y,
+                    radius: radius,
+                    line_width: 1
+                });
+            }
+
         },
         draw: function (gengine) {
             var base = this;
@@ -212,29 +218,45 @@ define([
             var y = base.y;
             var radius = base.radius;
 
-//            gengine.drawCircle({
-//                x: x,
-//                y: y,
-//                radius: radius + 50,
-//                line_width: 3,
-//                stroke_style: 'black',
-//                fill_style: "grey"
-//            });
-            if (base.destination)
+            if (base.destination) {
                 base.color = "rgb(" + Math.round(255 * (base.temperature / 1000)) + ", " + Math.round(255 * (base.temperature / 1000)) + ", " + Math.round(255 * ( base.temperature / 1000)) + ")";
-//            else {
-//                base.color = "rgb(150, 200, 150)";
-//            }
-            gengine.drawCircle({
-                x: x,
-                y: y,
-                radius: radius,
-                fill_style: base.color
-            });
+
+            }
+
+            if (!base.destination) {
+                gengine.drawCircle({
+                    x: x,
+                    y: y,
+                    radius: radius,
+                    fill_style: base.color
+                });
+            }
+
             if (base.planet_type != "life" || !base.alive)
                 for (var k in base.orbs) {
                     base.orbs[k].draw(gengine);
                 }
+            if (base.destination) {
+                var disp = base.influence > 0 ? base.influence / 20000: 0.01;
+
+
+                gengine.drawImage("sun.png", base.x, base.y, 500 * disp, 512 * disp, 4608 / 9 * base.image_disx, 0, 512, 512);
+                if (base.image_factor % 10 == 0) {
+
+                    if (base.image_disx > 7) {
+                        base.image_ddx = -1;
+                    }
+                    if (base.image_disx < 2) {
+                        base.image_ddx = 1;
+                    }
+                    base.image_disx += base.image_ddx;
+
+                }
+                base.image_factor++;
+                base.image_factor %= 100;
+
+
+            }
 
         }
     });

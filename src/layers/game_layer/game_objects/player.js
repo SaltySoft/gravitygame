@@ -81,11 +81,11 @@ define([
             base.accelOffsetX = 0;
             base.accelOffsetY = 0;
 
-            if (base.inputs.keyPressed(87)) {
+            if (base.inputs.keyPressed(87) && base.closest_distance && base.closest_distance < 2000) {
                 base.running = true;
                 base.accel_jet = 0.5;
             }
-            else if (base.inputs.keyPressed(83)) {
+            else if (base.inputs.keyPressed(83) && base.closest_distance && base.closest_distance < 2000) {
                 base.running = true;
                 base.accel_jet = -0.5;
             }
@@ -110,7 +110,7 @@ define([
                 base.just_inversed = false;
             }
 
-            if (base.inputs.buttonPressed(1)) {
+            if (base.layer.running && base.inputs.buttonPressed(1)) {
                 base.mouse_attracted = true;
                 base.mouse_position = base.inputs.mouse_position;
                 base.moved = true;
@@ -128,25 +128,25 @@ define([
                 y: base.y,
                 radius: 5 / base.layer.camera.zoom,
                 fill_style: "#FFAA88",
-                stroke_style: "#FFAA88",
-                angle: base.angle
+                stroke_style: "#FFAA88"
+//                angle: base.angle
             });
 
 
-            gengine.beginPath();
-            gengine.moveTo({x: base.x, y: base.y});
-            gengine.lineTo({
-                x: base.x + base.accelerationX * 1000,
-                y: base.y + base.accelerationY * 1000
-            }, "blue", 2);
-            gengine.closePath();
-            gengine.beginPath();
-            gengine.moveTo({x: base.x, y: base.y});
-            gengine.lineTo({
-                x: base.x + base.speedX * 20,
-                y: base.y + base.speedY * 20
-            }, "green", 2);
-            gengine.closePath();
+//            gengine.beginPath();
+//            gengine.moveTo({x: base.x, y: base.y});
+//            gengine.lineTo({
+//                x: base.x + base.accelerationX * 1000,
+//                y: base.y + base.accelerationY * 1000
+//            }, "blue", 2);
+//            gengine.closePath();
+//            gengine.beginPath();
+//            gengine.moveTo({x: base.x, y: base.y});
+//            gengine.lineTo({
+//                x: base.x + base.speedX * 20,
+//                y: base.y + base.speedY * 20
+//            }, "green", 2);
+//            gengine.closePath();
 
             var context = base.layer.game.context;
             context.font = "22px verdana";
@@ -202,13 +202,16 @@ define([
                 base.interractWith(layer, layer.planets[k]);
             }
 
-            if (base.layer.inputs_engine.keyPressed(16)) {
+            if (base.layer.inputs_engine.keyPressed(16) || true) {
 
-                base.angle = Math.atan(base.speedY / base.speedX);
-                if (base.speedX < 0)
-                    base.angle += Math.PI;
-                if (base.speedY < 0)
-                    base.angle += 2 * Math.PI;
+                if (base.speedX != 0) {
+                    base.angle = Math.atan(base.speedY / base.speedX);
+                    if (base.speedX < 0)
+                        base.angle += Math.PI;
+                    if (base.speedY < 0)
+                        base.angle += 2 * Math.PI;
+                }
+
             } else {
 //                base.center.x /= base.center_count;
 //                base.center.y /= base.center_count;
@@ -242,10 +245,10 @@ define([
 
                 vector_to_mouse = Vector.coeff_mult(vector_to_mouse, 1/*distance > 100 ? (distance) / 5000 : 0.2*/);
 
-                mouse_add.x = vector_to_mouse.x * 0.9;
-                mouse_add.y = vector_to_mouse.y * 0.9;
+                mouse_add.x = vector_to_mouse.x * 0.9 / (base.layer.camera.zoom / 0.09);
+                mouse_add.y = vector_to_mouse.y * 0.9 / (base.layer.camera.zoom / 0.09);
 
-                base.orbs_count -= 0.01;
+                base.orbs_count -=  0.9 / (base.layer.camera.zoom / 0.001);
 
             }
 //            if (base.layer.inputs_engine.pressed_buttons.length == 0)
@@ -275,7 +278,6 @@ define([
             }
 
             if (base.closest_planet) {
-                console.log(base.closest_planet.influence, base.closest_planet.water_counts);
                 if (base.closest_planet.destination) {
                     if (base.layer.inputs_engine.keyPressed(13)) {
                         if (base.orbs_count > 25) {
@@ -309,9 +311,9 @@ define([
                     var orb = orbs[k];
                     var d = base.distanceTo(orb);
                     var u = base.unitVectorTo(orb);
-                    if (d < 500) {
-                        orb.offsetx += d > 10 ? u.x * 30 * 150 / (d > 100 ? d : 100) : 0;
-                        orb.offsety += d > 10 ? u.y * 30 * 150 / (d > 100 ? d : 100) : 0;
+                    if (d < 2000) {
+                        orb.offsetx += d > 10 ? u.x * 30 * 500 / (d > 100 ? d : 100) : 0;
+                        orb.offsety += d > 10 ? u.y * 30 * 500 / (d > 100 ? d : 100) : 0;
                     }
                     if (d < 15) {
                         if (orb.type === "energy") {

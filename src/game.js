@@ -12,6 +12,7 @@ define([
     Game.include({
         init: function (container) {
             var base = this;
+            base.focused = false;
             base.debugging = true;
             $("html").css("padding", "0px");
             $("body").css("padding", "0px");

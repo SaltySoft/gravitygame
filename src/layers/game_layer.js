@@ -30,7 +30,7 @@ define([
             base.objects = [];
             base.planets = [];
             base.orbs = [];
-            console.log(game);
+
             base.mobile_objects = [];
 
             base.level = LevelGenerator.generate(base, {
@@ -45,7 +45,7 @@ define([
                 base.objects.push(base.level.planets[k]);
                 base.planets.push(base.level.planets[k]);
             }
-            base.running = false;
+            base.running = base.game.focused;
         },
         cameraPos: function (params) {
             var base = this;
@@ -102,7 +102,7 @@ define([
 
                 if (base.inputs_engine.buttonPressed(2)) {
                     var new_zoom = base.camera.zoom + (base.inputs_engine.mouse_move.y > 0 ? 0.001 : -0.001);
-                    if (new_zoom <= 2 && new_zoom >= 0.01) {
+                    if (new_zoom <= 2 && new_zoom >= 0.005) {
                         base.camera.x += base.game.canvas.width / (base.camera.zoom) / 2 - base.game.canvas.width / (new_zoom) / 2;
                         base.camera.y += base.game.canvas.height / (base.camera.zoom) / 2 - base.game.canvas.height / (new_zoom) / 2;
 
@@ -124,17 +124,20 @@ define([
                         y: base.camera.y + base.game.canvas.height / 2 / base.camera.zoom
                     };
                     var distance = Vector.distance(cplanet, vector);
-                    base.camera.speedX *= 0.9;
-                    base.camera.speedY *= 0.9;
-                    if (distance > 100 / base.camera.zoom) {
+                    base.camera.speedX *= 0.95;
+                    base.camera.speedY *= 0.95;
+                    if (distance > 5 / base.camera.zoom) {
                         var unit_to_planet = cplanet.unitVectorTo(vector);
-                        if (Vector.lgth({ x: base.camera.speedX, y: base.camera.speedY}) < 20) {
-                            if (base.camera.speedX < (5 + base.player.closest_planet.speed * base.player.closest_planet.orbit_distance) / base.camera.zoom)
-                                base.camera.speedX += unit_to_planet.x;
-                            if (base.camera.speedX < (5 + base.player.closest_planet.speed * base.player.closest_planet.orbit_distance)  / base.camera.zoom)
-                                base.camera.speedY += unit_to_planet.y;
+                        if (Vector.lgth({ x: base.camera.speedX, y: base.camera.speedY}) < 2 * base.player.closest_planet.speed * base.player.closest_planet.orbit_distance) {
+                                base.camera.speedX += unit_to_planet.x * 5;
+                                base.camera.speedY += unit_to_planet.y * 5;
                         }
-                        console.log(unit_to_planet);
+
+                    } else {
+                        base.camera.speedX = 0;
+                        base.camera.speedY = 0;
+                        base.camera.x = cplanet.x - base.game.canvas.width / 2 / base.camera.zoom;
+                        base.camera.y = cplanet.y - base.game.canvas.height / 2 / base.camera.zoom;
                     }
                 }
 

@@ -26,7 +26,6 @@ define([
             for (var i = 0; i < 15; i++) {
 
                 var planet_rand = Math.round(Math.random() * 7);
-                console.log(planet_rand);
                 var planet_type = "energy";
                 switch (planet_rand) {
                     case 1, 2:
@@ -53,8 +52,8 @@ define([
                 var speed = 0.5 + (Math.random() * 1.5);
                 var planet = Planet.init(layer, {
                     center: center,
-                    orbit_distance: i * 2 * radius + 8 * 900 + (center.radius + 4000) /*+ ( 500 * (Math.random()))*/,
-                    speed_factor: 0,
+                    orbit_distance: i * (2 * radius + 4 * 2000) + (center.radius + 8000) /*+ ( 500 * (Math.random()))*/,
+                    speed_factor: speed,
                     radius: radius,
                     planet_type: planet_type,
                     angle: 0

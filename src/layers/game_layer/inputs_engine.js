@@ -155,8 +155,10 @@ define([
             if (document.mozPointerLockElement === elem ||
                 document.webkitPointerLockElement === elem) {
                 base.layer.unPauseGame();
+                base.layer.game.focused  = true;
             } else {
                 base.layer.pauseGame();
+                base.layer.game.focused  = false;
             }
 
         },
