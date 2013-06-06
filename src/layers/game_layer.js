@@ -172,11 +172,13 @@ define([
 
             context.font = "22px verdana";
             context.fillStyle = "white";
-            context.fillText("Shield orbs : " + (base.player.shield_orbs).toFixed(2), 10, 120);
+            context.fillText("Earth orbs : " + (base.player.earth_orbs).toFixed(2), 10, 120);
 
             context.font = "20px verdana";
             context.fillStyle = "white";
             context.fillText("FullScreen", base.game.canvas.width - 120, base.game.canvas.height - 15);
+
+            
 
             if (!base.running) {
                 context.font="50px verdana";

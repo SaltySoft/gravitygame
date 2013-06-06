@@ -54,7 +54,7 @@ define([
             base.destination = obj.destination ? obj.destination : false;
             base.orbs = [];
             base.origin_orbs = 0;
-            base.grav_influence = base.destination ? 10000 : 2000;
+            base.grav_influence = base.destination ? 10000 : 4000;
             base.alive = false;
             var orb_type = "energy";
             switch (base.planet_type) {
@@ -107,6 +107,8 @@ define([
             base.image_ddx = 1;
             base.image_disy = 0;
             base.image_factor = 0;
+
+            base.previous_alive = false;
         },
         setVector: function (x, y) {
             var base = this;
@@ -149,7 +151,11 @@ define([
             if (base.planet_type == "life" && base.center && Vector.distance(base.center, base) < base.center.influence &&
                 base.water_counts >= 10 && base.earth_counts >= 10 && base.acid_counts >= 10) {
                 base.alive = true;
+                if (!base.previous_alive) {
+                    layer.player.score += 1000;
+                }
             }
+            base.previous_alive = base.alive;
 
         },
         predraw: function (gengine) {

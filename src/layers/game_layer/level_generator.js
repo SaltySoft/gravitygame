@@ -52,7 +52,7 @@ define([
                 var speed = 0.5 + (Math.random() * 1.5);
                 var planet = Planet.init(layer, {
                     center: center,
-                    orbit_distance: i * (2 * radius + 4 * 2000) + (center.radius + 8000) /*+ ( 500 * (Math.random()))*/,
+                    orbit_distance: i * (2 * radius + 4 * 2000) + (center.radius + 16000) /*+ ( 500 * (Math.random()))*/,
                     speed_factor: speed,
                     radius: radius,
                     planet_type: planet_type,

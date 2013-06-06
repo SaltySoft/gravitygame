@@ -34,8 +34,7 @@ define([
 
 
             base.layer = layer;
-
-
+            base.active_planets = [];
 
             base.forces = [];
         },
@@ -66,11 +65,11 @@ define([
             var base = this;
             var distance = base.distanceTo(object);
             if (distance > 200 + object.radius) {
-                var coeff = distance ;
+                var coeff = distance;
             } else {
                 var coeff = distance * distance;
             }
-            var force = (50 * base.mass + object.mass) / coeff;
+            var force = (500 * base.mass + object.mass) / coeff;
             return force;
         },
         unitVectorTo: function (object) {
@@ -152,6 +151,7 @@ define([
 //                }
 
                 if (active_planet) {
+                    object.active_planets.push(base);
 
                     if (base.radius >= distance) {
                         addx = 0;

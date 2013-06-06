@@ -56,6 +56,7 @@ define([
             base.moved = false;
             base.orbs = [];
             base.orbs_consumption = 0;
+            base.score = 0;
         },
         addAngle: function (angle, weight) {
             var base = this;
@@ -118,7 +119,7 @@ define([
                 base.mouse_attracted = false;
             }
             base.closest_distance = -1;
-
+            base.previous_closest = 0;
 
         },
         draw: function (gengine) {
@@ -151,8 +152,34 @@ define([
             var context = base.layer.game.context;
             context.font = "22px verdana";
             context.fillStyle = "white";
-            context.fillText(Math.round(base.temperature) + " degrees", 500, 60);
+            context.fillText("Score : " + Math.round(base.score) + " points", 500, 60);
 
+            for (var k in base.active_planets) {
+                gengine.beginPath();
+                gengine.moveTo({x: base.x, y: base.y});
+                gengine.lineTo({
+                    x: base.active_planets[k].x,
+                    y: base.active_planets[k].y
+                }, "blue", 2);
+            }
+
+            if (base.closest_planet && Vector.distance(base.closest_planet, base) <= base.closest_planet.radius + base.closest_planet.grav_influence) {
+                var context = base.layer.game.context;
+                context.font = "15px verdana";
+                context.fillStyle = "white";
+                var canvas = base.layer.game.canvas;
+                context.fillText("Planet type : " + base.closest_planet.planet_type, 10, canvas.height - 100);
+                context.fillText("Distance : " + Vector.distance(base.closest_planet, base).toFixed(2), 10, canvas.height - 80);
+                if (base.closest_planet.destination) {
+                    context.fillText("Fill this sun with energy orbs found on yellow planets around to make it shine (enter key)", 10, canvas.height - 60);
+                } else if (base.closest_planet.planet_type == "life") {
+                    context.fillText("You have to create life here. Drop water orbs (blue planets),", 10, canvas.height - 60);
+                    context.fillText("earth orbs (purple planets) and aminate acid orbs (green planets) - enter key", 10, canvas.height - 40);
+                    context.fillText("Then make sure the sun is shining on this planet.", 10, canvas.height - 20);
+                    context.fillText("Current orbs contained : Water :" + base.closest_planet.water_counts + "/10,  " + base.closest_planet.earth_counts + "/10, Aminate acid : " + base.closest_planet.acid_counts + "/10", 10, canvas.height - 0);
+                }
+
+            }
 
             base.forces = [];
 
@@ -163,6 +190,7 @@ define([
 
         physics: function (layer) {
             var base = this;
+            base.active_planets = [];
             var in_influence = false;
             for (var k in layer.planets) {
                 layer.planets[k].closest = false;
@@ -245,10 +273,10 @@ define([
 
                 vector_to_mouse = Vector.coeff_mult(vector_to_mouse, 1/*distance > 100 ? (distance) / 5000 : 0.2*/);
 
-                mouse_add.x = vector_to_mouse.x * 0.9 / (base.layer.camera.zoom / 0.09);
-                mouse_add.y = vector_to_mouse.y * 0.9 / (base.layer.camera.zoom / 0.09);
+                mouse_add.x = vector_to_mouse.x * 2;
+                mouse_add.y = vector_to_mouse.y * 2;
 
-                base.orbs_count -=  0.9 / (base.layer.camera.zoom / 0.001);
+                base.orbs_count -=  0.5;
 
             }
 //            if (base.layer.inputs_engine.pressed_buttons.length == 0)
@@ -270,11 +298,18 @@ define([
                     base.x -= (base.closest_planet.radius - distance) * unit.x;
                     base.y -= (base.closest_planet.radius - distance) * unit.y;
                     var unit_speed = Vector.normalize(speed_vect);
-                    base.speedX -= unit_speed.x * 0.5;
-                    base.speedY -= unit_speed.y * 0.5;
+                    base.speedX -= unit_speed.x * 0.9;
+                    base.speedY -= unit_speed.y * 0.9;
+                } else if (distance < base.closest_planet.radius + 5) {
+                    base.speedX *= 0.99;
+                    base.speedY *= 0.99;
+                } else {
+                    if (Math.abs(Vector.distance(base, base.closest_planet) - base.previous_closest) < 1000 && base.moved) {
+                        base.score += base.closest_distance/ 1000;
+                    }
                 }
 
-
+                base.previous_closest = Vector.distance(base, base.closest_planet) ;
             }
 
             if (base.closest_planet) {
@@ -284,6 +319,7 @@ define([
                             base.closest_planet.addOrb();
                             base.closest_planet.addOrb();
                             base.orbs_count -= 2;
+                            base.score += 5;
                         }
                     }
                 }
@@ -292,45 +328,60 @@ define([
                         if (base.water_orbs > 0 && base.closest_planet.water_counts < 10) {
                             base.closest_planet.addOrb("water");
                             base.water_orbs -= 1;
+                            base.score += 10;
+                            if (base.closest_planet.water_counts >= 10) {
+                                base.score += 100;
+                            }
                         }
                         if (base.acid_orbs > 0 && base.closest_planet.acid_counts < 10) {
                             base.closest_planet.addOrb("acid");
                             base.acid_orbs -= 1;
+                            base.score += 10;
+                            if (base.closest_planet.acid_counts >= 10) {
+                                base.score += 100;
+                            }
                         }
                         if (base.earth_orbs > 0 && base.closest_planet.earth_counts < 10) {
                             base.closest_planet.addOrb("earth");
                             base.earth_orbs -= 1;
+                            base.score += 10;
+                            if (base.closest_planet.earth_counts >= 10) {
+                                base.score += 100;
+                            }
                         }
                     }
                 }
             }
 
             var orbs = base.closest_planet.orbs;
-            if (base.closest_planet.planet_type != "life") {
+            if (base.closest_planet.planet_type != "life" && !base.closest_planet.destination ) {
                 for (var k in orbs) {
                     var orb = orbs[k];
                     var d = base.distanceTo(orb);
                     var u = base.unitVectorTo(orb);
-                    if (d < 2000) {
-                        orb.offsetx += d > 10 ? u.x * 30 * 500 / (d > 100 ? d : 100) : 0;
-                        orb.offsety += d > 10 ? u.y * 30 * 500 / (d > 100 ? d : 100) : 0;
+                    if (d < 4000) {
+                        orb.offsetx += d > 10 ? u.x * 30 * 1000 / (d > 100 ? d / 5 : 20) : 0;
+                        orb.offsety += d > 10 ? u.y * 30 * 1000 / (d > 100 ? d / 5 : 20) : 0;
                     }
-                    if (d < 15) {
+                    if (d < 100 ) {
                         if (orb.type === "energy") {
                             base.orbs_count++;
-
+                            base.score += 1;
                         }
                         if (orb.type == "water") {
                             base.water_orbs++;
                             base.closest_planet.water_counts--;
+                            base.score += 10;
                         }
                         if (orb.type == "acid") {
                             base.acid_orbs++;
                             base.closest_planet.acid_counts--;
+                            base.score += 10;
                         }
                         if (orb.type == "earth") {
                             base.earth_orbs++;
                             base.closest_planet.earth_counts--;
+                            base.score += 10;
                         }
                         if (orb.type == "shield") {
                             base.shield_orbs++;
