@@ -12,7 +12,11 @@ define([
             var base = this;
             base.layer = layer;
             base.camera = layer.camera;
+            base.context = layer.game.context;
+            base.canvas =  layer.game.canvas;
             base.images = [];
+            base.notifications = [];
+            console.log(layer);
         },
 
         run: function () {
@@ -26,6 +30,20 @@ define([
             }
             for (var k in base.layer.objects) {
                 base.layer.objects[k].draw(base);
+            }
+            var text_offset = 1;
+            var canvas = base.layer.game.canvas;
+            for (var k in base.notifications) {
+                var context = this.context;
+                context.font = "15px verdana";
+                context.fillStyle = "white";
+                if (base.notifications[k].creation + base.notifications[k].time > (new Date()).getTime()) {
+                    var metrics = context.measureText(base.notifications[k].text);
+                    var width = metrics.width;
+                    context.fillText(base.notifications[k].text, canvas.width / 2 - width / 2, text_offset * 20);
+                    text_offset++;
+                }
+
             }
         },
         drawCircle: function (params) {
@@ -148,6 +166,24 @@ define([
         closePath: function () {
             var base = this;
             base.context.closePath();
+        },
+        drawText: function (condition, x, y, height) {
+            var ctx = this.context;
+//            ctx
+        },
+        notification: function (text, time) {
+            var base = this;
+            base.notifications.push({
+                text: text,
+                time: time,
+                creation: (new Date()).getTime()
+            });
+        },
+        drawCache: function () {
+            var base = this;
+            var context = base.context;
+            context.fillStyle = "rgba(0, 0, 0, 0.8)";
+            context.fillRect(0, 0, base.canvas.width, base.canvas.height);
         }
     });
 

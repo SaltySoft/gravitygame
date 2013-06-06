@@ -30,7 +30,7 @@ define([
             base.distance = (base.center.radius + 50 + base.distance_factor * base.center.grav_influence);
             base.speed = Math.random() * 0.005 + 0.001;
             base.type = obj.type ? obj.type : "energy";
-            base.radius = 50;
+            base.radius = 10;
         },
         physics: function () {
             var base = this;
@@ -46,7 +46,7 @@ define([
         draw: function (gengine) {
             var base = this;
             if (base.center && base.center.close) {
-
+                base.radius = 3 / gengine.layer.camera.zoom;
 
 
                 var rad = gengine.createRadialGradient(base.x, base.y, base.radius, "rgba(100,100,255,0.5)", "white");

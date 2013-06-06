@@ -12,7 +12,7 @@ define([
     var MenuLayer = Layer.create();
 
     MenuLayer.include({
-        init: function (game) {
+        init: function (game, score) {
             var base = this;
             base.game = game;
             base.camera = {
@@ -26,7 +26,7 @@ define([
             base.inputs_engine = InputsEngine.init(base);
             base.physics_engine = PhysicsEngine.init(base);
             base.graphics_engine = GraphicsEngine.init(base);
-
+            base.score = score;
         },
         logic: function () {
             var base = this;
@@ -38,9 +38,13 @@ define([
         draw: function () {
             var base = this;
             var context = base.game.context;
-            context.font="100px verdana";
+            base.graphics_engine.drawCache();
+            context.font = "30px verdana";
             context.fillStyle = "white";
-            context.fillText("You won ", base.game.canvas.width / 2 - 200, base.game.canvas.height / 2);
+            var metrics1 = context.measureText("You won")
+            var metrics2 = context.measureText("Your score :" + base.score + " points")
+            context.fillText("You won", base.game.canvas.width / 2 - metrics1.width /2, base.game.canvas.height / 2 - 300);
+            context.fillText("Your score :" + base.score + " points", base.game.canvas.width / 2 - metrics2.width / 2, base.game.canvas.height / 2 - 200);
         }
     });
 

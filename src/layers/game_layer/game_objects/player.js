@@ -49,14 +49,15 @@ define([
             base.mouse_position = { x: 0, y: 0 };
 
             base.orbs_count = base.layer.game.debugging ? 1000 : 3;
-            base.water_orbs = base.layer.game.debugging ? 10 : 0;
-            base.acid_orbs = base.layer.game.debugging ? 10 : 0;
-            base.earth_orbs = base.layer.game.debugging ? 10 : 0;
-            base.shield_orbs = base.layer.game.debugging ? 10 : 0;
+            base.water_orbs = base.layer.game.debugging ? 100 : 0;
+            base.acid_orbs = base.layer.game.debugging ? 100 : 0;
+            base.earth_orbs = base.layer.game.debugging ? 100 : 0;
+            base.shield_orbs = base.layer.game.debugging ? 100 : 0;
             base.moved = false;
             base.orbs = [];
             base.orbs_consumption = 0;
             base.score = 0;
+            base.previous_closest = 0;
         },
         addAngle: function (angle, weight) {
             var base = this;
@@ -119,7 +120,7 @@ define([
                 base.mouse_attracted = false;
             }
             base.closest_distance = -1;
-            base.previous_closest = 0;
+
 
         },
         draw: function (gengine) {
@@ -160,7 +161,33 @@ define([
                 gengine.lineTo({
                     x: base.active_planets[k].x,
                     y: base.active_planets[k].y
-                }, "blue", 2);
+                }, "blue", 1);
+            }
+
+            gengine.beginPath();
+            gengine.moveTo({x: base.x, y: base.y});
+            gengine.lineTo({
+                x: base.layer.level.sun.x,
+                y: base.layer.level.sun.y
+            }, "rgba(255, 255, 255, 0.1)", 1);
+
+            if (base.mouse_attracted) {
+                gengine.beginPath();
+                gengine.moveTo({x: base.x, y: base.y});
+                gengine.lineTo({
+                    x: base.layer.inputs_engine.mouse_position.x,
+                    y: base.layer.inputs_engine.mouse_position.y
+                }, "rgba(255, 0, 0, 0.3)", 3);
+            }
+
+
+            for (var k in base.layer.level.life_planets) {
+                gengine.beginPath();
+                gengine.moveTo({x: base.x, y: base.y});
+                gengine.lineTo({
+                    x: base.layer.level.life_planets[k].x,
+                    y: base.layer.level.life_planets[k].y
+                }, "rgba(0, 100, 255, 0.1)", 1);
             }
 
             if (base.closest_planet && Vector.distance(base.closest_planet, base) <= base.closest_planet.radius + base.closest_planet.grav_influence) {
@@ -230,30 +257,12 @@ define([
                 base.interractWith(layer, layer.planets[k]);
             }
 
-            if (base.layer.inputs_engine.keyPressed(16) || true) {
-
-                if (base.speedX != 0) {
-                    base.angle = Math.atan(base.speedY / base.speedX);
-                    if (base.speedX < 0)
-                        base.angle += Math.PI;
-                    if (base.speedY < 0)
-                        base.angle += 2 * Math.PI;
-                }
-
-            } else {
-//                base.center.x /= base.center_count;
-//                base.center.y /= base.center_count;
-//                if (base.center.x) {
-//                    var unit = base.unitVectorTo(base.closest_planet);
-//                    var angle = Math.atan(-unit.x / unit.y);
-//                    base.angle = angle;
-//                    if (unit.y < 0)
-//                        base.angle += Math.PI;
-//                    if (-unit.x < 0)
-//                        base.angle += 2 * Math.PI;
-//                    if (base.inverse)
-//                        base.angle += Math.PI;
-//                }
+            if (base.speedX != 0) {
+                base.angle = Math.atan(base.speedY / base.speedX);
+                if (base.speedX < 0)
+                    base.angle += Math.PI;
+                if (base.speedY < 0)
+                    base.angle += 2 * Math.PI;
             }
 
 
@@ -268,15 +277,17 @@ define([
                     y: base.mouse_position.y - base.y
                 };
 
+
+
                 vector_to_mouse = Vector.normalize(vector_to_mouse);
                 var distance = Vector.distance(base, base.mouse_position);
 
-                vector_to_mouse = Vector.coeff_mult(vector_to_mouse, 1/*distance > 100 ? (distance) / 5000 : 0.2*/);
+                vector_to_mouse = Vector.coeff_mult(vector_to_mouse, distance > 100 ? (distance) / 5000 : 0.2);
 
-                mouse_add.x = vector_to_mouse.x * 2;
-                mouse_add.y = vector_to_mouse.y * 2;
+                mouse_add.x = vector_to_mouse.x * 4;
+                mouse_add.y = vector_to_mouse.y * 4;
 
-                base.orbs_count -=  0.5;
+                base.orbs_count -= 0.01;
 
             }
 //            if (base.layer.inputs_engine.pressed_buttons.length == 0)
@@ -300,16 +311,23 @@ define([
                     var unit_speed = Vector.normalize(speed_vect);
                     base.speedX -= unit_speed.x * 0.9;
                     base.speedY -= unit_speed.y * 0.9;
+
+                    //Player loses score when on planet.
+                    base.score -= base.score > 50 ? 50 : base.score;
+                    console.log(base.previous_closest, base.closest_planet.radius);
+                    if (base.previous_closest >= base.closest_planet.radius + 10) {
+                        base.layer.graphics_engine.notification("Don't touch planets ! You'll disturb its nature. Malus : 50pts", 1000);
+                    }
                 } else if (distance < base.closest_planet.radius + 5) {
                     base.speedX *= 0.99;
                     base.speedY *= 0.99;
                 } else {
-                    if (Math.abs(Vector.distance(base, base.closest_planet) - base.previous_closest) < 1000 && base.moved) {
-                        base.score += base.closest_distance/ 1000;
+                    if (Math.abs(Vector.distance(base, base.closest_planet) - base.previous_closest) < 10 && base.moved) {
+                        base.score += base.closest_distance / 1000;
                     }
                 }
 
-                base.previous_closest = Vector.distance(base, base.closest_planet) ;
+                base.previous_closest = Vector.distance(base, base.closest_planet);
             }
 
             if (base.closest_planet) {
@@ -354,7 +372,7 @@ define([
             }
 
             var orbs = base.closest_planet.orbs;
-            if (base.closest_planet.planet_type != "life" && !base.closest_planet.destination ) {
+            if (base.closest_planet.planet_type != "life" && !base.closest_planet.destination) {
                 for (var k in orbs) {
                     var orb = orbs[k];
                     var d = base.distanceTo(orb);
@@ -363,7 +381,7 @@ define([
                         orb.offsetx += d > 10 ? u.x * 30 * 1000 / (d > 100 ? d / 5 : 20) : 0;
                         orb.offsety += d > 10 ? u.y * 30 * 1000 / (d > 100 ? d / 5 : 20) : 0;
                     }
-                    if (d < 100 ) {
+                    if (d < 100) {
                         if (orb.type === "energy") {
                             base.orbs_count++;
                             base.score += 1;
@@ -390,7 +408,6 @@ define([
                     }
                 }
             }
-
 
 
             base.offsetx = 0;

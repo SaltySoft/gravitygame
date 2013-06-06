@@ -45,9 +45,9 @@ define([
             base.canvas.width = $(document).width();
             base.canvas.height = $(document).height();
         },
-        won: function () {
+        won: function (score) {
             var base = this;
-            var layer = MenuLayer.init(base);
+            var layer = MenuLayer.init(base, score);
             base.addLayer(layer);
         },
         newGame: function () {

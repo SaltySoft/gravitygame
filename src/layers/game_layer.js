@@ -71,7 +71,7 @@ define([
             }
 
             if (won) {
-                base.game.won();
+                base.game.won(Math.round(base.player.score));
             }
 
         },
@@ -102,7 +102,7 @@ define([
 
                 if (base.inputs_engine.buttonPressed(2)) {
                     var new_zoom = base.camera.zoom + (base.inputs_engine.mouse_move.y > 0 ? 0.001 : -0.001);
-                    if (new_zoom <= 2 && new_zoom >= 0.005) {
+                    if (new_zoom <= 2 && new_zoom >= 0.0005) {
                         base.camera.x += base.game.canvas.width / (base.camera.zoom) / 2 - base.game.canvas.width / (new_zoom) / 2;
                         base.camera.y += base.game.canvas.height / (base.camera.zoom) / 2 - base.game.canvas.height / (new_zoom) / 2;
 
@@ -118,7 +118,7 @@ define([
 
                 }
                 if (base.player.closest_planet) {
-                    var cplanet = base.player.closest_planet;
+                    var cplanet = base.player.closest_planet;u
                     var vector = {
                         x: base.camera.x + base.game.canvas.width / 2 / base.camera.zoom,
                         y: base.camera.y + base.game.canvas.height / 2 / base.camera.zoom
@@ -178,10 +178,11 @@ define([
             context.fillStyle = "white";
             context.fillText("FullScreen", base.game.canvas.width - 120, base.game.canvas.height - 15);
 
-            
+
 
             if (!base.running) {
-                context.font="50px verdana";
+                base.graphics_engine.drawCache();
+                context.font="25px verdana";
                 context.fillStyle = "white";
                 var text = "Click on the screen to play";
                 var metrics = context.measureText(text);

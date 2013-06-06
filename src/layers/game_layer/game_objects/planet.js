@@ -54,12 +54,12 @@ define([
             base.destination = obj.destination ? obj.destination : false;
             base.orbs = [];
             base.origin_orbs = 0;
-            base.grav_influence = base.destination ? 10000 : 4000;
+            base.grav_influence = base.destination ? 20000 : 8000;
             base.alive = false;
             var orb_type = "energy";
             switch (base.planet_type) {
                 case "water":
-                    base.origin_orbs = 5 + 10 * Math.random();
+                    base.origin_orbs = 20 + 10 * Math.random();
                     orb_type = "water";
                     break;
                 case "energy":
@@ -67,15 +67,15 @@ define([
                     orb_type = "energy";
                     break;
                 case "acid":
-                    base.origin_orbs = 5 + 10 * Math.random();
+                    base.origin_orbs = 20 + 10 * Math.random();
                     orb_type = "acid";
                     break;
                 case "shield":
-                    base.origin_orbs = 5 + 10 * Math.random();
+                    base.origin_orbs = 20 + 10 * Math.random();
                     orb_type = "shield";
                     break;
                 case "earth":
-                    base.origin_orbs = 5 + 10 * Math.random();
+                    base.origin_orbs = 20 + 10 * Math.random();
                     orb_type = "earth";
                     break;
                 case "life":
@@ -83,7 +83,7 @@ define([
                     orb_type = "none";
                     break;
                 case "sun":
-                    base.origin_orbs = 0;
+                    base.origin_orbs = 200;
                     orb_type = "energy";
                     break;
                 default:
@@ -135,7 +135,7 @@ define([
             else if (base.planet_type == "life") {
                 base.influence = (base.water_counts / 10 + base.acid_counts / 10 + base.earth_counts / 10 ) / 3 * 500;
             } else {
-                base.influence = base.origin_orbs > 0 ? base.orbs.length / base.origin_orbs * 1000 : 0;
+                base.influence = base.origin_orbs > 0 ? base.orbs.length / base.origin_orbs * 10000 : 0;
             }
             if (base.center !== undefined) {
                 if (base.center.x && base.center.y) {
@@ -245,7 +245,7 @@ define([
             if (base.destination) {
                 var disp = base.influence > 0 ? base.influence / 20000: 0.01;
 
-
+                base.radius = 500 * disp;
                 gengine.drawImage("sun.png", base.x, base.y, 500 * disp, 512 * disp, 4608 / 9 * base.image_disx, 0, 512, 512);
                 if (base.image_factor % 10 == 0) {
 
