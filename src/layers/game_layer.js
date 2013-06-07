@@ -21,7 +21,7 @@ define([
                 distance: 100,
                 speedX: 0,
                 speedY: 0,
-                zoom: 0.1
+                zoom: 0.01
             };
             base.inputs_engine = InputsEngine.init(base);
             base.physics_engine = PhysicsEngine.init(base);
@@ -100,8 +100,8 @@ define([
                 }
 
 
-                if (base.inputs_engine.buttonPressed(2)) {
-                    var new_zoom = base.camera.zoom + (base.inputs_engine.mouse_move.y > 0 ? 0.001 : -0.001);
+                if (base.inputs_engine.buttonPressed(2) && Math.abs(base.inputs_engine.mouse_move.y) > 0.5) {
+                    var new_zoom = base.camera.zoom + (base.inputs_engine.mouse_move.y > 0 ? 0.025 * base.camera.zoom : -0.025 * base.camera.zoom);
                     if (new_zoom <= 2 && new_zoom >= 0.0005) {
                         base.camera.x += base.game.canvas.width / (base.camera.zoom) / 2 - base.game.canvas.width / (new_zoom) / 2;
                         base.camera.y += base.game.canvas.height / (base.camera.zoom) / 2 - base.game.canvas.height / (new_zoom) / 2;
@@ -113,36 +113,36 @@ define([
 
 
                 if (base.inputs_engine.buttonPressed(3)) {
-                    base.camera.x -= base.inputs_engine.mouse_move.x / base.camera.zoom;
+                    base.camera.x -= base.inputs_engine.mouse_move.x / base.camera.zoom ;
                     base.camera.y -= base.inputs_engine.mouse_move.y / base.camera.zoom;
 
-                }
-                if (base.player.closest_planet) {
-                    var cplanet = base.player.closest_planet;u
-                    var vector = {
-                        x: base.camera.x + base.game.canvas.width / 2 / base.camera.zoom,
-                        y: base.camera.y + base.game.canvas.height / 2 / base.camera.zoom
-                    };
-                    var distance = Vector.distance(cplanet, vector);
-                    base.camera.speedX *= 0.95;
-                    base.camera.speedY *= 0.95;
-                    if (distance > 5 / base.camera.zoom) {
-                        var unit_to_planet = cplanet.unitVectorTo(vector);
-                        if (Vector.lgth({ x: base.camera.speedX, y: base.camera.speedY}) < 2 * base.player.closest_planet.speed * base.player.closest_planet.orbit_distance) {
-                                base.camera.speedX += unit_to_planet.x * 5;
-                                base.camera.speedY += unit_to_planet.y * 5;
+                } else {
+                    if (base.player.closest_planet) {
+                        var cplanet = base.player.closest_planet;
+                        var vector = {
+                            x: base.camera.x + base.game.canvas.width / 2 / base.camera.zoom,
+                            y: base.camera.y + base.game.canvas.height / 2 / base.camera.zoom
+                        };
+                        var distance = Vector.distance(cplanet, vector);
+                        base.camera.speedX *= 0.95;
+                        base.camera.speedY *= 0.95;
+                        if (distance > 10) {
+                            var unit_to_planet = cplanet.unitVectorTo(vector);
+                            if (Vector.lgth({ x: base.camera.speedX, y: base.camera.speedY}) < 30 * base.player.closest_planet.speed * base.player.closest_planet.orbit_distance) {
+                                base.camera.speedX += unit_to_planet.x * 10;
+                                base.camera.speedY += unit_to_planet.y * 10;
+                            }
+
+                        } else {
+//                        base.camera.speedX *= 0.9;
+//                        base.camera.speedY *= 0.9;
                         }
-
-                    } else {
-                        base.camera.speedX = 0;
-                        base.camera.speedY = 0;
-                        base.camera.x = cplanet.x - base.game.canvas.width / 2 / base.camera.zoom;
-                        base.camera.y = cplanet.y - base.game.canvas.height / 2 / base.camera.zoom;
                     }
-                }
 
-                base.camera.x += base.camera.speedX;
-                base.camera.y += base.camera.speedY;
+                    base.camera.x += base.camera.speedX;
+                    base.camera.y += base.camera.speedY;
+
+                }
 
                 base.physics_engine.run();
                 for (var k in base.planets)
@@ -153,29 +153,24 @@ define([
         draw: function () {
             var base = this;
 
-            base.graphics_engine.run();
+
             for (var k in base.orbs)
                 base.orbs[k].draw(base.graphics_engine);
 
             var context = base.game.context;
-            context.font = "22px verdana";
+            context.font = "15px verdana";
             context.fillStyle = "white";
-            context.fillText("Energy orbs (fuel) : " + (base.player.orbs_count).toFixed(2), 10, 30);
+            context.fillText("Energy orbs (fuel) : " + (base.player.orbs_count).toFixed(2), 5, 20);
             var context = base.game.context;
-            context.font = "22px verdana";
-            context.fillStyle = "white";
-            context.fillText("Water orbs : " + (base.player.water_orbs).toFixed(2), 10, 60);
 
-            context.font = "22px verdana";
-            context.fillStyle = "white";
-            context.fillText("Aminate acid orbs : " + (base.player.acid_orbs).toFixed(2), 10, 90);
+            context.fillText("Water orbs : " + (base.player.water_orbs).toFixed(2), 5, 40);
 
-            context.font = "22px verdana";
-            context.fillStyle = "white";
-            context.fillText("Earth orbs : " + (base.player.earth_orbs).toFixed(2), 10, 120);
 
-            context.font = "20px verdana";
-            context.fillStyle = "white";
+            context.fillText("Amino acid orbs : " + (base.player.acid_orbs).toFixed(2), 5, 60);
+
+
+            context.fillText("Earth orbs : " + (base.player.earth_orbs).toFixed(2), 5, 80);
+
             context.fillText("FullScreen", base.game.canvas.width - 120, base.game.canvas.height - 15);
 
 
@@ -190,6 +185,7 @@ define([
             }
 
             base.inputs_engine.draw();
+            base.graphics_engine.run();
         },
         pauseGame: function () {
             var base = this;

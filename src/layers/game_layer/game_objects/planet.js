@@ -50,12 +50,14 @@ define([
             base.earth_counts = 0;
             base.planet_type = obj.planet_type ? obj.planet_type : "energy";
             base.influence = obj.influence || 300;
-            base.speed = 0.0005 * (obj.speed_factor ? obj.speed_factor : 1);
+            base.speed = 50 * (obj.speed_factor ? obj.speed_factor : 1);
             base.destination = obj.destination ? obj.destination : false;
             base.orbs = [];
             base.origin_orbs = 0;
             base.grav_influence = base.destination ? 20000 : 8000;
             base.alive = false;
+            base.active = false;
+            base.previous_active = false;
             var orb_type = "energy";
             switch (base.planet_type) {
                 case "water":
@@ -122,6 +124,7 @@ define([
         },
         physics: function (layer) {
             var base = this;
+
             if (base.planet_type == "sun")
                 base.temperature = base.orbs.length > base.radius / 2 ? 1000 : base.orbs.length / (base.radius / 2) * 1000;
             else if (base.planet_type == "life") {
@@ -131,7 +134,7 @@ define([
             }
 
             if (base.destination)
-                base.influence = base.orbs.length * 200;
+                base.influence = base.orbs.length * 2000;
             else if (base.planet_type == "life") {
                 base.influence = (base.water_counts / 10 + base.acid_counts / 10 + base.earth_counts / 10 ) / 3 * 500;
             } else {
@@ -142,7 +145,7 @@ define([
                     base.x = base.center.x + Math.cos(base.angle) * ( base.orbit_distance);
                     base.y = base.center.y + Math.sin(base.angle) * ( base.orbit_distance);
                 }
-                base.angle += base.speed;
+                base.angle += base.speed / base.orbit_distance;
             }
             for (var k in base.orbs) {
                 base.orbs[k].physics();
@@ -223,7 +226,7 @@ define([
             var x = base.x;
             var y = base.y;
             var radius = base.radius;
-
+            base.color = "rgb(0, 0, 0)";
             if (base.destination) {
                 base.color = "rgb(" + Math.round(255 * (base.temperature / 1000)) + ", " + Math.round(255 * (base.temperature / 1000)) + ", " + Math.round(255 * ( base.temperature / 1000)) + ")";
 
@@ -263,7 +266,8 @@ define([
 
 
             }
-
+            base.previous_active = base.active;
+            base.active = false;
         }
     });
 

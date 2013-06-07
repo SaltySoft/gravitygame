@@ -2,7 +2,7 @@ define([
     'jquery',
     'class',
     './object',
-    'vector'
+    '../vector'
 ], function ($, Class, Obj, Vector) {
     var Player = Obj.create();
 
@@ -129,31 +129,33 @@ define([
                 x: base.x,
                 y: base.y,
                 radius: 5 / base.layer.camera.zoom,
-                fill_style: "#FFAA88",
+                fill_style: "blue",
                 stroke_style: "#FFAA88"
 //                angle: base.angle
             });
 
 
-//            gengine.beginPath();
-//            gengine.moveTo({x: base.x, y: base.y});
-//            gengine.lineTo({
-//                x: base.x + base.accelerationX * 1000,
-//                y: base.y + base.accelerationY * 1000
-//            }, "blue", 2);
-//            gengine.closePath();
-//            gengine.beginPath();
-//            gengine.moveTo({x: base.x, y: base.y});
-//            gengine.lineTo({
-//                x: base.x + base.speedX * 20,
-//                y: base.y + base.speedY * 20
-//            }, "green", 2);
-//            gengine.closePath();
-
+            if (base.layer.game.debugging) {
+                gengine.beginPath();
+                gengine.moveTo({x: base.x, y: base.y});
+                gengine.lineTo({
+                    x: base.x + base.accelerationX * 1000,
+                    y: base.y + base.accelerationY * 1000
+                }, "blue", 2);
+                gengine.closePath();
+                gengine.beginPath();
+                gengine.moveTo({x: base.x, y: base.y});
+                gengine.lineTo({
+                    x: base.x + base.speedX * 20,
+                    y: base.y + base.speedY * 20
+                }, "green", 2);
+                gengine.closePath();
+            }
             var context = base.layer.game.context;
-            context.font = "22px verdana";
+            context.font = "18px verdana";
             context.fillStyle = "white";
-            context.fillText("Score : " + Math.round(base.score) + " points", 500, 60);
+            var metrics = context.measureText("Score : " + Math.round(base.score) + " points");
+            context.fillText("Score : " + Math.round(base.score) + " points", base.layer.game.canvas.width - metrics.width - 10, 28);
 
             for (var k in base.active_planets) {
                 gengine.beginPath();
@@ -163,7 +165,6 @@ define([
                     y: base.active_planets[k].y
                 }, "blue", 1);
             }
-
             gengine.beginPath();
             gengine.moveTo({x: base.x, y: base.y});
             gengine.lineTo({
@@ -195,15 +196,15 @@ define([
                 context.font = "15px verdana";
                 context.fillStyle = "white";
                 var canvas = base.layer.game.canvas;
-                context.fillText("Planet type : " + base.closest_planet.planet_type, 10, canvas.height - 100);
-                context.fillText("Distance : " + Vector.distance(base.closest_planet, base).toFixed(2), 10, canvas.height - 80);
+                context.fillText("Planet type : " + base.closest_planet.planet_type, 10, canvas.height - 140);
+                context.fillText("Distance : " + Vector.distance(base.closest_planet, base).toFixed(2), 10, canvas.height - 120);
                 if (base.closest_planet.destination) {
-                    context.fillText("Fill this sun with energy orbs found on yellow planets around to make it shine (enter key)", 10, canvas.height - 60);
+                    context.fillText("Fill this sun with energy orbs found on yellow planets around to make it shine (enter key)", 10, canvas.height - 100);
                 } else if (base.closest_planet.planet_type == "life") {
-                    context.fillText("You have to create life here. Drop water orbs (blue planets),", 10, canvas.height - 60);
-                    context.fillText("earth orbs (purple planets) and aminate acid orbs (green planets) - enter key", 10, canvas.height - 40);
-                    context.fillText("Then make sure the sun is shining on this planet.", 10, canvas.height - 20);
-                    context.fillText("Current orbs contained : Water :" + base.closest_planet.water_counts + "/10,  " + base.closest_planet.earth_counts + "/10, Aminate acid : " + base.closest_planet.acid_counts + "/10", 10, canvas.height - 0);
+                    context.fillText("You have to create life here. Drop water orbs (blue planets),", 10, canvas.height - 80);
+                    context.fillText("earth orbs (purple planets) and amino acid orbs (green planets) - enter key", 10, canvas.height - 60);
+                    context.fillText("Then make sure the sun is shining on this planet.", 10, canvas.height - 40);
+                    context.fillText("Current orbs contained : Water :" + base.closest_planet.water_counts + "/10,  " + base.closest_planet.earth_counts + "/10, Aminate acid : " + base.closest_planet.acid_counts + "/10", 10, canvas.height - 20);
                 }
 
             }
@@ -229,7 +230,7 @@ define([
                 }
                 var planet = layer.planets[k];
                 if (distance < planet.grav_influence + planet.radius) {
-                    planet.close = true;
+//                    planet.close = true;
                 }
                 if (distance <= planet.influence + planet.radius && distance >= 10 + planet.radius) {
                     if (base.temperature < 20 || base.temperature > 24)
@@ -252,6 +253,7 @@ define([
                 }
             }
             base.closest_planet.closest = true;
+            base.closest_planet.close = true;
 
             for (var k in layer.planets) {
                 base.interractWith(layer, layer.planets[k]);
@@ -278,14 +280,13 @@ define([
                 };
 
 
-
                 vector_to_mouse = Vector.normalize(vector_to_mouse);
                 var distance = Vector.distance(base, base.mouse_position);
 
-                vector_to_mouse = Vector.coeff_mult(vector_to_mouse, distance > 100 ? (distance) / 5000 : 0.2);
+                vector_to_mouse = Vector.coeff_mult(vector_to_mouse, 1);
 
-                mouse_add.x = vector_to_mouse.x * 4;
-                mouse_add.y = vector_to_mouse.y * 4;
+                mouse_add.x = vector_to_mouse.x * 10;
+                mouse_add.y = vector_to_mouse.y * 10;
 
                 base.orbs_count -= 0.01;
 
@@ -293,11 +294,10 @@ define([
 //            if (base.layer.inputs_engine.pressed_buttons.length == 0)
 //                base.angle += base.layer.inputs_engine.mouse_move.x / 75;
 
+
             base.speedX += base.accelerationX + Math.cos(base.angle) * base.accel_jet + mouse_add.x;
             base.speedY += base.accelerationY + Math.sin(base.angle) * base.accel_jet + mouse_add.y;
-
-            base.x += base.speedX + base.offsetx;
-            base.y += base.speedY + base.offsety;
+            base.speed = Math.sqrt(base.speedX * base.speedX + base.speedY * base.speedY);
             var speed_vect = {
                 x: base.speedX,
                 y: base.speedY
@@ -309,18 +309,18 @@ define([
                     base.x -= (base.closest_planet.radius - distance) * unit.x;
                     base.y -= (base.closest_planet.radius - distance) * unit.y;
                     var unit_speed = Vector.normalize(speed_vect);
-                    base.speedX -= unit_speed.x * 0.9;
-                    base.speedY -= unit_speed.y * 0.9;
+
+                    base.speedX -= base.speed * unit.x / 10;
+                    base.speedY -= base.speed * unit.y / 10;
 
                     //Player loses score when on planet.
                     base.score -= base.score > 50 ? 50 : base.score;
-                    console.log(base.previous_closest, base.closest_planet.radius);
                     if (base.previous_closest >= base.closest_planet.radius + 10) {
                         base.layer.graphics_engine.notification("Don't touch planets ! You'll disturb its nature. Malus : 50pts", 1000);
                     }
                 } else if (distance < base.closest_planet.radius + 5) {
-                    base.speedX *= 0.99;
-                    base.speedY *= 0.99;
+                    base.speedX *= 0.9;
+                    base.speedY *= 0.9;
                 } else {
                     if (Math.abs(Vector.distance(base, base.closest_planet) - base.previous_closest) < 10 && base.moved) {
                         base.score += base.closest_distance / 1000;
@@ -329,6 +329,15 @@ define([
 
                 base.previous_closest = Vector.distance(base, base.closest_planet);
             }
+            var speed_f = 1;
+            if (base.layer.inputs_engine.keyPressed(65) && base.orbs_count > 0.1) {
+                speed_f = 10;
+                base.orbs_count -= 0.01;
+            }
+
+            base.x += base.speedX * speed_f + base.offsetx;
+            base.y += base.speedY * speed_f + base.offsety;
+
 
             if (base.closest_planet) {
                 if (base.closest_planet.destination) {
@@ -377,11 +386,11 @@ define([
                     var orb = orbs[k];
                     var d = base.distanceTo(orb);
                     var u = base.unitVectorTo(orb);
-                    if (d < 4000) {
-                        orb.offsetx += d > 10 ? u.x * 30 * 1000 / (d > 100 ? d / 5 : 20) : 0;
-                        orb.offsety += d > 10 ? u.y * 30 * 1000 / (d > 100 ? d / 5 : 20) : 0;
+                    if (d < 10000) {
+                        orb.offsetx += d > 10 ? u.x * (base.speed + 5) : 0;
+                        orb.offsety += d > 10 ? u.y * (base.speed + 5) : 0;
                     }
-                    if (d < 100) {
+                    if (d < 900) {
                         if (orb.type === "energy") {
                             base.orbs_count++;
                             base.score += 1;
@@ -426,6 +435,8 @@ define([
                 base.y = base.planet.y + base.planet.radius + 100;
                 base.speedX = 0;
                 base.speedY = 0;
+                base.accelerationX = 0;
+                base.accelerationY = 0;
             }
         }
     });

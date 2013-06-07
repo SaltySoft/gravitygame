@@ -3,12 +3,8 @@ define([
     './layer',
     './game_layer/inputs_engine',
     './game_layer/physics_engine',
-    './game_layer/graphics_engine',
-    './game_layer/game_objects/planet',
-    './game_layer/game_objects/player',
-    './game_layer/level_generator',
-    './game_layer/vector'
-], function (Class, Layer, InputsEngine, PhysicsEngine, GraphicsEngine, Planet, Player, LevelGenerator, Vector) {
+    './game_layer/graphics_engine'
+], function (Class, Layer, InputsEngine, PhysicsEngine, GraphicsEngine) {
     var MenuLayer = Layer.create();
 
     MenuLayer.include({

@@ -25,27 +25,29 @@ define([
             var acids = 0;
             var earths = 0;
             var lives = [];
-            for (var i = 0; i < 50; i++) {
+            for (var i = 0; i < 100; i++) {
 
                 var planet_rand = Math.round(Math.random() * 10);
                 var planet_type = "";
 
-                if (lifes < 3) {
-                    if (Math.random() * (3 - lifes) < 0.7) {
-                        planet_type = "life";
-                        lifes++;
-                    }
-                } else if (earths < 5) {
+
+                if (earths < 25) {
                     if (Math.random() * (5 - earths) < 0.7) {
                         planet_type = "earth";
                         earths++;
                     }
-                } else if (acids < 5) {
+                }
+                else if (lifes < 3) {
+                    if (Math.random() * (3 - lifes) < 0.7) {
+                        planet_type = "life";
+                        lifes++;
+                    }
+                } else if (acids < 25) {
                     if (Math.random() * (5 - acids) < 0.7) {
                         planet_type = "acid";
                         acids++;
                     }
-                } else if (waters < 5) {
+                } else if (waters < 25) {
                     if (Math.random() * (5 - waters) < 0.7) {
                         planet_type = "water";
                         waters++;
@@ -68,7 +70,6 @@ define([
                         case 3:
 
 
-
                             break;
                         default:
                             energies++
@@ -77,12 +78,11 @@ define([
                 }
 
 
-
                 var radius = 500 + 200 * Math.random()
                 var speed = 0.5 + (Math.random() * 1.5);
                 var planet = Planet.init(layer, {
                     center: center,
-                    orbit_distance: i * (2 * radius + 4 * 4000) + (center.radius + 16000) /*+ ( 500 * (Math.random()))*/,
+                    orbit_distance: i * (2 * radius + 4 * 4000) + (center.radius + 40000) /*+ ( 500 * (Math.random()))*/,
                     speed_factor: speed,
                     radius: radius,
                     planet_type: planet_type,
@@ -106,7 +106,7 @@ define([
             player: player,
             generate: generate,
             life_planets: lives,
-            sun : center
+            sun: center
         };
     };
 

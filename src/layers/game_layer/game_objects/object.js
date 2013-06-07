@@ -1,7 +1,6 @@
 define([
-    'class',
-    'vector'
-], function (Class, Vector) {
+    'class'
+], function (Class) {
     var Obj = Class.create();
 
     Obj.extend({
@@ -64,12 +63,12 @@ define([
         gravityTo: function (object) {
             var base = this;
             var distance = base.distanceTo(object);
-            if (distance > 200 + object.radius) {
-                var coeff = distance;
+            if (distance > 20 + object.radius) {
+                var coeff = distance / 100;
             } else {
-                var coeff = distance * distance;
+                var coeff = distance * distance * 100;
             }
-            var force = (500 * base.mass + object.mass) / coeff;
+            var force = (10 * base.mass + object.mass) / coeff;
             return force;
         },
         unitVectorTo: function (object) {
@@ -165,6 +164,7 @@ define([
                         x: addx,
                         y: addy
                     });
+                    base.active = true;
                 }
             }
         }

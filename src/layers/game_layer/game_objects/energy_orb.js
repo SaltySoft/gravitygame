@@ -45,7 +45,7 @@ define([
         },
         draw: function (gengine) {
             var base = this;
-            if (base.center && base.center.close) {
+            if (base.center && base.center.close && !base.center.destination) {
                 base.radius = 3 / gengine.layer.camera.zoom;
 
 
@@ -67,17 +67,19 @@ define([
                     default :
                         break;
                 };
+                if (gengine.layer.camera.zoom > 0.001) {
+                    gengine.beginPath();
 
-                gengine.beginPath();
+                    gengine.drawCircle({
+                        x: base.x,
+                        y: base.y,
+                        radius: base.radius,
+                        fill_style: rad
+                    });
 
-                gengine.drawCircle({
-                    x: base.x,
-                    y: base.y,
-                    radius: base.radius,
-                    fill_style: rad
-                });
+                    gengine.closePath();
+                }
 
-                gengine.closePath();
             }
 
         }
