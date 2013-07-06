@@ -39,8 +39,17 @@ define([
             context.fillStyle = "white";
             var metrics1 = context.measureText("You won")
             var metrics2 = context.measureText("Your score :" + base.score + " points")
-            context.fillText("You won", base.game.canvas.width / 2 - metrics1.width /2, base.game.canvas.height / 2 - 300);
+            context.fillText("You won", base.game.canvas.width / 2 - metrics1.width / 2, base.game.canvas.height / 2 - 300);
             context.fillText("Your score :" + base.score + " points", base.game.canvas.width / 2 - metrics2.width / 2, base.game.canvas.height / 2 - 200);
+        },
+        addImage: function (resource, x, y, width, height) {
+
+        },
+        addText: function (text, x, y, font) {
+
+        },
+        addButton: function () {
+
         }
     });
 
