@@ -7,8 +7,9 @@ define([
     './game_layer/game_objects/planet',
     './game_layer/game_objects/player',
     './game_layer/level_generator',
-    './game_layer/vector'
-], function (Class, Layer, InputsEngine, PhysicsEngine, GraphicsEngine, Planet, Player, LevelGenerator, Vector) {
+    './game_layer/vector',
+    './menu_layers/pause_menu'
+], function (Class, Layer, InputsEngine, PhysicsEngine, GraphicsEngine, Planet, Player, LevelGenerator, Vector, PauseMenu) {
     var GameLayer = Layer.create();
 
     GameLayer.include({
@@ -46,6 +47,7 @@ define([
                 base.planets.push(base.level.planets[k]);
             }
             base.running = base.game.focused;
+            base.paused = false;
         },
         cameraPos: function (params) {
             var base = this;
@@ -58,6 +60,9 @@ define([
         logic: function () {
             var base = this;
 
+            if (base.last) {
+                base.paused = false;
+            }
 
             for (var k in base.objects) {
                 base.objects[k].logic(base);
@@ -80,10 +85,22 @@ define([
                 }
             }
 
+            if (base.inputs_engine.keyPressed(80)) {
+                base.pauseMenu();
+            }
+
         },
         inputs: function () {
             var base = this;
             base.inputs_engine.run();
+
+        },
+        pauseMenu: function () {
+            var base = this;
+            base.paused = true;
+            base.game.running = true;
+            var pause_layer = PauseMenu.init(base.game);
+            base.game.addLayer(pause_layer);
 
         },
         physics: function () {
@@ -181,17 +198,20 @@ define([
 
 
 
-            if (!base.running) {
-                base.graphics_engine.drawCache();
-                context.font="25px verdana";
-                context.fillStyle = "white";
-                var text = "Click on the screen to play";
-                var metrics = context.measureText(text);
-                context.fillText( "Click on the screen to play", base.game.canvas.width / 2 - metrics.width / 2, base.game.canvas.height / 2 - 25);
-            }
+
 
             base.inputs_engine.draw();
             base.graphics_engine.run();
+        },
+        layerRun: function (last) {
+            var base = this;
+            base.last = last;
+            if (!base.running) {
+                if (!base.paused) {
+                    base.pauseMenu();
+                }
+            }
+
         },
         pauseGame: function () {
             var base = this;

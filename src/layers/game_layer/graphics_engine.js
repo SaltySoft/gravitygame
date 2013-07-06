@@ -16,7 +16,6 @@ define([
             base.canvas =  layer.game.canvas;
             base.images = [];
             base.notifications = [];
-            console.log(layer);
         },
 
         run: function () {

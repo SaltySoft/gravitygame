@@ -106,7 +106,6 @@ define([
 //
 //            });
             base.lockMouse();
-            console.log("new inputs");
             $(layer.game.canvas).click(function () {
                 base.requestLocks();
             });

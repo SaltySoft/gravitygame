@@ -26,7 +26,6 @@ define([
             base.context = base.canvas.getContext("2d");
             $(base.canvas).css("background-color", "black");
 
-//            $(base.canvas).css("background-image", "url('src/resources/space02.gif')");
             base.resetSize();
             $(base.canvas).attr("oncontextmenu", "return false;");
             $(document).css("overflow", "hidden");
@@ -36,13 +35,12 @@ define([
             base.layers = [];
             $(container).append(base.canvas);
             base.context = base.canvas.getContext('2d');
-//            base.newGame();
             if (window.mozRequestAnimationFrame)
                 base.anfunc = window.mozRequestAnimationFrame;
             else if (window.requestAnimationFrame)
                 base.anfunc = window.requestAnimationFrame;
             base.score = 0;
-//            base.clearLayers();
+
             base.startMenu();
 
         },

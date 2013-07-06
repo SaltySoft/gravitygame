@@ -13,8 +13,6 @@ define([
                 base.game.clearLayers();
                 base.game.newGame();
             });
-
-            console.log(base.game.score);
         }
     });
 

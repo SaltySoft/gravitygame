@@ -27,6 +27,9 @@ define([
                 base.physics();
             }
             base.draw();
+            base.layerRun(last);
+        },
+        layerRun: function (last) {
         }
     });
 
