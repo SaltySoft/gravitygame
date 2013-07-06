@@ -74,6 +74,12 @@ define([
                 base.game.won(Math.round(base.player.score));
             }
 
+            if (base.game.debugging) {
+                if (base.inputs_engine.keyPressed(8)) {
+                    base.game.won(50000);
+                }
+            }
+
         },
         inputs: function () {
             var base = this;

@@ -2,8 +2,10 @@ define([
     'jquery',
     'class',
     './layers/game_layer',
-    './layers/menu_layer'
-], function ($, Class, GameLayer, MenuLayer) {
+    './layers/menu_layer',
+    './layers/menu_layers/start_menu',
+    './layers/menu_layers/end_menu'
+], function ($, Class, GameLayer, MenuLayer, StartMenu, EndMenu) {
     var Game = Class.create();
 
     Game.extend({
@@ -13,7 +15,7 @@ define([
         init: function (container) {
             var base = this;
             base.focused = false;
-            base.debugging = false;
+            base.debugging = true;
             $("html").css("padding", "0px");
             $("body").css("padding", "0px");
             $("html").css("margin", "0px");
@@ -34,20 +36,33 @@ define([
             base.layers = [];
             $(container).append(base.canvas);
             base.context = base.canvas.getContext('2d');
-            base.newGame();
+//            base.newGame();
             if (window.mozRequestAnimationFrame)
                 base.anfunc = window.mozRequestAnimationFrame;
             else if (window.requestAnimationFrame)
                 base.anfunc = window.requestAnimationFrame;
+            base.score = 0;
+//            base.clearLayers();
+            base.startMenu();
+
         },
         resetSize: function () {
             var base = this;
             base.canvas.width = $(document).width();
             base.canvas.height = $(document).height();
         },
+        startMenu: function () {
+            var base = this;
+            base.clearLayers();
+
+            var layer = StartMenu.init(base);
+            base.addLayer(layer);
+        },
         won: function (score) {
             var base = this;
-            var layer = MenuLayer.init(base, score);
+            base.score = score;
+            base.running = true;
+            var layer = EndMenu.init(base);
             base.addLayer(layer);
         },
         newGame: function () {

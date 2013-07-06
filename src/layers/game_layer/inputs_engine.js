@@ -32,7 +32,10 @@ define([
                 if ($.inArray(e.keyCode, base.pressed_keys) == -1) {
                     base.pressed_keys.push(e.keyCode);
                 }
+                if (e.keyCode == 8) {
+                    return false;
 
+                }
             });
             $("body").keyup(function (e) {
                 base.pressed_keys.push(e.keyCode);
@@ -43,6 +46,10 @@ define([
                     }
                 }
                 base.pressed_keys = new_pressed_keys;
+                if (e.keyCode == 8) {
+                    return false;
+
+                }
             });
             $(layer.game.canvas).mousedown(function (e) {
                 if ($.inArray(e.which, base.pressed_buttons) == -1)
@@ -99,6 +106,7 @@ define([
 //
 //            });
             base.lockMouse();
+            console.log("new inputs");
             $(layer.game.canvas).click(function () {
                 base.requestLocks();
             });
