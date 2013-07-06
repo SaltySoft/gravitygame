@@ -1,7 +1,6 @@
 define([
-    'class',
-    'vector'
-], function (Class, Vector) {
+    'class'
+], function (Class) {
     var Obj = Class.create();
 
     Obj.extend({
@@ -34,8 +33,7 @@ define([
 
 
             base.layer = layer;
-
-
+            base.active_planets = [];
 
             base.forces = [];
         },
@@ -65,12 +63,12 @@ define([
         gravityTo: function (object) {
             var base = this;
             var distance = base.distanceTo(object);
-            if (distance < 500) {
-                var coeff = (200 * (distance / 500))
+            if (distance > 20 + object.radius) {
+                var coeff = distance / 100;
             } else {
-                var coeff = 200;
+                var coeff = distance * distance * 100;
             }
-            var force = (0.9 * base.mass + object.mass) / coeff;
+            var force = (10 * base.mass + object.mass) / coeff;
             return force;
         },
         unitVectorTo: function (object) {
@@ -137,19 +135,22 @@ define([
                     y: unit.x
                 };
 
-                var active_planet = distance < base.radius + 500 || object.closest_planet.distanceTo(base) < 1000 &&
-                    (distance < base.radius + 500 || object.closest_distance < object.closest_planet.radius + 500);
+//                var active_planet = distance < base.radius + 500 || object.closest_planet.distanceTo(base) < 1000 &&
+//                    (distance < base.radius + 500 || object.closest_distance < object.closest_planet.radius + 500);
 
-                if (active_planet && !layer.inputs_engine.keyPressed(192)) {
-                    var angle = Math.atan(tangent.y / tangent.x);
-                    object.addAngle(angle, 1 / distance);
-                    object.addCenter({
-                        x: base.x,
-                        y: base.y
-                    });
-                }
+                var active_planet = distance < base.radius + base.grav_influence;
+
+//                if (active_planet && !layer.inputs_engine.keyPressed(192)) {
+//                    var angle = Math.atan(tangent.y / tangent.x);
+//                    object.addAngle(angle, 1 / distance);
+//                    object.addCenter({
+//                        x: base.x,
+//                        y: base.y
+//                    });
+//                }
 
                 if (active_planet) {
+                    object.active_planets.push(base);
 
                     if (base.radius >= distance) {
                         addx = 0;
@@ -163,6 +164,7 @@ define([
                         x: addx,
                         y: addy
                     });
+                    base.active = true;
                 }
             }
         }
