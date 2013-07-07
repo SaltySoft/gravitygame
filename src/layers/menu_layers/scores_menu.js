@@ -12,17 +12,21 @@ define([
             base.addText("High Scores", 0.5, 0.5, 0, -100, true);
 
             var scores = amplify.store("gravitygame_scores");
-
-            for (var i = 0; i < (scores.length > 10 ? 10 : scores.length); i++) {
-                var date = new Date(scores[i].date);
-                var score = scores[i].score;
-                base.addText((date.getDate() < 10 ? "0" : "") +  date.getDate() + "/" +
-                    (date.getMonth() < 10 ? "0" : "") + date.getMonth() + "/" +
-                    date.getFullYear() + " at " +
-                    (date.getHours() < 10 ? "0" : "") + date.getHours() + ":" + (date.getMinutes() < 10 ? "0" : "") + date.getMinutes() +
-                    " --- " + Math.round(score) +  " points"
-                    , 0.5, 0.5, 0, -60 +  i * 20, true);
+            if (scores) {
+                for (var i = 0; i < (scores.length > 10 ? 10 : scores.length); i++) {
+                    var date = new Date(scores[i].date);
+                    var score = scores[i].score;
+                    base.addText((date.getDate() < 10 ? "0" : "") +  date.getDate() + "/" +
+                        (date.getMonth() < 10 ? "0" : "") + date.getMonth() + "/" +
+                        date.getFullYear() + " at " +
+                        (date.getHours() < 10 ? "0" : "") + date.getHours() + ":" + (date.getMinutes() < 10 ? "0" : "") + date.getMinutes() +
+                        " --- " + Math.round(score) +  " points"
+                        , 0.5, 0.5, 0, -60 +  i * 20, true);
+                }
+            } else {
+                base.addText("No scores yet", 0.5, 0.5, 0, -50, true);
             }
+
 
             base.addButton("Main menu", 0.5, 0.7,-75, 0, 150, 30, "#BF3030", function () {
                 base.game.popLayer();
