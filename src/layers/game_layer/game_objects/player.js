@@ -58,6 +58,7 @@ define([
             base.orbs_consumption = 0;
             base.score = 0;
             base.previous_closest = 0;
+            base.show_radar = true;
         },
         addAngle: function (angle, weight) {
             var base = this;
@@ -127,6 +128,8 @@ define([
             base.closest_distance = -1;
 
 
+
+
         },
         draw: function (gengine) {
             var base = this;
@@ -172,10 +175,15 @@ define([
             }
             gengine.beginPath();
             gengine.moveTo({x: base.x, y: base.y});
+            var normalized_vector = Vector.normalize({
+                x: (base.layer.level.sun.x - base.x),
+                y: (base.layer.level.sun.y - base.y)
+            });
+
             gengine.lineTo({
-                x: base.layer.level.sun.x,
-                y: base.layer.level.sun.y
-            }, "rgba(255, 255, 255, 0.1)", 1);
+                x:  base.x + normalized_vector.x * 50 / base.layer.camera.zoom,
+                y: base.y + normalized_vector.y * 50 / base.layer.camera.zoom
+            }, "rgba(255, 255, 255, 0.5)", 1);
 
             if (base.mouse_attracted) {
                 gengine.beginPath();
@@ -190,10 +198,20 @@ define([
             for (var k in base.layer.level.life_planets) {
                 gengine.beginPath();
                 gengine.moveTo({x: base.x, y: base.y});
+
+                var normalized_vector = Vector.normalize({
+                    x: (base.layer.level.life_planets[k].x - base.x),
+                    y: (base.layer.level.life_planets[k].y - base.y)
+                });
+
+                gengine.moveTo({
+                    x: base.x,
+                    y: base.y
+                });
                 gengine.lineTo({
-                    x: base.layer.level.life_planets[k].x,
-                    y: base.layer.level.life_planets[k].y
-                }, "rgba(0, 100, 255, 0.1)", 1);
+                    x: base.x + normalized_vector.x * 50 / base.layer.camera.zoom,
+                    y: base.y + normalized_vector.y * 50 / base.layer.camera.zoom
+                }, "#228751", 2);
             }
 
             base.forces = [];

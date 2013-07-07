@@ -199,29 +199,39 @@ define([
             if (base.show_hints) {
                 var text = "[Maj] Ultra speed engine";
                 var metrics = ctx.measureText(text);
-                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 60);
+                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 80);
 
                 var text = "[Space] Anti gravity ray";
                 var metrics = ctx.measureText(text);
-                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 80);
+                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 100);
 
                 var text = "[Left click] Accelerate towards pointer";
                 var metrics = ctx.measureText(text);
-                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 40);
+                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 60);
 
                 var text = "[Middle click] Zoom";
                 var metrics = ctx.measureText(text);
-                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 20);
+                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 40);
 
                 var text = "[Right click] Camera move";
                 var metrics = ctx.measureText(text);
-                ctx.fillText(text, posx + 5 - metrics.width / 2, posy);
+                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 20);
 
+                var text = "Green radar lines indicate potential life planets";
+                var metrics = ctx.measureText(text);
+                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 180);
 
+                var text = "White radar line indicates the sun";
+                var metrics = ctx.measureText(text);
+                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 160);
+
+                var text = "Blue lines indicate gravitation influence";
+                var metrics = ctx.measureText(text);
+                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 140);
 
                 var text = "[H] Hide commands help";
                 var metrics = ctx.measureText(text);
-                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 100);
+                ctx.fillText(text, posx + 5 - metrics.width / 2, posy);
             } else {
                 var text = "[H] Show commands help";
                 var metrics = ctx.measureText(text);
