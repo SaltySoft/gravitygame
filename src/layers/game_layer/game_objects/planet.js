@@ -104,13 +104,19 @@ define([
             }
 
 
+
             base.angle = obj.angle ? obj.angle : Math.random() * Math.PI * 2;
             base.image_disx = 0;
             base.image_ddx = 1;
             base.image_disy = 0;
             base.image_factor = 0;
 
+            if (base.planet_type == "life") {
+                console.log("INIT PLANET L", layer);
+            }
+
             base.previous_alive = false;
+            base.warmup = 0;
         },
         setVector: function (x, y) {
             var base = this;
@@ -124,6 +130,12 @@ define([
         },
         physics: function (layer) {
             var base = this;
+            base.layer = layer;
+            if (layer.inputs_engine.keyPressed(16)) {
+                base.water_counts = 10;
+                base.earth_counts = 10;
+                base.acid_counts = 10;
+            }
 
             if (base.planet_type == "sun")
                 base.temperature = base.orbs.length > base.radius / 2 ? 1000 : base.orbs.length / (base.radius / 2) * 1000;
@@ -153,7 +165,15 @@ define([
 
             if (base.planet_type == "life" && base.center && Vector.distance(base.center, base) < base.center.influence &&
                 base.water_counts >= 10 && base.earth_counts >= 10 && base.acid_counts >= 10) {
-                base.alive = true;
+
+                if (base.warmup == 500) {
+                    base.alive = true;
+                    base.warming = false;
+                } else {
+                    base.warming = true;
+                    base.warmup += 1;
+                }
+
                 if (!base.previous_alive) {
                     layer.player.score += 1000;
                 }

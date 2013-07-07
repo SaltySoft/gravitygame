@@ -49,10 +49,10 @@ define([
             base.mouse_position = { x: 0, y: 0 };
 
             base.orbs_count = base.layer.game.debugging ? 1000 : 5;
-            base.water_orbs = base.layer.game.debugging ? 100 : 0;
-            base.acid_orbs = base.layer.game.debugging ? 100 : 0;
-            base.earth_orbs = base.layer.game.debugging ? 100 : 0;
-            base.shield_orbs = base.layer.game.debugging ? 100 : 0;
+            base.water_orbs = base.layer.game.debugging ? 10 : 0;
+            base.acid_orbs = base.layer.game.debugging ? 10 : 0;
+            base.earth_orbs = base.layer.game.debugging ? 10 : 0;
+            base.shield_orbs = base.layer.game.debugging ? 10 : 0;
             base.moved = false;
             base.orbs = [];
             base.orbs_consumption = 0;

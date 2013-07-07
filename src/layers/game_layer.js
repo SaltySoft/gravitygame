@@ -62,6 +62,7 @@ define([
                     base.life_planets++;
                 }
             }
+            base.warmup_percentage = 0;
         },
         cameraPos: function (params) {
             var base = this;
@@ -83,6 +84,8 @@ define([
             }
             var won = true;
             base.alive_planets = 0;
+            base.warmup_percentage = 0;
+            base.warming_planets = 0;
             for (var k in base.planets) {
                 var planet = base.planets[k];
                 if (!planet.alive && planet.planet_type == "life") {
@@ -90,8 +93,15 @@ define([
                 }
                 if (planet.planet_type == "life" && planet.alive) {
                     base.alive_planets++;
+                    base.warmup_percentage += 1;
+                }
+                if (planet.planet_type == "life" && planet.warming) {
+                    base.warming_planets++;
+                    base.warmup_percentage += planet.warmup / 500;
                 }
             }
+
+            base.warmup_percentage = Math.round(base.warmup_percentage / base.life_planets * 100);
 
             if (won) {
                 base.finished = true;
@@ -191,7 +201,7 @@ define([
 
                 base.physics_engine.run();
                 for (var k in base.planets)
-                    base.planets[k].physics();
+                    base.planets[k].physics(base);
             }
 
         },

@@ -142,8 +142,11 @@ define([
                         ctx.fillText("Touched by sunrays", 35, line_y + 35);
                     else
                         ctx.fillText("Untouched by sunrays", 35, line_y + 35);
+                    if (planet.warming) {
+                        ctx.fillText("Planet currently warming " + planet.warmup / 500 + "%", 10, line_y + 55);
+                    }
                     if (planet.acid_counts < 10 || planet.earth_counts < 10 || planet.water_orbs < 10)
-                        ctx.fillText("[Enter] : drop orbs", 10, line_y + 55);
+                        ctx.fillText("[Enter] : drop orbs", 10, line_y + 75);
                 }
             } else {
                 ctx.fillText("No near planet", 10, posy + 10);
@@ -173,7 +176,9 @@ define([
             ctx.fillStyle = "white";
             ctx.fillText("Objectives", posx + 5, posy + 20);
             ctx.fillText(base.layer.alive_planets + "/" + base.layer.life_planets +  " planets to revive", posx + 5, posy + 40);
-            ctx.fillText(base.layer.warming_planets +  " planets planets warming", posx + 5, posy + 60);
+            if (base.layer.warming_planets > 0)
+                ctx.fillText(base.layer.warming_planets +  " planets planets warming", posx + 5, posy + 60);
+            ctx.fillText(base.layer.warmup_percentage +  "% of success", posx + 5, posy + 80);
         },
         drawHints: function () {
             var base = this;
@@ -214,9 +219,6 @@ define([
                 var metrics = ctx.measureText(text);
                 ctx.fillText(text, posx + 5 - metrics.width / 2, posy);
             }
-
-
-
         },
         draw: function () {
             var base = this;
@@ -233,7 +235,6 @@ define([
             } else {
                 base.hpressed = false;
             }
-
         }
     });
 
