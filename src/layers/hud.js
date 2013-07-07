@@ -202,7 +202,7 @@ define([
                 ctx.strokeStyle = "rgba(255,255,255,0.5);";
                 ctx.lineWidth = 2;
                 ctx.beginPath();
-                ctx.rect(395, posy - 215, 365, 225);
+                ctx.rect(canvas.width / 2 - 175, posy - 215, 365, 225);
                 ctx.fill();
                 ctx.stroke();
 
