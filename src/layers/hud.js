@@ -15,17 +15,19 @@ define([
             var images = {};
 
             images.eorb = new Image();
-            images.eorb.src = "/resources/orb_energy.png";
+            images.eorb.src = "resources/orb_energy.png";
             images.worb = new Image();
-            images.worb.src = "/resources/orb_water.png";
+            images.worb.src = "resources/orb_water.png";
             images.torb = new Image();
-            images.torb.src = "/resources/orb_earth.png";
+            images.torb.src = "resources/orb_earth.png";
             images.aorb = new Image();
-            images.aorb.src = "/resources/orb_acid.png";
+            images.aorb.src = "resources/orb_acid.png";
             images.norb = new Image();
-            images.norb.src = "/resources/orb_absent.png";
+            images.norb.src = "resources/orb_absent.png";
             images.battery = new Image();
-            images.battery.src = "/resources/battery.png";
+            images.battery.src = "resources/battery.png";
+            images.lightning = new Image();
+            images.lightning.src = "resources/lightning.png";
 
             base.images = images;
             base.show_hints = false;
@@ -86,7 +88,7 @@ define([
             var canvas = base.layer.game.canvas;
             var posy = canvas.height - 110;
             var posx = 5;
-            var height = 110;
+            var height = 115;
             var width = 250;
 
             var ctx = base.layer.game.context;
@@ -137,16 +139,16 @@ define([
                     ctx.fillText(planet.earth_counts + "/10", 105, line_y + 15);
                     ctx.drawImage(base.images.aorb, 155, line_y);
                     ctx.fillText(planet.acid_counts + "/10", 175, line_y + 15);
-                    ctx.drawImage(base.images.battery, 10, line_y + 20);
+                    ctx.drawImage(base.images.lightning, 10, line_y + 23);
                     if (planet.distanceTo(planet.center) < planet.center.influence)
-                        ctx.fillText("Touched by sunrays", 35, line_y + 35);
+                        ctx.fillText("Touched by sunrays", 35, line_y + 40);
                     else
-                        ctx.fillText("Untouched by sunrays", 35, line_y + 35);
+                        ctx.fillText("Untouched by sunrays", 35, line_y + 40);
                     if (planet.warming) {
                         ctx.fillText("Planet currently warming " + planet.warmup / 500 + "%", 10, line_y + 55);
                     }
                     if (planet.acid_counts < 10 || planet.earth_counts < 10 || planet.water_orbs < 10)
-                        ctx.fillText("[Enter] : drop orbs", 10, line_y + 75);
+                        ctx.fillText("[Enter] : drop orbs", 10, line_y + 60);
                 }
             } else {
                 ctx.fillText("No near planet", 10, posy + 10);

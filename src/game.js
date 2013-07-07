@@ -22,6 +22,8 @@ define([
             $("body").css("margin", "0px");
             $("html").css("overflow", "hidden");
             $("body").css("overflow", "hidden");
+            base.sound_container = $(".sound");
+
             base.canvas = document.createElement("canvas");
             base.context = base.canvas.getContext("2d");
             $(base.canvas).css("background-color", "black");
@@ -42,7 +44,19 @@ define([
             base.score = 0;
 
             base.startMenu();
-
+            base.current_music = 0;
+            base.music_playing = false;
+            if (base.sound_container) {
+                base.sound_container.bind("ended", function () {
+                    base.current_music++;
+                    base.current_music %= 3;
+                    base.sound_container.html('<source src="resources/music/circus_' + base.current_music + '.mp3" type="audio/mpeg">');
+                    base.sound_container[0].volume = 0.2;
+                    base.sound_container[0].play();
+                });
+            }
+            base.volume = 0.2;
+            base.startMusic();
         },
         resetSize: function () {
             var base = this;
@@ -71,6 +85,46 @@ define([
             base.running = true;
             var layer = EndMenu.init(base);
             base.addLayer(layer);
+        },
+        startMusic: function () {
+            var base = this;
+
+            if (base.sound_container) {
+                base.music_playing = true;
+                base.sound_container.html('<source src="resources/music/circus_' + base.current_music + '.mp3" type="audio/mpeg">');
+                base.sound_container[0].volume = base.volume;
+
+                base.sound_container[0].play();
+
+
+            }
+        },
+        volumeDown: function () {
+            var base = this;
+            base.volume -= 0.05;
+            if (base.volume < 0) {
+                base.volume = 0;
+            }
+            if (base.sound_container) {
+                base.sound_container[0].volume = base.volume;
+            }
+        },
+        volumeUp: function () {
+            var base = this;
+            base.volume += 0.05;
+            if (base.volume > 1) {
+                base.volume = 1;
+            }
+            if (base.sound_container) {
+                base.sound_container[0].volume = base.volume;
+            }
+        },
+        stopMusic: function () {
+            var base = this;
+            if (base.sound_container) {
+                base.sound_container[0].pause();
+                base.music_playing = false;
+            }
         },
         newGame: function () {
             var base = this;

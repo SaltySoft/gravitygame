@@ -131,7 +131,7 @@ define([
         physics: function (layer) {
             var base = this;
             base.layer = layer;
-            if (layer.inputs_engine.keyPressed(16)) {
+            if (layer.game.debugging && layer.inputs_engine.keyPressed(16)) {
                 base.water_counts = 10;
                 base.earth_counts = 10;
                 base.acid_counts = 10;
