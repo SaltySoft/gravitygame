@@ -111,7 +111,7 @@ define([
             if (base.game.debugging) {
                 if (base.inputs_engine.keyPressed(8)) {
                     base.finished = true;
-                    base.game.won(50000);
+                    base.game.won(Math.round(50000 + Math.random() * 5000));
                 }
             }
 

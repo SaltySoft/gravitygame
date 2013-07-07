@@ -8,11 +8,16 @@ define([
         menu_init: function () {
             var base = this;
 
-            base.addText("Gravity game", 0.5, 0.5, 0, -50, true);
-            base.addButton("New game", 0.5, 0.5, -75, -33, 150, 30, "#BF3030", function () {
+            base.addText("Gravity game", 0.5, 0.5, 0, -80, true);
+            base.addButton("New game", 0.5, 0.5, -75, -66, 150, 30, "#BF3030", function () {
                 base.game.clearLayers();
                 base.game.newGame();
             });
+            base.addButton("Scores", 0.5, 0.5, -75, -33, 150, 30, "#BF3030", function () {
+
+                base.game.scoresMenu();
+            });
+
             base.addButton("Toggle music", 0.5, 0.5, -75, 33, 150, 30, "#BF3030", function () {
                 if (base.game.music_playing) {
                     base.game.stopMusic();
@@ -44,8 +49,6 @@ define([
             var ctx = base.game.context;
 
             ctx.drawImage(base.bg, base.offx, base.offy);
-
-            console.log("bg");
         },
         resetSize: function (widthchange, heightchange) {
             var base = this;

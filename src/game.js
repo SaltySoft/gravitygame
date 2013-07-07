@@ -4,8 +4,9 @@ define([
     './layers/game_layer',
     './layers/menu_layer',
     './layers/menu_layers/start_menu',
-    './layers/menu_layers/end_menu'
-], function ($, Class, GameLayer, MenuLayer, StartMenu, EndMenu) {
+    './layers/menu_layers/end_menu',
+    './layers/menu_layers/scores_menu'
+], function ($, Class, GameLayer, MenuLayer, StartMenu, EndMenu, ScoreMenu) {
     var Game = Class.create();
 
     Game.extend({
@@ -15,7 +16,7 @@ define([
         init: function (container) {
             var base = this;
             base.focused = false;
-            base.debugging = false;
+            base.debugging = true;
             $("html").css("padding", "0px");
             $("body").css("padding", "0px");
             $("html").css("margin", "0px");
@@ -80,6 +81,11 @@ define([
             base.clearLayers();
 
             var layer = StartMenu.init(base);
+            base.addLayer(layer);
+        },
+        scoresMenu: function () {
+            var base = this;
+            var layer = ScoreMenu.init(base);
             base.addLayer(layer);
         },
         won: function (score) {

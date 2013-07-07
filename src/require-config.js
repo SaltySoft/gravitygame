@@ -3,7 +3,8 @@ requirejs.config({
     paths: {
         'jquery' : '../libs/jquery',
         'class' : '../libs/class',
-        'vector' : './layers/game_layer/vector'
+        'vector' : './layers/game_layer/vector',
+        'amplify' : '../libs/amplify.min'
     },
     shim: {}
 });

@@ -1,8 +1,13 @@
 define([
     'class',
-    '../menu_layer'
+    '../menu_layer',
+    'amplify'
 ], function (Classe, MenuLayer) {
     var EndMenu = MenuLayer.create();
+
+    function compare(o1, o2) {
+        return - o1.score + o2.score;
+    }
 
     EndMenu.include({
         menu_init: function () {
@@ -19,6 +24,21 @@ define([
                 base.game.startMenu();
             });
             console.log(base.game.score);
+            var scores = amplify.store("gravitygame_scores");
+
+            if (!scores) {
+                scores = [];
+            }
+
+            var current_score = {
+                score: base.game.score,
+                date: new Date()
+            };
+
+            scores.push(current_score);
+            scores.sort(compare);
+
+            amplify.store("gravitygame_scores", scores);
         }
     });
 
