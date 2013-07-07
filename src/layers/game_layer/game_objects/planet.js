@@ -54,7 +54,7 @@ define([
             base.destination = obj.destination ? obj.destination : false;
             base.orbs = [];
             base.origin_orbs = 0;
-            base.grav_influence = base.destination ? 20000 : 8000;
+            base.grav_influence = base.destination ? 20000 : 15000;
             base.alive = false;
             base.active = false;
             base.previous_active = false;
@@ -104,13 +104,19 @@ define([
             }
 
 
+
             base.angle = obj.angle ? obj.angle : Math.random() * Math.PI * 2;
             base.image_disx = 0;
             base.image_ddx = 1;
             base.image_disy = 0;
             base.image_factor = 0;
 
+            if (base.planet_type == "life") {
+                console.log("INIT PLANET L", layer);
+            }
+
             base.previous_alive = false;
+            base.warmup = 0;
         },
         setVector: function (x, y) {
             var base = this;
@@ -124,6 +130,12 @@ define([
         },
         physics: function (layer) {
             var base = this;
+            base.layer = layer;
+            if (layer.game.debugging && layer.inputs_engine.keyPressed(16)) {
+                base.water_counts = 10;
+                base.earth_counts = 10;
+                base.acid_counts = 10;
+            }
 
             if (base.planet_type == "sun")
                 base.temperature = base.orbs.length > base.radius / 2 ? 1000 : base.orbs.length / (base.radius / 2) * 1000;
@@ -153,7 +165,15 @@ define([
 
             if (base.planet_type == "life" && base.center && Vector.distance(base.center, base) < base.center.influence &&
                 base.water_counts >= 10 && base.earth_counts >= 10 && base.acid_counts >= 10) {
-                base.alive = true;
+
+                if (base.warmup == 500) {
+                    base.alive = true;
+                    base.warming = false;
+                } else {
+                    base.warming = true;
+                    base.warmup += 1;
+                }
+
                 if (!base.previous_alive) {
                     layer.player.score += 1000;
                 }
@@ -228,7 +248,7 @@ define([
             var radius = base.radius;
             base.color = "rgb(0, 0, 0)";
             if (base.destination) {
-                base.color = "rgb(" + Math.round(255 * (base.temperature / 1000)) + ", " + Math.round(255 * (base.temperature / 1000)) + ", " + Math.round(255 * ( base.temperature / 1000)) + ")";
+               base.color = "rgb(" + Math.round(255 * (base.temperature / 1000)) + ", " + Math.round(255 * (base.temperature / 1000)) + ", " + Math.round(255 * ( base.temperature / 1000)) + ")";
 
             }
 
@@ -245,11 +265,19 @@ define([
                 for (var k in base.orbs) {
                     base.orbs[k].draw(gengine);
                 }
+            if (base.planet_type == "life" && base.alive) {
+                gengine.drawCircle({
+                    x: x,
+                    y: y,
+                    radius: radius * 30,
+                    fill_style: "rgba(255,255,255,0.3)"
+                });
+            }
             if (base.destination) {
                 var disp = base.influence > 0 ? base.influence / 20000: 0.01;
 
                 base.radius = 500 * disp;
-                gengine.drawImage("sun.png", base.x, base.y, 500 * disp, 512 * disp, 4608 / 9 * base.image_disx, 0, 512, 512);
+                gengine.drawImage("sun.png", base.x, base.y, 1100 * disp, 1124 * disp, 4608 / 9 * base.image_disx, 0, 512, 512);
                 if (base.image_factor % 10 == 0) {
 
                     if (base.image_disx > 7) {

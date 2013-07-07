@@ -48,16 +48,18 @@ define([
             base.mouse_attracted = false;
             base.mouse_position = { x: 0, y: 0 };
 
-            base.orbs_count = base.layer.game.debugging ? 1000 : 3;
-            base.water_orbs = base.layer.game.debugging ? 100 : 0;
-            base.acid_orbs = base.layer.game.debugging ? 100 : 0;
-            base.earth_orbs = base.layer.game.debugging ? 100 : 0;
-            base.shield_orbs = base.layer.game.debugging ? 100 : 0;
+            base.orbs_count = base.layer.game.debugging ? 1000 : 5;
+            base.water_orbs = base.layer.game.debugging ? 10 : 0;
+            base.acid_orbs = base.layer.game.debugging ? 10 : 0;
+            base.earth_orbs = base.layer.game.debugging ? 10 : 0;
+            base.shield_orbs = base.layer.game.debugging ? 10 : 0;
             base.moved = false;
             base.orbs = [];
             base.orbs_consumption = 0;
             base.score = 0;
             base.previous_closest = 0;
+            base.show_radar = true;
+            base.radar_key = false;
         },
         addAngle: function (angle, weight) {
             var base = this;
@@ -115,13 +117,25 @@ define([
             if (base.layer.running && base.inputs.buttonPressed(1)) {
                 base.mouse_attracted = true;
                 base.mouse_position = base.inputs.mouse_position;
+                if (!base.moved) {
+                    base.acid_orbs = 0;
+                    base.water_orbs = 0;
+                    base.earth_orbs = 0;
+                }
                 base.moved = true;
             } else {
                 base.mouse_attracted = false;
             }
             base.closest_distance = -1;
 
-
+            if (base.layer.inputs_engine.keyPressed(82)) {
+                if (!base.radar_key) {
+                    base.radar_key = true;
+                    base.show_radar = !base.show_radar;
+                }
+            } else {
+                base.radar_key = false;
+            }
         },
         draw: function (gengine) {
             var base = this;
@@ -167,10 +181,16 @@ define([
             }
             gengine.beginPath();
             gengine.moveTo({x: base.x, y: base.y});
-            gengine.lineTo({
-                x: base.layer.level.sun.x,
-                y: base.layer.level.sun.y
-            }, "rgba(255, 255, 255, 0.1)", 1);
+            var normalized_vector = Vector.normalize({
+                x: (base.layer.level.sun.x - base.x),
+                y: (base.layer.level.sun.y - base.y)
+            });
+            if (base.show_radar) {
+                gengine.lineTo({
+                    x: base.x + normalized_vector.x * 50 / base.layer.camera.zoom,
+                    y: base.y + normalized_vector.y * 50 / base.layer.camera.zoom
+                }, "rgba(255, 255, 255, 0.5)", 1);
+            }
 
             if (base.mouse_attracted) {
                 gengine.beginPath();
@@ -181,32 +201,25 @@ define([
                 }, "rgba(255, 0, 0, 0.3)", 3);
             }
 
+            if (base.show_radar) {
+                for (var k in base.layer.level.life_planets) {
+                    gengine.beginPath();
+                    gengine.moveTo({x: base.x, y: base.y});
 
-            for (var k in base.layer.level.life_planets) {
-                gengine.beginPath();
-                gengine.moveTo({x: base.x, y: base.y});
-                gengine.lineTo({
-                    x: base.layer.level.life_planets[k].x,
-                    y: base.layer.level.life_planets[k].y
-                }, "rgba(0, 100, 255, 0.1)", 1);
-            }
+                    var normalized_vector = Vector.normalize({
+                        x: (base.layer.level.life_planets[k].x - base.x),
+                        y: (base.layer.level.life_planets[k].y - base.y)
+                    });
 
-            if (base.closest_planet && Vector.distance(base.closest_planet, base) <= base.closest_planet.radius + base.closest_planet.grav_influence) {
-                var context = base.layer.game.context;
-                context.font = "15px verdana";
-                context.fillStyle = "white";
-                var canvas = base.layer.game.canvas;
-                context.fillText("Planet type : " + base.closest_planet.planet_type, 10, canvas.height - 140);
-                context.fillText("Distance : " + Vector.distance(base.closest_planet, base).toFixed(2), 10, canvas.height - 120);
-                if (base.closest_planet.destination) {
-                    context.fillText("Fill this sun with energy orbs found on yellow planets around to make it shine (enter key)", 10, canvas.height - 100);
-                } else if (base.closest_planet.planet_type == "life") {
-                    context.fillText("You have to create life here. Drop water orbs (blue planets),", 10, canvas.height - 80);
-                    context.fillText("earth orbs (purple planets) and amino acid orbs (green planets) - enter key", 10, canvas.height - 60);
-                    context.fillText("Then make sure the sun is shining on this planet.", 10, canvas.height - 40);
-                    context.fillText("Current orbs contained : Water :" + base.closest_planet.water_counts + "/10,  " + base.closest_planet.earth_counts + "/10, Aminate acid : " + base.closest_planet.acid_counts + "/10", 10, canvas.height - 20);
+                    gengine.moveTo({
+                        x: base.x,
+                        y: base.y
+                    });
+                    gengine.lineTo({
+                        x: base.x + normalized_vector.x * 50 / base.layer.camera.zoom,
+                        y: base.y + normalized_vector.y * 50 / base.layer.camera.zoom
+                    }, "#228751", 2);
                 }
-
             }
 
             base.forces = [];
@@ -330,7 +343,7 @@ define([
                 base.previous_closest = Vector.distance(base, base.closest_planet);
             }
             var speed_f = 1;
-            if (base.layer.inputs_engine.keyPressed(65) && base.orbs_count > 0.1) {
+            if (base.layer.inputs_engine.keyPressed(16) && base.orbs_count > 0.1) {
                 speed_f = 10;
                 base.orbs_count -= 0.01;
             }
@@ -386,7 +399,11 @@ define([
                     var orb = orbs[k];
                     var d = base.distanceTo(orb);
                     var u = base.unitVectorTo(orb);
-                    if (d < 10000) {
+                    if (d < 10000 &&
+                        ((orb.type === "water" && base.water_orbs < 10) ||
+                            (orb.type === "earth" && base.earth_orbs < 10) ||
+                            (orb.type === "acid" && base.acid_orbs < 10) ||
+                            orb.type === "energy")) {
                         orb.offsetx += d > 10 ? u.x * (base.speed + 5) : 0;
                         orb.offsety += d > 10 ? u.y * (base.speed + 5) : 0;
                     }
@@ -394,26 +411,31 @@ define([
                         if (orb.type === "energy") {
                             base.orbs_count++;
                             base.score += 1;
+                            orbs.splice(k, 1);
                         }
-                        if (orb.type == "water") {
+                        if (orb.type == "water" && base.water_orbs < 10) {
                             base.water_orbs++;
                             base.closest_planet.water_counts--;
                             base.score += 10;
+                            orbs.splice(k, 1);
                         }
-                        if (orb.type == "acid") {
+                        if (orb.type == "acid" && base.acid_orbs < 10) {
                             base.acid_orbs++;
                             base.closest_planet.acid_counts--;
                             base.score += 10;
+                            orbs.splice(k, 1);
                         }
-                        if (orb.type == "earth") {
+                        if (orb.type == "earth" && base.earth_orbs < 10) {
                             base.earth_orbs++;
                             base.closest_planet.earth_counts--;
                             base.score += 10;
+                            orbs.splice(k, 1);
                         }
-                        if (orb.type == "shield") {
+                        if (orb.type == "shield" && base.shield_orbs < 10) {
                             base.shield_orbs++;
+                            orbs.splice(k, 1);
                         }
-                        orbs.splice(k, 1);
+
                     }
                 }
             }
@@ -438,6 +460,7 @@ define([
                 base.accelerationX = 0;
                 base.accelerationY = 0;
             }
+            base.layer.game.score = Math.round(base.score);
         }
     });
 
