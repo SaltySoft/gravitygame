@@ -48,7 +48,7 @@ define([
             base.mouse_attracted = false;
             base.mouse_position = { x: 0, y: 0 };
 
-            base.orbs_count = base.layer.game.debugging ? 1000 : 5;
+            base.orbs_count = base.layer.game.debugging ? 1000 : 10;
             base.water_orbs = base.layer.game.debugging ? 10 : 0;
             base.acid_orbs = base.layer.game.debugging ? 10 : 0;
             base.earth_orbs = base.layer.game.debugging ? 10 : 0;
@@ -294,34 +294,29 @@ define([
 
 
                 vector_to_mouse = Vector.normalize(vector_to_mouse);
-                var distance = Vector.distance(base, base.mouse_position);
-
                 vector_to_mouse = Vector.coeff_mult(vector_to_mouse, 1);
 
                 mouse_add.x = vector_to_mouse.x * 10;
                 mouse_add.y = vector_to_mouse.y * 10;
 
-                base.orbs_count -= 0.01;
+                base.orbs_count -= 0.1;
+                if (base.orbs_count < 0) {
+                    base.orbs_count = 0;
+                }
 
             }
-//            if (base.layer.inputs_engine.pressed_buttons.length == 0)
-//                base.angle += base.layer.inputs_engine.mouse_move.x / 75;
 
 
             base.speedX += base.accelerationX + Math.cos(base.angle) * base.accel_jet + mouse_add.x;
             base.speedY += base.accelerationY + Math.sin(base.angle) * base.accel_jet + mouse_add.y;
             base.speed = Math.sqrt(base.speedX * base.speedX + base.speedY * base.speedY);
-            var speed_vect = {
-                x: base.speedX,
-                y: base.speedY
-            }
+
             if (base.closest_planet) {
                 var distance = base.distanceTo(base.closest_planet);
                 if (distance < base.closest_planet.radius) {
                     var unit = base.closest_planet.unitVectorTo(base);
                     base.x -= (base.closest_planet.radius - distance) * unit.x;
                     base.y -= (base.closest_planet.radius - distance) * unit.y;
-                    var unit_speed = Vector.normalize(speed_vect);
 
                     base.speedX -= base.speed * unit.x / 10;
                     base.speedY -= base.speed * unit.y / 10;
@@ -329,7 +324,7 @@ define([
                     //Player loses score when on planet.
                     base.score -= base.score > 50 ? 50 : base.score;
                     if (base.previous_closest >= base.closest_planet.radius + 10) {
-                        base.layer.graphics_engine.notification("Don't touch planets ! You'll disturb its nature. Malus : 50pts", 1000);
+                        base.layer.graphics_engine.notification("Don't touch planets ! You'll disturb its nature. Malus : 50pts", 2000);
                     }
                 } else if (distance < base.closest_planet.radius + 5) {
                     base.speedX *= 0.9;
