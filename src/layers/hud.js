@@ -24,8 +24,11 @@ define([
             images.aorb.src = "/resources/orb_acid.png";
             images.norb = new Image();
             images.norb.src = "/resources/orb_absent.png";
+            images.battery = new Image();
+            images.battery.src = "/resources/battery.png";
 
             base.images = images;
+            base.show_hints = false;
         },
         drawPlayerInformation: function () {
             var base = this;
@@ -73,10 +76,8 @@ define([
                 i++;
             }
 
-//            ctx.drawImage(base.images.torb, posx + 5, posy + 43);
-//            ctx.fillText((player.earth_orbs).toFixed(2), posx + 25, posy + 60);
-//            ctx.drawImage(base.images.eorb, posx + 5, posy + 63);
-            ctx.fillText((player.orbs_count).toFixed(2), posx + 25, posy + 80);
+            ctx.drawImage(base.images.battery, posx + 5, posy + 75);
+            ctx.fillText((player.orbs_count).toFixed(2), posx + 40, posy + 98);
         },
 
 
@@ -136,7 +137,7 @@ define([
                     ctx.fillText(planet.earth_counts + "/10", 105, line_y + 15);
                     ctx.drawImage(base.images.aorb, 155, line_y);
                     ctx.fillText(planet.acid_counts + "/10", 175, line_y + 15);
-                    ctx.drawImage(base.images.eorb, 10, line_y + 20);
+                    ctx.drawImage(base.images.battery, 10, line_y + 20);
                     if (planet.distanceTo(planet.center) < planet.center.influence)
                         ctx.fillText("Touched by sunrays", 35, line_y + 35);
                     else
@@ -152,10 +153,10 @@ define([
             var base = this;
 
             var canvas = base.layer.game.canvas;
-            var posy = 5;
-            var posx = 5;
             var height = 110;
             var width = 250;
+            var posx = canvas.width - 5 - width;
+            var posy = canvas.height - 5 - height;
 
             var ctx = base.layer.game.context;
             var player = base.layer.player;
@@ -170,12 +171,69 @@ define([
 
             ctx.font = "15px verdana";
             ctx.fillStyle = "white";
+            ctx.fillText("Objectives", posx + 5, posy + 20);
+            ctx.fillText(base.layer.alive_planets + "/" + base.layer.life_planets +  " planets to revive", posx + 5, posy + 40);
+            ctx.fillText(base.layer.warming_planets +  " planets planets warming", posx + 5, posy + 60);
+        },
+        drawHints: function () {
+            var base = this;
+
+            var canvas = base.layer.game.canvas;
+
+            var posx = canvas.width / 2;
+            var posy = canvas.height - 5;
+
+            var ctx = base.layer.game.context;
+            var player = base.layer.player;
+
+            ctx.font = "15px verdana";
+            ctx.fillStyle = "white";
+
+            if (base.show_hints) {
+                var text = "[Maj] Ultra speed engine";
+                var metrics = ctx.measureText(text);
+                ctx.fillText(text, posx + 5 - metrics.width / 2, posy);
+
+                var text = "[Left click] Accelerate towards pointer";
+                var metrics = ctx.measureText(text);
+                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 60);
+
+                var text = "[Middle click] Zoom";
+                var metrics = ctx.measureText(text);
+                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 40);
+
+                var text = "[Right click] Camera move";
+                var metrics = ctx.measureText(text);
+                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 20);
+
+                var text = "[H] Hide commands help";
+                var metrics = ctx.measureText(text);
+                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 80);
+            } else {
+                var text = "[H] Show commands help";
+                var metrics = ctx.measureText(text);
+                ctx.fillText(text, posx + 5 - metrics.width / 2, posy);
+            }
+
+
+
         },
         draw: function () {
             var base = this;
             base.drawPlanetInformation();
             base.drawPlayerInformation();
             base.drawObjectives();
+            base.drawHints();
+
+            if (base.layer.inputs_engine.keyPressed(72)) {
+                if (!base.hpressed) {
+                    base.show_hints = !base.show_hints;
+                    base.hpressed = true;
+                }
+            } else {
+                base.hpressed = false;
+            }
+
         }
     });
 

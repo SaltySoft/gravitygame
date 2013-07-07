@@ -56,6 +56,7 @@ define([
 
             base.alive_planets = 0;
             base.life_planets = 0;
+            base.warming_planets = 0;
             for (var k in base.planets) {
                 if (base.planets[k].planet_type == "life") {
                     base.life_planets++;

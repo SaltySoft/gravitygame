@@ -48,7 +48,7 @@ define([
             base.mouse_attracted = false;
             base.mouse_position = { x: 0, y: 0 };
 
-            base.orbs_count = base.layer.game.debugging ? 1000 : 3;
+            base.orbs_count = base.layer.game.debugging ? 1000 : 5;
             base.water_orbs = base.layer.game.debugging ? 100 : 0;
             base.acid_orbs = base.layer.game.debugging ? 100 : 0;
             base.earth_orbs = base.layer.game.debugging ? 100 : 0;
@@ -115,6 +115,11 @@ define([
             if (base.layer.running && base.inputs.buttonPressed(1)) {
                 base.mouse_attracted = true;
                 base.mouse_position = base.inputs.mouse_position;
+                if (!base.moved) {
+                    base.acid_orbs = 0;
+                    base.water_orbs = 0;
+                    base.earth_orbs = 0;
+                }
                 base.moved = true;
             } else {
                 base.mouse_attracted = false;
@@ -371,8 +376,8 @@ define([
                     if (d < 10000 &&
                         ((orb.type === "water" && base.water_orbs < 10) ||
                             (orb.type === "earth" && base.earth_orbs < 10) ||
-                            (orb.type === "acid" && base.acid_orbs < 10)) ||
-                            orb.type === "energy") {
+                            (orb.type === "acid" && base.acid_orbs < 10) ||
+                            orb.type === "energy")) {
                         orb.offsetx += d > 10 ? u.x * (base.speed + 5) : 0;
                         orb.offsety += d > 10 ? u.y * (base.speed + 5) : 0;
                     }
