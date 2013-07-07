@@ -27,6 +27,32 @@ define([
             base.addButton("Vol+", 0.5, 0.5, 0, 66, 74, 30, "#BF3030", function () {
                 base.game.volumeUp();
             });
+
+            base.bg = new Image();
+            base.bg.src = "resources/menu.png";
+            base.bg_width = 0;
+            base.bg_height = 0;
+            base.offx = 0;
+            base.offy = 0;
+            $(base.bg).load(function () {
+                base.resetSize();
+            });
+        },
+        drawBackground: function () {
+            var base = this;
+
+            var ctx = base.game.context;
+
+            ctx.drawImage(base.bg, base.offx, base.offy);
+
+            console.log("bg");
+        },
+        resetSize: function (widthchange, heightchange) {
+            var base = this;
+            var dd = $(document);
+
+            base.offy = dd.height() / 2 - base.bg.height / 2;
+            base.offx = dd.width() / 2 - base.bg.width / 2;
         }
     });
 

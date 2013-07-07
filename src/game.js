@@ -33,6 +33,9 @@ define([
             $(document).css("overflow", "hidden");
             $(window).resize(function () {
                 base.resetSize();
+
+
+
             });
             base.layers = [];
             $(container).append(base.canvas);

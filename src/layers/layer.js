@@ -46,6 +46,7 @@ define([
         },
         run: function (last) {
             var base = this;
+            base.drawBackground();
             if (last) {
                 base.inputs();
                 base.logic();
@@ -60,6 +61,9 @@ define([
 
         },
         layerRun: function (last) {
+        },
+        drawBackground: function () {
+
         },
         drawText: function (text, x, y, ofx, ofy, centered, color, font) {
             var base = this;
