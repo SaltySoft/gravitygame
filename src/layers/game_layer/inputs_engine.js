@@ -161,11 +161,16 @@ define([
             var elem = base.layer.game.canvas;
             if (document.mozPointerLockElement === elem ||
                 document.webkitPointerLockElement === elem) {
-                base.layer.unPauseGame();
-                base.layer.game.focused = true;
+                if (base.layer.unPauseGame) {
+                    base.layer.unPauseGame();
+                    base.layer.game.focused = true;
+                }
+
             } else {
-                base.layer.pauseGame();
-                base.layer.game.focused = false;
+                if (base.layer.pauseGame) {
+                    base.layer.pauseGame();
+                    base.layer.game.focused = false;
+                }
             }
 
         },
@@ -222,7 +227,6 @@ define([
         requestLocks: function () {
             var base = this;
             var elem = base.layer.game.canvas;
-
 
 
             elem.requestPointerLock = elem.requestPointerLock ||

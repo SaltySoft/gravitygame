@@ -16,9 +16,9 @@ define([
             base.addButton("Main menu", 0.5, 0.5, -75, -50, 150, 30, "#BF3030", function () {
                 base.game.startMenu();
             });
-            base.addButton("Fullscreen", 1, 1, -150, -30, 150, 30, "blue", function () {
-                base.inputs_engine.requestFullScreen();
-            });
+//            base.addButton("Fullscreen", 1, 1, -150, -30, 150, 30, "blue", function () {
+//                base.inputs_engine.requestFullScreen();
+//            });
 
         }
     });

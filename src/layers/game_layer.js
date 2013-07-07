@@ -8,8 +8,9 @@ define([
     './game_layer/game_objects/player',
     './game_layer/level_generator',
     './game_layer/vector',
-    './menu_layers/pause_menu'
-], function (Class, Layer, InputsEngine, PhysicsEngine, GraphicsEngine, Planet, Player, LevelGenerator, Vector, PauseMenu) {
+    './menu_layers/pause_menu',
+    './hud'
+], function (Class, Layer, InputsEngine, PhysicsEngine, GraphicsEngine, Planet, Player, LevelGenerator, Vector, PauseMenu, HudLayer) {
     var GameLayer = Layer.create();
 
     GameLayer.include({
@@ -50,7 +51,16 @@ define([
             base.paused = false;
 
 
+            base.hud_layer = HudLayer.init(base.game);
+            base.hud_layer.setup(base);
 
+            base.alive_planets = 0;
+            base.life_planets = 0;
+            for (var k in base.planets) {
+                if (base.planets[k].planet_type == "life") {
+                    base.life_planets++;
+                }
+            }
         },
         cameraPos: function (params) {
             var base = this;
@@ -71,10 +81,14 @@ define([
                 base.objects[k].logic(base);
             }
             var won = true;
+            base.alive_planets = 0;
             for (var k in base.planets) {
                 var planet = base.planets[k];
                 if (!planet.alive && planet.planet_type == "life") {
                     won = false;
+                }
+                if (planet.planet_type == "life" && planet.alive) {
+                    base.alive_planets++;
                 }
             }
 
@@ -182,31 +196,10 @@ define([
         },
         draw: function () {
             var base = this;
-
-
             for (var k in base.orbs)
                 base.orbs[k].draw(base.graphics_engine);
 
-            var context = base.game.context;
-            context.font = "15px verdana";
-            context.fillStyle = "white";
-            context.fillText("Energy orbs (fuel) : " + (base.player.orbs_count).toFixed(2), 5, 20);
-            var context = base.game.context;
-
-            context.fillText("Water orbs : " + (base.player.water_orbs).toFixed(2), 5, 40);
-
-
-            context.fillText("Amino acid orbs : " + (base.player.acid_orbs).toFixed(2), 5, 60);
-
-
-            context.fillText("Earth orbs : " + (base.player.earth_orbs).toFixed(2), 5, 80);
-
-//            context.fillText("FullScreen", base.game.canvas.width - 120, base.game.canvas.height - 15);
-
-
-
-
-
+            base.hud_layer.draw();
             base.inputs_engine.draw();
             base.graphics_engine.run();
         },

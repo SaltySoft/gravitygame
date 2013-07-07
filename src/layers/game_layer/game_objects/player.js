@@ -191,24 +191,6 @@ define([
                 }, "rgba(0, 100, 255, 0.1)", 1);
             }
 
-            if (base.closest_planet && Vector.distance(base.closest_planet, base) <= base.closest_planet.radius + base.closest_planet.grav_influence) {
-                var context = base.layer.game.context;
-                context.font = "15px verdana";
-                context.fillStyle = "white";
-                var canvas = base.layer.game.canvas;
-                context.fillText("Planet type : " + base.closest_planet.planet_type, 10, canvas.height - 140);
-                context.fillText("Distance : " + Vector.distance(base.closest_planet, base).toFixed(2), 10, canvas.height - 120);
-                if (base.closest_planet.destination) {
-                    context.fillText("Fill this sun with energy orbs found on yellow planets around to make it shine (enter key)", 10, canvas.height - 100);
-                } else if (base.closest_planet.planet_type == "life") {
-                    context.fillText("You have to create life here. Drop water orbs (blue planets),", 10, canvas.height - 80);
-                    context.fillText("earth orbs (purple planets) and amino acid orbs (green planets) - enter key", 10, canvas.height - 60);
-                    context.fillText("Then make sure the sun is shining on this planet.", 10, canvas.height - 40);
-                    context.fillText("Current orbs contained : Water :" + base.closest_planet.water_counts + "/10,  " + base.closest_planet.earth_counts + "/10, Aminate acid : " + base.closest_planet.acid_counts + "/10", 10, canvas.height - 20);
-                }
-
-            }
-
             base.forces = [];
 
             base.accelerationX = 0;
@@ -386,7 +368,11 @@ define([
                     var orb = orbs[k];
                     var d = base.distanceTo(orb);
                     var u = base.unitVectorTo(orb);
-                    if (d < 10000) {
+                    if (d < 10000 &&
+                        ((orb.type === "water" && base.water_orbs < 10) ||
+                            (orb.type === "earth" && base.earth_orbs < 10) ||
+                            (orb.type === "acid" && base.acid_orbs < 10)) ||
+                            orb.type === "energy") {
                         orb.offsetx += d > 10 ? u.x * (base.speed + 5) : 0;
                         orb.offsety += d > 10 ? u.y * (base.speed + 5) : 0;
                     }
@@ -394,26 +380,31 @@ define([
                         if (orb.type === "energy") {
                             base.orbs_count++;
                             base.score += 1;
+                            orbs.splice(k, 1);
                         }
-                        if (orb.type == "water") {
+                        if (orb.type == "water" && base.water_orbs < 10) {
                             base.water_orbs++;
                             base.closest_planet.water_counts--;
                             base.score += 10;
+                            orbs.splice(k, 1);
                         }
-                        if (orb.type == "acid") {
+                        if (orb.type == "acid" && base.acid_orbs < 10) {
                             base.acid_orbs++;
                             base.closest_planet.acid_counts--;
                             base.score += 10;
+                            orbs.splice(k, 1);
                         }
-                        if (orb.type == "earth") {
+                        if (orb.type == "earth" && base.earth_orbs < 10) {
                             base.earth_orbs++;
                             base.closest_planet.earth_counts--;
                             base.score += 10;
+                            orbs.splice(k, 1);
                         }
-                        if (orb.type == "shield") {
+                        if (orb.type == "shield" && base.shield_orbs < 10) {
                             base.shield_orbs++;
+                            orbs.splice(k, 1);
                         }
-                        orbs.splice(k, 1);
+
                     }
                 }
             }

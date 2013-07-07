@@ -15,7 +15,7 @@ define([
         init: function (container) {
             var base = this;
             base.focused = false;
-            base.debugging = true;
+            base.debugging = false;
             $("html").css("padding", "0px");
             $("body").css("padding", "0px");
             $("html").css("margin", "0px");

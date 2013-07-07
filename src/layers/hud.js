@@ -1,0 +1,183 @@
+define([
+    './layer',
+    './game_layer/vector'
+], function (Layer, Vector) {
+    var HudLayer = Layer.create();
+
+    HudLayer.include({
+        initializeLayer: function () {
+            var base = this;
+        },
+        setup: function (layer) {
+            var base = this;
+            base.layer = layer;
+
+            var images = {};
+
+            images.eorb = new Image();
+            images.eorb.src = "/resources/orb_energy.png";
+            images.worb = new Image();
+            images.worb.src = "/resources/orb_water.png";
+            images.torb = new Image();
+            images.torb.src = "/resources/orb_earth.png";
+            images.aorb = new Image();
+            images.aorb.src = "/resources/orb_acid.png";
+            images.norb = new Image();
+            images.norb.src = "/resources/orb_absent.png";
+
+            base.images = images;
+        },
+        drawPlayerInformation: function () {
+            var base = this;
+
+            var canvas = base.layer.game.canvas;
+            var posy = 5;
+            var posx = 5;
+            var height = 110;
+            var width = 250;
+
+            var ctx = base.layer.game.context;
+            var player = base.layer.player;
+
+            ctx.fillStyle = "rgba(255,255,255,0.2);";
+            ctx.strokeStyle = "rgba(255,255,255,0.5);";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.rect(posx, posy, width, height);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.font = "15px verdana";
+            ctx.fillStyle = "white";
+
+
+            for (var i = 0; i < player.water_orbs; i++) {
+                ctx.drawImage(base.images.worb, posx + 5+ i * 20, posy  + 3);
+            }
+            while (i < 10) {
+                ctx.drawImage(base.images.norb, posx + 5+ i * 20, posy  + 3);
+                i++;
+            }
+            for (var i = 0; i < player.acid_orbs; i++) {
+                ctx.drawImage(base.images.aorb, posx + 5+ i * 20, posy  + 23);
+            }
+            while (i < 10) {
+                ctx.drawImage(base.images.norb, posx + 5+ i * 20, posy  + 23);
+                i++;
+            }
+            for (var i = 0; i < player.earth_orbs; i++) {
+                ctx.drawImage(base.images.torb, posx + 5+ i * 20, posy  + 43);
+            }
+            while (i < 10) {
+                ctx.drawImage(base.images.norb, posx + 5+ i * 20, posy  + 43);
+                i++;
+            }
+
+//            ctx.drawImage(base.images.torb, posx + 5, posy + 43);
+//            ctx.fillText((player.earth_orbs).toFixed(2), posx + 25, posy + 60);
+//            ctx.drawImage(base.images.eorb, posx + 5, posy + 63);
+            ctx.fillText((player.orbs_count).toFixed(2), posx + 25, posy + 80);
+        },
+
+
+        drawPlanetInformation: function () {
+            var base = this;
+            var canvas = base.layer.game.canvas;
+            var posy = canvas.height - 110;
+            var posx = 5;
+            var height = 110;
+            var width = 250;
+
+            var ctx = base.layer.game.context;
+            var player = base.layer.player;
+
+            ctx.fillStyle = "rgba(255,255,255,0.2);";
+            ctx.strokeStyle = "rgba(255,255,255,0.5);";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.rect(posx, posy - 10, width, height);
+            ctx.fill();
+            ctx.stroke();
+            ctx.font = "15px verdana";
+            ctx.fillStyle = "white";
+            if (player.closest_planet && Vector.distance(player.closest_planet, player) <= player.closest_planet.radius + player.closest_planet.grav_influence) {
+
+                var planet = player.closest_planet;
+
+
+                ctx.fillText("Planet type : " + player.closest_planet.planet_type, 10, posy + 10);
+                ctx.fillText("Distance : " + Vector.distance(player.closest_planet, player).toFixed(2), 10, posy + 30);
+                if (player.closest_planet.destination) {
+                    ctx.fillText("[Enter] : drop energy orbs", 10, posy + 50);
+                }
+
+
+                var line_y = posy + 35;
+                if (player.closest_planet.planet_type == "energy") {
+                    ctx.drawImage(base.images.eorb, 10, line_y);
+                    ctx.fillText(planet.orbs.length + " left", 40, line_y + 15);
+                }
+                if (player.closest_planet.planet_type == "earth") {
+                    ctx.drawImage(base.images.torb, 10, line_y);
+                    ctx.fillText(planet.orbs.length + " left", 40, line_y + 15);
+                }
+                if (player.closest_planet.planet_type == "water") {
+                    ctx.drawImage(base.images.worb, 10, line_y);
+                    ctx.fillText(planet.orbs.length + " left", 40, line_y + 15);
+                }
+                if (player.closest_planet.planet_type == "acid") {
+                    ctx.drawImage(base.images.aorb, 10, line_y);
+                    ctx.fillText(planet.orbs.length + " left", 40, line_y + 15);
+                }
+                if (planet.planet_type == "life") {
+                    ctx.drawImage(base.images.worb, 10, line_y);
+                    ctx.fillText(planet.water_counts + "/10", 35, line_y + 15);
+                    ctx.drawImage(base.images.torb, 85, line_y);
+                    ctx.fillText(planet.earth_counts + "/10", 105, line_y + 15);
+                    ctx.drawImage(base.images.aorb, 155, line_y);
+                    ctx.fillText(planet.acid_counts + "/10", 175, line_y + 15);
+                    ctx.drawImage(base.images.eorb, 10, line_y + 20);
+                    if (planet.distanceTo(planet.center) < planet.center.influence)
+                        ctx.fillText("Touched by sunrays", 35, line_y + 35);
+                    else
+                        ctx.fillText("Untouched by sunrays", 35, line_y + 35);
+                    if (planet.acid_counts < 10 || planet.earth_counts < 10 || planet.water_orbs < 10)
+                        ctx.fillText("[Enter] : drop orbs", 10, line_y + 55);
+                }
+            } else {
+                ctx.fillText("No near planet", 10, posy + 10);
+            }
+        },
+        drawObjectives: function () {
+            var base = this;
+
+            var canvas = base.layer.game.canvas;
+            var posy = 5;
+            var posx = 5;
+            var height = 110;
+            var width = 250;
+
+            var ctx = base.layer.game.context;
+            var player = base.layer.player;
+
+            ctx.fillStyle = "rgba(255,255,255,0.2);";
+            ctx.strokeStyle = "rgba(255,255,255,0.5);";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.rect(posx, posy, width, height);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.font = "15px verdana";
+            ctx.fillStyle = "white";
+        },
+        draw: function () {
+            var base = this;
+            base.drawPlanetInformation();
+            base.drawPlayerInformation();
+            base.drawObjectives();
+        }
+    });
+
+    return HudLayer;
+});

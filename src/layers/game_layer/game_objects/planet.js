@@ -245,6 +245,14 @@ define([
                 for (var k in base.orbs) {
                     base.orbs[k].draw(gengine);
                 }
+            if (base.planet_type == "life" && base.alive) {
+                gengine.drawCircle({
+                    x: x,
+                    y: y,
+                    radius: radius * 30,
+                    fill_style: "rgba(255,255,255,0.3)"
+                });
+            }
             if (base.destination) {
                 var disp = base.influence > 0 ? base.influence / 20000: 0.01;
 
