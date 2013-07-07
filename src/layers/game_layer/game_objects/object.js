@@ -68,7 +68,9 @@ define([
             } else {
                 var coeff = distance * distance * 100;
             }
-            var force = (10 * base.mass + object.mass) / coeff;
+            var force = 0.8 * (base.mass + object.mass);
+
+
             return force;
         },
         unitVectorTo: function (object) {

@@ -54,7 +54,7 @@ define([
             base.destination = obj.destination ? obj.destination : false;
             base.orbs = [];
             base.origin_orbs = 0;
-            base.grav_influence = base.destination ? 20000 : 8000;
+            base.grav_influence = base.destination ? 20000 : 15000;
             base.alive = false;
             base.active = false;
             base.previous_active = false;
