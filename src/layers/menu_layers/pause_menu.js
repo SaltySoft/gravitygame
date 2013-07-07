@@ -8,13 +8,16 @@ define([
         menu_init: function () {
             var base = this;
 
-            base.addText("Pause menu",  base.game.canvas.width / 2,  base.game.canvas.height / 2 - 400, true);
-            base.addText("Current score : " + base.game.score,  base.game.canvas.width / 2,  base.game.canvas.height / 2 - 300, true);
-            base.addButton("Resume",  base.game.canvas.width / 2 - 100, base.game.canvas.height / 2 - 200, 200, 50, "#BF3030", function () {
+            base.addText("Pause menu", 0.5, 0.5, 0, -100, true);
+            base.addText("Current score : " + base.game.score, 0.5, 0.5, 0, +100, true);
+            base.addButton("Resume",0.5, 0.5, -75, -83, 150, 30, "#BF3030", function () {
                 base.game.popLayer();
             });
-            base.addButton("Main menu",  base.game.canvas.width / 2 - 100, base.game.canvas.height / 2 - 150, 200, 50, "#BF3030", function () {
+            base.addButton("Main menu", 0.5, 0.5, -75, -50, 150, 30, "#BF3030", function () {
                 base.game.startMenu();
+            });
+            base.addButton("Fullscreen", 1, 1, -150, -30, 150, 30, "blue", function () {
+                base.inputs_engine.requestFullScreen();
             });
 
         }

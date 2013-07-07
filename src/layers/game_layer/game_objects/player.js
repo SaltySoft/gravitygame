@@ -438,6 +438,7 @@ define([
                 base.accelerationX = 0;
                 base.accelerationY = 0;
             }
+            base.layer.game.score = Math.round(base.score);
         }
     });
 

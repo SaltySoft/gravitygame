@@ -46,8 +46,17 @@ define([
         },
         resetSize: function () {
             var base = this;
+            var oldw = base.canvas.width;
+            var oldh = base.canvas.height;
             base.canvas.width = $(document).width();
-            base.canvas.height = $(document).height();
+            base.canvas.height = $(window).height();
+
+            var widthchange = base.canvas.width - oldw;
+            var heightchange = base.canvas.height - oldh;
+
+            for (var k in base.layers) {
+                base.layers[k].resetSize(widthchange, heightchange);
+            }
         },
         startMenu: function () {
             var base = this;

@@ -162,10 +162,10 @@ define([
             if (document.mozPointerLockElement === elem ||
                 document.webkitPointerLockElement === elem) {
                 base.layer.unPauseGame();
-                base.layer.game.focused  = true;
+                base.layer.game.focused = true;
             } else {
                 base.layer.pauseGame();
-                base.layer.game.focused  = false;
+                base.layer.game.focused = false;
             }
 
         },
@@ -210,17 +210,20 @@ define([
             // lock--something that will likely change in the future.
 
         },
+        requestFullScreen: function () {
+            var base = this;
+            var elem = base.layer.game.canvas;
+            elem.requestFullscreen = elem.requestFullscreen ||
+                elem.mozRequestFullscreen ||
+                elem.mozRequestFullScreen || // Older API upper case 'S'.
+                elem.webkitRequestFullscreen;
+            elem.requestFullscreen();
+        },
         requestLocks: function () {
             var base = this;
             var elem = base.layer.game.canvas;
-//            if (base.mouse_position_scr.x > base.layer.game.canvas.width - 500 && base.mouse_position_scr.y > base.layer.game.canvas.height - 500) {
-//                elem.requestFullscreen = elem.requestFullscreen ||
-//                    elem.mozRequestFullscreen ||
-//                    elem.mozRequestFullScreen || // Older API upper case 'S'.
-//                    elem.webkitRequestFullscreen;
-//                elem.requestFullscreen();
-//
-//            }
+
+
 
             elem.requestPointerLock = elem.requestPointerLock ||
                 elem.mozRequestPointerLock ||

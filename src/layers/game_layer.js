@@ -13,7 +13,7 @@ define([
     var GameLayer = Layer.create();
 
     GameLayer.include({
-        init: function (game) {
+        initializeLayer: function (game) {
             var base = this;
             base.game = game;
             base.camera = {
@@ -48,6 +48,9 @@ define([
             }
             base.running = base.game.focused;
             base.paused = false;
+
+
+
         },
         cameraPos: function (params) {
             var base = this;
@@ -76,11 +79,13 @@ define([
             }
 
             if (won) {
+                base.finished = true;
                 base.game.won(Math.round(base.player.score));
             }
 
             if (base.game.debugging) {
                 if (base.inputs_engine.keyPressed(8)) {
+                    base.finished = true;
                     base.game.won(50000);
                 }
             }
@@ -97,11 +102,13 @@ define([
         },
         pauseMenu: function () {
             var base = this;
-            base.paused = true;
-            base.game.running = true;
-            var pause_layer = PauseMenu.init(base.game);
-            base.game.addLayer(pause_layer);
+            if (!base.finished) {
+                base.paused = true;
+                base.game.running = true;
 
+                var pause_layer = PauseMenu.init(base.game);
+                base.game.addLayer(pause_layer);
+            }
         },
         physics: function () {
             var base = this;
@@ -194,7 +201,7 @@ define([
 
             context.fillText("Earth orbs : " + (base.player.earth_orbs).toFixed(2), 5, 80);
 
-            context.fillText("FullScreen", base.game.canvas.width - 120, base.game.canvas.height - 15);
+//            context.fillText("FullScreen", base.game.canvas.width - 120, base.game.canvas.height - 15);
 
 
 
