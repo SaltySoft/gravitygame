@@ -57,24 +57,24 @@ define([
 
 
             for (var i = 0; i < player.water_orbs; i++) {
-                ctx.drawImage(base.images.worb, posx + 5+ i * 20, posy  + 3);
+                ctx.drawImage(base.images.worb, posx + 5 + i * 20, posy + 3);
             }
             while (i < 10) {
-                ctx.drawImage(base.images.norb, posx + 5+ i * 20, posy  + 3);
+                ctx.drawImage(base.images.norb, posx + 5 + i * 20, posy + 3);
                 i++;
             }
             for (var i = 0; i < player.acid_orbs; i++) {
-                ctx.drawImage(base.images.aorb, posx + 5+ i * 20, posy  + 23);
+                ctx.drawImage(base.images.aorb, posx + 5 + i * 20, posy + 23);
             }
             while (i < 10) {
-                ctx.drawImage(base.images.norb, posx + 5+ i * 20, posy  + 23);
+                ctx.drawImage(base.images.norb, posx + 5 + i * 20, posy + 23);
                 i++;
             }
             for (var i = 0; i < player.earth_orbs; i++) {
-                ctx.drawImage(base.images.torb, posx + 5+ i * 20, posy  + 43);
+                ctx.drawImage(base.images.torb, posx + 5 + i * 20, posy + 43);
             }
             while (i < 10) {
-                ctx.drawImage(base.images.norb, posx + 5+ i * 20, posy  + 43);
+                ctx.drawImage(base.images.norb, posx + 5 + i * 20, posy + 43);
                 i++;
             }
 
@@ -177,10 +177,10 @@ define([
             ctx.font = "15px verdana";
             ctx.fillStyle = "white";
             ctx.fillText("Objectives", posx + 5, posy + 20);
-            ctx.fillText(base.layer.alive_planets + "/" + base.layer.life_planets +  " planets to revive", posx + 5, posy + 40);
+            ctx.fillText(base.layer.alive_planets + "/" + base.layer.life_planets + " planets to revive", posx + 5, posy + 40);
             if (base.layer.warming_planets > 0)
-                ctx.fillText(base.layer.warming_planets +  " planets planets warming", posx + 5, posy + 60);
-            ctx.fillText(base.layer.warmup_percentage +  "% of success", posx + 5, posy + 80);
+                ctx.fillText(base.layer.warming_planets + " planets planets warming", posx + 5, posy + 60);
+            ctx.fillText(base.layer.warmup_percentage + "% of success", posx + 5, posy + 80);
         },
         drawHints: function () {
             var base = this;
@@ -202,7 +202,7 @@ define([
                 ctx.strokeStyle = "rgba(255,255,255,0.5);";
                 ctx.lineWidth = 2;
                 ctx.beginPath();
-                ctx.rect(385    , posy - 215, 365, 225);
+                ctx.rect(395, posy - 215, 365, 225);
                 ctx.fill();
                 ctx.stroke();
 
@@ -232,7 +232,6 @@ define([
                 var text = "Green radar lines indicate potential life planets";
                 var metrics = ctx.measureText(text);
                 ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 200);
-
 
 
                 var text = "White radar line indicates the sun";
