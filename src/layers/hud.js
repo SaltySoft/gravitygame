@@ -145,7 +145,7 @@ define([
                     else
                         ctx.fillText("Untouched by sunrays", 35, line_y + 40);
                     if (planet.warming) {
-                        ctx.fillText("Planet currently warming " + planet.warmup / 500 + "%", 10, line_y + 55);
+                        ctx.fillText("Planet currently warming " + Math.round(planet.warmup / 500 * 100) + "%", 10, line_y + 55);
                     }
                     if (planet.acid_counts < 10 || planet.earth_counts < 10 || planet.water_orbs < 10)
                         ctx.fillText("[Enter] : drop orbs", 10, line_y + 60);
@@ -197,6 +197,18 @@ define([
             ctx.fillStyle = "white";
 
             if (base.show_hints) {
+
+                ctx.fillStyle = "rgba(255,255,255,0.2);";
+                ctx.strokeStyle = "rgba(255,255,255,0.5);";
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.rect(385    , posy - 215, 365, 225);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.font = "15px verdana";
+                ctx.fillStyle = "white";
+
                 var text = "[Maj] Ultra speed engine";
                 var metrics = ctx.measureText(text);
                 ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 80);
@@ -219,16 +231,22 @@ define([
 
                 var text = "Green radar lines indicate potential life planets";
                 var metrics = ctx.measureText(text);
-                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 180);
+                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 200);
+
+
 
                 var text = "White radar line indicates the sun";
                 var metrics = ctx.measureText(text);
-                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 160);
+                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 180);
 
                 var text = "Blue lines indicate gravitation influence";
                 var metrics = ctx.measureText(text);
-                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 140);
+                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 160);
 
+                var text = "[R] Show radar";
+                var metrics = ctx.measureText(text);
+                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 120);
+                ctx.fillStyle = "red";
                 var text = "[H] Hide commands help";
                 var metrics = ctx.measureText(text);
                 ctx.fillText(text, posx + 5 - metrics.width / 2, posy);

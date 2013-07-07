@@ -59,6 +59,7 @@ define([
             base.score = 0;
             base.previous_closest = 0;
             base.show_radar = true;
+            base.radar_key = false;
         },
         addAngle: function (angle, weight) {
             var base = this;
@@ -127,9 +128,14 @@ define([
             }
             base.closest_distance = -1;
 
-
-
-
+            if (base.layer.inputs_engine.keyPressed(82)) {
+                if (!base.radar_key) {
+                    base.radar_key = true;
+                    base.show_radar = !base.show_radar;
+                }
+            } else {
+                base.radar_key = false;
+            }
         },
         draw: function (gengine) {
             var base = this;
@@ -179,11 +185,12 @@ define([
                 x: (base.layer.level.sun.x - base.x),
                 y: (base.layer.level.sun.y - base.y)
             });
-
-            gengine.lineTo({
-                x:  base.x + normalized_vector.x * 50 / base.layer.camera.zoom,
-                y: base.y + normalized_vector.y * 50 / base.layer.camera.zoom
-            }, "rgba(255, 255, 255, 0.5)", 1);
+            if (base.show_radar) {
+                gengine.lineTo({
+                    x: base.x + normalized_vector.x * 50 / base.layer.camera.zoom,
+                    y: base.y + normalized_vector.y * 50 / base.layer.camera.zoom
+                }, "rgba(255, 255, 255, 0.5)", 1);
+            }
 
             if (base.mouse_attracted) {
                 gengine.beginPath();
@@ -194,24 +201,25 @@ define([
                 }, "rgba(255, 0, 0, 0.3)", 3);
             }
 
+            if (base.show_radar) {
+                for (var k in base.layer.level.life_planets) {
+                    gengine.beginPath();
+                    gengine.moveTo({x: base.x, y: base.y});
 
-            for (var k in base.layer.level.life_planets) {
-                gengine.beginPath();
-                gengine.moveTo({x: base.x, y: base.y});
+                    var normalized_vector = Vector.normalize({
+                        x: (base.layer.level.life_planets[k].x - base.x),
+                        y: (base.layer.level.life_planets[k].y - base.y)
+                    });
 
-                var normalized_vector = Vector.normalize({
-                    x: (base.layer.level.life_planets[k].x - base.x),
-                    y: (base.layer.level.life_planets[k].y - base.y)
-                });
-
-                gengine.moveTo({
-                    x: base.x,
-                    y: base.y
-                });
-                gengine.lineTo({
-                    x: base.x + normalized_vector.x * 50 / base.layer.camera.zoom,
-                    y: base.y + normalized_vector.y * 50 / base.layer.camera.zoom
-                }, "#228751", 2);
+                    gengine.moveTo({
+                        x: base.x,
+                        y: base.y
+                    });
+                    gengine.lineTo({
+                        x: base.x + normalized_vector.x * 50 / base.layer.camera.zoom,
+                        y: base.y + normalized_vector.y * 50 / base.layer.camera.zoom
+                    }, "#228751", 2);
+                }
             }
 
             base.forces = [];
