@@ -317,7 +317,7 @@ define([
                 base.previous_closest = Vector.distance(base, base.closest_planet);
             }
             var speed_f = 1;
-            if (base.layer.inputs_engine.keyPressed(65) && base.orbs_count > 0.1) {
+            if (base.layer.inputs_engine.keyPressed(16) && base.orbs_count > 0.1) {
                 speed_f = 10;
                 base.orbs_count -= 0.01;
             }

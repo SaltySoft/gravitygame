@@ -277,7 +277,7 @@ define([
                 var disp = base.influence > 0 ? base.influence / 20000: 0.01;
 
                 base.radius = 500 * disp;
-                gengine.drawImage("sun.png", base.x, base.y, 500 * disp, 512 * disp, 4608 / 9 * base.image_disx, 0, 512, 512);
+                gengine.drawImage("sun.png", base.x, base.y, 1100 * disp, 1124 * disp, 4608 / 9 * base.image_disx, 0, 512, 512);
                 if (base.image_factor % 10 == 0) {
 
                     if (base.image_disx > 7) {

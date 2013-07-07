@@ -199,23 +199,29 @@ define([
             if (base.show_hints) {
                 var text = "[Maj] Ultra speed engine";
                 var metrics = ctx.measureText(text);
-                ctx.fillText(text, posx + 5 - metrics.width / 2, posy);
+                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 60);
+
+                var text = "[Space] Anti gravity ray";
+                var metrics = ctx.measureText(text);
+                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 80);
 
                 var text = "[Left click] Accelerate towards pointer";
                 var metrics = ctx.measureText(text);
-                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 60);
+                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 40);
 
                 var text = "[Middle click] Zoom";
                 var metrics = ctx.measureText(text);
-                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 40);
+                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 20);
 
                 var text = "[Right click] Camera move";
                 var metrics = ctx.measureText(text);
-                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 20);
+                ctx.fillText(text, posx + 5 - metrics.width / 2, posy);
+
+
 
                 var text = "[H] Hide commands help";
                 var metrics = ctx.measureText(text);
-                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 80);
+                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 100);
             } else {
                 var text = "[H] Show commands help";
                 var metrics = ctx.measureText(text);
