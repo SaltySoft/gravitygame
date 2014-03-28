@@ -45,7 +45,7 @@ define([
         },
         draw: function (gengine) {
             var base = this;
-            if (base.center && base.center.close && !base.center.destination) {
+            if (base.center && base.center.close) {
                 base.radius = 3 / gengine.layer.camera.zoom;
 
 

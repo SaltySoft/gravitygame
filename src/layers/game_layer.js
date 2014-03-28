@@ -168,8 +168,35 @@ define([
 
 
                 if (base.inputs_engine.buttonPressed(3)) {
-                    base.camera.x -= base.inputs_engine.mouse_move.x / base.camera.zoom ;
-                    base.camera.y -= base.inputs_engine.mouse_move.y / base.camera.zoom;
+                    if (!base.previous_right_button) {
+                        base.planet_centered = !base.planet_centered;
+                    }
+
+                    base.previous_right_button = true;
+                } else {
+                    base.previous_right_button = false;
+                }
+
+
+                if (!base.planet_centered) {
+//                    base.camera.x -= base.inputs_engine.mouse_move.x / base.camera.zoom ;
+//                    base.camera.y -= base.inputs_engine.mouse_move.y / base.camera.zoom;
+
+                    var camera_center = {
+                        x: base.camera.x + base.game.canvas.width / 2 / base.camera.zoom,
+                        y: base.camera.y + base.game.canvas.height / 2 / base.camera.zoom
+                    };
+                    var vector = base.player.unitVectorTo(camera_center);
+                    var speed = base.player.calcSpeed();
+
+                    if (false && base.player.distanceTo(camera_center) > 500 + speed * 2) {
+                        base.camera.x += vector.x * ((speed * 2) || 200);
+                        base.camera.y += vector.y * ((speed * 2) || 200);
+                    } else {
+                        base.camera.x = base.player.x - base.game.canvas.width / 2 / base.camera.zoom;
+                        base.camera.y = base.player.y - base.game.canvas.height / 2 / base.camera.zoom;
+                    }
+
 
                 } else {
                     if (base.player.closest_planet) {
@@ -181,21 +208,24 @@ define([
                         var distance = Vector.distance(cplanet, vector);
                         base.camera.speedX *= 0.95;
                         base.camera.speedY *= 0.95;
-                        if (distance > 10) {
-                            var unit_to_planet = cplanet.unitVectorTo(vector);
-                            if (Vector.lgth({ x: base.camera.speedX, y: base.camera.speedY}) < 30 * base.player.closest_planet.speed * base.player.closest_planet.orbit_distance) {
-                                base.camera.speedX += unit_to_planet.x * 10;
-                                base.camera.speedY += unit_to_planet.y * 10;
-                            }
+                        var unit_to_planet = cplanet.unitVectorTo(vector);
+                        if (distance > Vector.calcSpeed(base.camera.speedX, base.camera.speedY) + 100) {
 
+                            if (Vector.lgth({ x: base.camera.speedX, y: base.camera.speedY}) < 30 * base.player.closest_planet.speed * base.player.closest_planet.orbit_distance) {
+                                base.camera.speedX += unit_to_planet.x * 15;
+                                base.camera.speedY += unit_to_planet.y * 15;
+                            }
+                            console.log("j", Vector.calcSpeed(base.camera.speedX, base.camera.speedY), distance, base.camera.speedX, base.camera.speedY);
+                            base.camera.x += base.camera.speedX;
+                            base.camera.y += base.camera.speedY;
                         } else {
-//                        base.camera.speedX *= 0.9;
-//                        base.camera.speedY *= 0.9;
+                            console.log(Vector.calcSpeed(base.camera.speedX, base.camera.speedY), distance, base.camera.speedX, base.camera.speedY);
+                            base.camera.x = cplanet.x - base.game.canvas.width / 2 / base.camera.zoom;
+                            base.camera.y = cplanet.y - base.game.canvas.height / 2 / base.camera.zoom;
+
                         }
                     }
 
-                    base.camera.x += base.camera.speedX;
-                    base.camera.y += base.camera.speedY;
 
                 }
 

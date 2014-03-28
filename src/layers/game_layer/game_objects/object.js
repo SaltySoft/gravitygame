@@ -99,6 +99,12 @@ define([
             return Math.sqrt(base.speedX * base.speedX + base.speedY * base.speedY);
         },
         calcSpeed: function (speedX, speedY) {
+            var base = this;
+            if (!speedX || !speedY) {
+                speedX = base.speedX;
+                speedY = base.speedY;
+            }
+
             return Math.sqrt(speedX * speedX + speedY * speedY);
         },
         interractWith: function (layer, obj) {
