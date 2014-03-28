@@ -36,6 +36,11 @@ define([
         },
         lgth: function (vector) {
             return Math.sqrt(vector.x * vector.x + vector.y * vector.y);
+        },
+        calcSpeed: function (speedX, speedY) {
+            var base = this;
+
+            return Math.sqrt(speedX * speedX + speedY * speedY);
         }
     });
 

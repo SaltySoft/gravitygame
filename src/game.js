@@ -5,7 +5,8 @@ define([
     './layers/menu_layer',
     './layers/menu_layers/start_menu',
     './layers/menu_layers/end_menu',
-    './layers/menu_layers/scores_menu'
+    './layers/menu_layers/scores_menu',
+    'amplify'
 ], function ($, Class, GameLayer, MenuLayer, StartMenu, EndMenu, ScoreMenu) {
     var Game = Class.create();
 
@@ -16,7 +17,7 @@ define([
         init: function (container) {
             var base = this;
             base.focused = false;
-            base.debugging = false;
+            base.debugging = true   ;
             $("html").css("padding", "0px");
             $("body").css("padding", "0px");
             $("html").css("margin", "0px");
@@ -60,6 +61,7 @@ define([
                 });
             }
             base.volume = 0.2;
+            if (!amplify.store("music_off"))
             base.startMusic();
         },
         resetSize: function () {
@@ -104,8 +106,7 @@ define([
                 base.sound_container[0].volume = base.volume;
 
                 base.sound_container[0].play();
-
-
+                amplify.store("music_off", false);
             }
         },
         volumeDown: function () {
@@ -133,6 +134,7 @@ define([
             if (base.sound_container) {
                 base.sound_container[0].pause();
                 base.music_playing = false;
+                amplify.store("music_off", true);
             }
         },
         newGame: function () {

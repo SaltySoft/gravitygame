@@ -104,7 +104,6 @@ define([
             }
 
 
-
             base.angle = obj.angle ? obj.angle : Math.random() * Math.PI * 2;
             base.image_disx = 0;
             base.image_ddx = 1;
@@ -131,7 +130,7 @@ define([
         physics: function (layer) {
             var base = this;
             base.layer = layer;
-            if (layer.game.debugging && layer.inputs_engine.keyPressed(16)) {
+            if (layer.game.debugging && layer.inputs_engine.keyPressed(77)) {
                 base.water_counts = 10;
                 base.earth_counts = 10;
                 base.acid_counts = 10;
@@ -165,13 +164,22 @@ define([
 
             if (base.planet_type == "life" && base.center && Vector.distance(base.center, base) < base.center.influence &&
                 base.water_counts >= 10 && base.earth_counts >= 10 && base.acid_counts >= 10) {
-
-                if (base.warmup == 500) {
+                console.log("d");
+                if (base.warmup == 500 && Vector.distance(base.center, base) < base.center.influence) {
                     base.alive = true;
                     base.warming = false;
                 } else {
                     base.warming = true;
+
+
+                }
+                if (base.warmup <= 500 && Vector.distance(base.center, base) < base.center.influence) {
                     base.warmup += 1;
+                } else {
+                    console.log("-");
+                    base.alive = false;
+                    if (Vector.distance(base.center, base) > base.center.influence)
+                        base.warmup -= 1;
                 }
 
                 if (!base.previous_alive) {
@@ -248,7 +256,7 @@ define([
             var radius = base.radius;
             base.color = "rgb(0, 0, 0)";
             if (base.destination) {
-               base.color = "rgb(" + Math.round(255 * (base.temperature / 1000)) + ", " + Math.round(255 * (base.temperature / 1000)) + ", " + Math.round(255 * ( base.temperature / 1000)) + ")";
+                base.color = "rgb(" + Math.round(255 * (base.temperature / 1000)) + ", " + Math.round(255 * (base.temperature / 1000)) + ", " + Math.round(255 * ( base.temperature / 1000)) + ")";
 
             }
 
@@ -274,23 +282,29 @@ define([
                 });
             }
             if (base.destination) {
-                var disp = base.influence > 0 ? base.influence / 20000: 0.01;
+                var disp = base.influence > 0 ? base.influence / 20000 : 0.01;
 
                 base.radius = 500 * disp;
-                gengine.drawImage("sun.png", base.x, base.y, 1100 * disp, 1124 * disp, 4608 / 9 * base.image_disx, 0, 512, 512);
-                if (base.image_factor % 10 == 0) {
-
-                    if (base.image_disx > 7) {
-                        base.image_ddx = -1;
-                    }
-                    if (base.image_disx < 2) {
-                        base.image_ddx = 1;
-                    }
-                    base.image_disx += base.image_ddx;
-
-                }
-                base.image_factor++;
-                base.image_factor %= 100;
+////                gengine.drawImage("sun.png", base.x, base.y, 1100 * disp, 1124 * disp, 4608 / 9 * base.image_disx, 0, 512, 512);
+////                if (base.image_factor % 10 == 0) {
+////
+////                    if (base.image_disx > 7) {
+////                        base.image_ddx = -1;
+////                    }
+////                    if (base.image_disx < 2) {
+////                        base.image_ddx = 1;
+////                    }
+////                    base.image_disx += base.image_ddx;
+////
+////                }
+//                base.image_factor++;
+//                base.image_factor %= 100;
+                gengine.drawCircle({
+                    x: x,
+                    y: y,
+                    radius: base.radius,
+                    fill_style: "rgba(255,255,255,0.9)"
+                });
 
 
             }
