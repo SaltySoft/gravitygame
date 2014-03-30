@@ -113,7 +113,7 @@ define([
             context.lineTo((vector.x - base.camera.x) * base.camera.zoom, (vector.y - base.camera.y) * base.camera.zoom);
             context.stroke();
         },
-        radarTo: function(center, dest, color, line_width) {
+        radarTo: function(center, dest, color, line_width, angle) {
             var base = this;
             var context = base.context;
 
@@ -123,7 +123,7 @@ define([
                 context.beginPath();
                 context.lineWidth = line_width !== undefined ? line_width : 4;
                 context.strokeStyle = color !== undefined ? color : "white";
-                context.arc((center.x - base.camera.x) * base.camera.zoom, (center.y - base.camera.y) * base.camera.zoom, 5 * i, theta - (Math.PI / 12), theta + (Math.PI / 12));
+                context.arc((center.x - base.camera.x) * base.camera.zoom, (center.y - base.camera.y) * base.camera.zoom, 5 * i, theta - (angle / 2), theta + (angle / 2));
                 context.stroke();
             }
 

@@ -211,10 +211,17 @@ define([
                 y: (base.layer.level.sun.y - base.y)
             });
             if (base.show_radar) {
-                gengine.lineTo({
+                var distance = base.distanceTo({
+                    x: (base.layer.level.sun.x - base.x),
+                    y: (base.layer.level.sun.y - base.y)
+                });
+                gengine.radarTo({
+                    x: base.x,
+                    y: base.y
+                }, {
                     x: base.x + normalized_vector.x * 50 / base.layer.camera.zoom,
                     y: base.y + normalized_vector.y * 50 / base.layer.camera.zoom
-                }, "rgba(255, 255, 255, 0.5)", 1);
+                }, "rgba(255, 255, 20," + (50000 / distance) + ")", 2, Math.PI / 6);
             }
 
             if (base.mouse_attracted) {
@@ -257,7 +264,7 @@ define([
                     }, {
                         x: base.x + normalized_vector.x * 50 / base.layer.camera.zoom,
                         y: base.y + normalized_vector.y * 50 / base.layer.camera.zoom
-                    }, "rgba(255,255,255," + (100000 / distance) + ")", 2);
+                    }, "rgba(50,255,50," + (100000 / distance) + ")", 2, Math.PI / 6);
                 }
             }
 

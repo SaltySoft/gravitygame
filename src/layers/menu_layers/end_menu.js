@@ -12,32 +12,44 @@ define([
     EndMenu.include({
         menu_init: function() {
             var base = this;
+            if (base.game.score > 0) {
+                base.addText("You won", 0.5, 0.5, 0, -70, true);
+                base.addText("Your score : " + base.game.score + " points", 0.5, 0.5, 0, -30, true);
+                base.addButton("New game", 0.5, 0.5, -75, 0, 150, 30, "#BF3030", function() {
+                    base.game.clearLayers();
+                    base.game.newGame();
+                });
 
-            base.addText("You won", 0.5, 0.5, 0, -70, true);
-            base.addText("Your score : " + base.game.score + " points", 0.5, 0.5, 0, -30, true);
-            base.addButton("New game", 0.5, 0.5, -75, 0, 150, 30, "#BF3030", function() {
-                base.game.clearLayers();
-                base.game.newGame();
-            });
+                base.addButton("Main menu", 0.5, 0.5, -75, 33, 150, 30, "#BF3030", function() {
+                    base.game.startMenu();
+                });
+                var scores = amplify.store("gravitygame_scores");
 
-            base.addButton("Main menu", 0.5, 0.5, -75, 33, 150, 30, "#BF3030", function() {
-                base.game.startMenu();
-            });
-            var scores = amplify.store("gravitygame_scores");
+                if (!scores) {
+                    scores = [];
+                }
 
-            if (!scores) {
-                scores = [];
+                var current_score = {
+                    score: base.game.score,
+                    date: new Date()
+                };
+
+                scores.push(current_score);
+                scores.sort(compare);
+
+                amplify.store("gravitygame_scores", scores);
+            } else {
+                base.addText("You lost: " + base.game.lost_reason, 0.5, 0.5, 0, -70, true);
+                base.addButton("New game", 0.5, 0.5, -75, 0, 150, 30, "#BF3030", function() {
+                    base.game.clearLayers();
+                    base.game.newGame();
+                });
+
+                base.addButton("Main menu", 0.5, 0.5, -75, 33, 150, 30, "#BF3030", function() {
+                    base.game.startMenu();
+                });
             }
 
-            var current_score = {
-                score: base.game.score,
-                date: new Date()
-            };
-
-            scores.push(current_score);
-            scores.sort(compare);
-
-            amplify.store("gravitygame_scores", scores);
         }
     });
 

@@ -97,6 +97,14 @@ define([
             var layer = EndMenu.init(base);
             base.addLayer(layer);
         },
+        lost: function(lost_reason) {
+            var base = this;
+            base.score = 0;
+            base.lost_reason = lost_reason;
+            base.running = true;
+            var layer = EndMenu.init(base);
+            base.addLayer(layer);
+        },
         startMusic: function() {
             var base = this;
 

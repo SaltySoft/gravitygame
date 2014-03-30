@@ -83,6 +83,7 @@ define([
                 base.objects[k].logic(base);
             }
             var won = true;
+            var lost = false;
             base.alive_planets = 0;
             base.warmup_percentage = 0;
             base.warming_planets = 0;
@@ -100,12 +101,19 @@ define([
                     base.warmup_percentage += planet.warmup / 500;
                 }
             }
+            if (base.player.orbs_count <= 0) {
+                lost = true;
+            }
 
             base.warmup_percentage = Math.round(base.warmup_percentage / base.life_planets * 100);
 
             if (won) {
                 base.finished = true;
                 base.game.won(Math.round(base.player.score));
+            }
+            if (lost) {
+                base.finished = true;
+                base.game.lost("No energy left");
             }
 
             if (base.game.debugging) {
@@ -156,7 +164,8 @@ define([
 
                 if (Math.abs(base.inputs_engine.getScroll()) > 0.0001) {
                     var new_zoom = base.camera.zoom + base.inputs_engine.getScroll() * 0.0001;
-                    base.camera.zoom = new_zoom;
+                    if (new_zoom >= 0.0007)
+                        base.camera.zoom = new_zoom;
                 }
 
 
