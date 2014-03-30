@@ -10,11 +10,11 @@ define([
     './game_layer/vector',
     './menu_layers/pause_menu',
     './hud'
-], function (Class, Layer, InputsEngine, PhysicsEngine, GraphicsEngine, Planet, Player, LevelGenerator, Vector, PauseMenu, HudLayer) {
+], function(Class, Layer, InputsEngine, PhysicsEngine, GraphicsEngine, Planet, Player, LevelGenerator, Vector, PauseMenu, HudLayer) {
     var GameLayer = Layer.create();
 
     GameLayer.include({
-        initializeLayer: function (game) {
+        initializeLayer: function(game) {
             var base = this;
             base.game = game;
             base.camera = {
@@ -64,7 +64,7 @@ define([
             }
             base.warmup_percentage = 0;
         },
-        cameraPos: function (params) {
+        cameraPos: function(params) {
             var base = this;
             if (params.x)
                 base.camera.x = params.x;
@@ -72,7 +72,7 @@ define([
                 base.camera.y = params.y;
 
         },
-        logic: function () {
+        logic: function() {
             var base = this;
 
             if (base.last) {
@@ -120,12 +120,12 @@ define([
             }
 
         },
-        inputs: function () {
+        inputs: function() {
             var base = this;
             base.inputs_engine.run();
 
         },
-        pauseMenu: function () {
+        pauseMenu: function() {
             var base = this;
             if (!base.finished) {
                 base.paused = true;
@@ -135,7 +135,7 @@ define([
                 base.game.addLayer(pause_layer);
             }
         },
-        physics: function () {
+        physics: function() {
             var base = this;
             if (base.running) {
                 if ((base.player.x) < base.camera.x + 50) {
@@ -155,21 +155,53 @@ define([
                 }
 
 
-                if (base.inputs_engine.buttonPressed(2) && Math.abs(base.inputs_engine.mouse_move.y) > 0.5) {
-                    var new_zoom = base.camera.zoom + (base.inputs_engine.mouse_move.y > 0 ? 0.025 * base.camera.zoom : -0.025 * base.camera.zoom);
-                    if (new_zoom <= 2 && new_zoom >= 0.0005) {
-                        base.camera.x += base.game.canvas.width / (base.camera.zoom) / 2 - base.game.canvas.width / (new_zoom) / 2;
-                        base.camera.y += base.game.canvas.height / (base.camera.zoom) / 2 - base.game.canvas.height / (new_zoom) / 2;
+                // if (base.inputs_engine.buttonPressed(2) && Math.abs(base.inputs_engine.mouse_move.y) > 0.5) {
+                //     var new_zoom = base.camera.zoom + (base.inputs_engine.mouse_move.y > 0 ? 0.025 * base.camera.zoom : -0.025 * base.camera.zoom);
+                //     if (new_zoom <= 2 && new_zoom >= 0.0005) {
+                //         base.camera.x += base.game.canvas.width / (base.camera.zoom) / 2 - base.game.canvas.width / (new_zoom) / 2;
+                //         base.camera.y += base.game.canvas.height / (base.camera.zoom) / 2 - base.game.canvas.height / (new_zoom) / 2;
 
 
-                        base.camera.zoom = new_zoom;
-                    }
+                //         base.camera.zoom = new_zoom;
+                //     }
+                // }
+                console.log("SCROLL", base.inputs_engine.getScroll());
+                if (Math.abs(base.inputs_engine.getScroll()) > 0.0001) {
+                    var new_zoom = base.camera.zoom + base.inputs_engine.getScroll() * 0.0001;
+                    base.camera.zoom = new_zoom;
                 }
 
 
                 if (base.inputs_engine.buttonPressed(3)) {
-                    base.camera.x -= base.inputs_engine.mouse_move.x / base.camera.zoom ;
-                    base.camera.y -= base.inputs_engine.mouse_move.y / base.camera.zoom;
+                    if (!base.previous_right_button) {
+                        base.planet_centered = !base.planet_centered;
+                    }
+
+                    base.previous_right_button = true;
+                } else {
+                    base.previous_right_button = false;
+                }
+
+
+                if (!base.planet_centered) {
+                    //                    base.camera.x -= base.inputs_engine.mouse_move.x / base.camera.zoom ;
+                    //                    base.camera.y -= base.inputs_engine.mouse_move.y / base.camera.zoom;
+
+                    var camera_center = {
+                        x: base.camera.x + base.game.canvas.width / 2 / base.camera.zoom,
+                        y: base.camera.y + base.game.canvas.height / 2 / base.camera.zoom
+                    };
+                    var vector = base.player.unitVectorTo(camera_center);
+                    var speed = base.player.calcSpeed();
+
+                    if (false && base.player.distanceTo(camera_center) > 500 + speed * 2) {
+                        base.camera.x += vector.x * ((speed * 2) || 200);
+                        base.camera.y += vector.y * ((speed * 2) || 200);
+                    } else {
+                        base.camera.x = base.player.x - base.game.canvas.width / 2 / base.camera.zoom;
+                        base.camera.y = base.player.y - base.game.canvas.height / 2 / base.camera.zoom;
+                    }
+
 
                 } else {
                     if (base.player.closest_planet) {
@@ -181,21 +213,27 @@ define([
                         var distance = Vector.distance(cplanet, vector);
                         base.camera.speedX *= 0.95;
                         base.camera.speedY *= 0.95;
-                        if (distance > 10) {
-                            var unit_to_planet = cplanet.unitVectorTo(vector);
-                            if (Vector.lgth({ x: base.camera.speedX, y: base.camera.speedY}) < 30 * base.player.closest_planet.speed * base.player.closest_planet.orbit_distance) {
-                                base.camera.speedX += unit_to_planet.x * 10;
-                                base.camera.speedY += unit_to_planet.y * 10;
-                            }
+                        var unit_to_planet = cplanet.unitVectorTo(vector);
+                        if (distance > Vector.calcSpeed(base.camera.speedX, base.camera.speedY) + 100) {
 
+                            if (Vector.lgth({
+                                x: base.camera.speedX,
+                                y: base.camera.speedY
+                            }) < 30 * base.player.closest_planet.speed * base.player.closest_planet.orbit_distance) {
+                                base.camera.speedX += unit_to_planet.x * 15;
+                                base.camera.speedY += unit_to_planet.y * 15;
+                            }
+                            console.log("j", Vector.calcSpeed(base.camera.speedX, base.camera.speedY), distance, base.camera.speedX, base.camera.speedY);
+                            base.camera.x += base.camera.speedX;
+                            base.camera.y += base.camera.speedY;
                         } else {
-//                        base.camera.speedX *= 0.9;
-//                        base.camera.speedY *= 0.9;
+                            console.log(Vector.calcSpeed(base.camera.speedX, base.camera.speedY), distance, base.camera.speedX, base.camera.speedY);
+                            base.camera.x = cplanet.x - base.game.canvas.width / 2 / base.camera.zoom;
+                            base.camera.y = cplanet.y - base.game.canvas.height / 2 / base.camera.zoom;
+
                         }
                     }
 
-                    base.camera.x += base.camera.speedX;
-                    base.camera.y += base.camera.speedY;
 
                 }
 
@@ -205,7 +243,7 @@ define([
             }
 
         },
-        draw: function () {
+        draw: function() {
             var base = this;
             for (var k in base.orbs)
                 base.orbs[k].draw(base.graphics_engine);
@@ -214,7 +252,7 @@ define([
             base.inputs_engine.draw();
             base.graphics_engine.run();
         },
-        layerRun: function (last) {
+        layerRun: function(last) {
             var base = this;
             base.last = last;
             if (!base.running) {
@@ -224,11 +262,11 @@ define([
             }
 
         },
-        pauseGame: function () {
+        pauseGame: function() {
             var base = this;
             base.running = false;
         },
-        unPauseGame: function () {
+        unPauseGame: function() {
             var base = this;
             base.running = true;
         }
