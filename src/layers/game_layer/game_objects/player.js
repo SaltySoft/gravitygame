@@ -3,7 +3,7 @@ define([
     'class',
     './object',
     '../vector'
-], function ($, Class, Obj, Vector) {
+], function($, Class, Obj, Vector) {
     var Player = Obj.create();
 
     Player.extend({
@@ -15,7 +15,7 @@ define([
 
     Player.include({
 
-        init: function (layer, obj) {
+        init: function(layer, obj) {
             var base = this;
             $.proxy(base.father.init, base)(layer, obj);
             base.x = 0;
@@ -46,7 +46,10 @@ define([
 
 
             base.mouse_attracted = false;
-            base.mouse_position = { x: 0, y: 0 };
+            base.mouse_position = {
+                x: 0,
+                y: 0
+            };
 
             base.orbs_count = base.layer.game.debugging ? 1000 : 10;
             base.water_orbs = base.layer.game.debugging ? 10 : 0;
@@ -60,14 +63,16 @@ define([
             base.previous_closest = 0;
             base.show_radar = true;
             base.radar_key = false;
+            base.last_pos = [];
+            base.cur_frame = 0;
         },
-        addAngle: function (angle, weight) {
+        addAngle: function(angle, weight) {
             var base = this;
             weight *= weight * weight;
             base.angle_sum += angle * weight;
             base.angle_count += weight;
         },
-        addCenter: function (vector, weight) {
+        addCenter: function(vector, weight) {
             var base = this;
             if (base.center.x == undefined) {
                 base.center.x = 0;
@@ -78,7 +83,7 @@ define([
             base.center.y += vector.y;
             base.center_count += 1;
         },
-        logic: function (layer) {
+        logic: function(layer) {
             var base = this;
             base.inputs = layer.inputs_engine;
 
@@ -88,12 +93,10 @@ define([
             if (base.inputs.keyPressed(87) && base.closest_distance && base.closest_distance < 2000) {
                 base.running = true;
                 base.accel_jet = 0.5;
-            }
-            else if (base.inputs.keyPressed(83) && base.closest_distance && base.closest_distance < 2000) {
+            } else if (base.inputs.keyPressed(83) && base.closest_distance && base.closest_distance < 2000) {
                 base.running = true;
                 base.accel_jet = -0.5;
-            }
-            else {
+            } else {
                 base.running = false;
                 base.accel_jet = 0;
             }
@@ -137,7 +140,7 @@ define([
                 base.radar_key = false;
             }
         },
-        draw: function (gengine) {
+        draw: function(gengine) {
             var base = this;
             gengine.drawCircle({
                 x: base.x,
@@ -145,20 +148,36 @@ define([
                 radius: 5 / base.layer.camera.zoom,
                 fill_style: "blue",
                 stroke_style: "#FFAA88"
-//                angle: base.angle
             });
+            var i = 10;
+            for (var k in base.last_pos) {
+                var alpha = 1 / i--;
+                gengine.drawCircle({
+                    x: base.last_pos[k].x,
+                    y: base.last_pos[k].y,
+                    radius: 5 / base.layer.camera.zoom,
+                    fill_style: "rgba(255,255,255," + alpha + ")",
+                    stroke_style: "#FFAA88"
+                });
+            }
 
 
             if (base.layer.game.debugging) {
                 gengine.beginPath();
-                gengine.moveTo({x: base.x, y: base.y});
+                gengine.moveTo({
+                    x: base.x,
+                    y: base.y
+                });
                 gengine.lineTo({
                     x: base.x + base.accelerationX * 1000,
                     y: base.y + base.accelerationY * 1000
                 }, "blue", 2);
                 gengine.closePath();
                 gengine.beginPath();
-                gengine.moveTo({x: base.x, y: base.y});
+                gengine.moveTo({
+                    x: base.x,
+                    y: base.y
+                });
                 gengine.lineTo({
                     x: base.x + base.speedX * 20,
                     y: base.y + base.speedY * 20
@@ -173,14 +192,20 @@ define([
 
             for (var k in base.active_planets) {
                 gengine.beginPath();
-                gengine.moveTo({x: base.x, y: base.y});
+                gengine.moveTo({
+                    x: base.x,
+                    y: base.y
+                });
                 gengine.lineTo({
                     x: base.active_planets[k].x,
                     y: base.active_planets[k].y
                 }, "blue", 1);
             }
             gengine.beginPath();
-            gengine.moveTo({x: base.x, y: base.y});
+            gengine.moveTo({
+                x: base.x,
+                y: base.y
+            });
             var normalized_vector = Vector.normalize({
                 x: (base.layer.level.sun.x - base.x),
                 y: (base.layer.level.sun.y - base.y)
@@ -194,7 +219,10 @@ define([
 
             if (base.mouse_attracted) {
                 gengine.beginPath();
-                gengine.moveTo({x: base.x, y: base.y});
+                gengine.moveTo({
+                    x: base.x,
+                    y: base.y
+                });
                 gengine.lineTo({
                     x: base.layer.inputs_engine.mouse_position.x,
                     y: base.layer.inputs_engine.mouse_position.y
@@ -204,7 +232,10 @@ define([
             if (base.show_radar) {
                 for (var k in base.layer.level.life_planets) {
                     gengine.beginPath();
-                    gengine.moveTo({x: base.x, y: base.y});
+                    gengine.moveTo({
+                        x: base.x,
+                        y: base.y
+                    });
 
                     var normalized_vector = Vector.normalize({
                         x: (base.layer.level.life_planets[k].x - base.x),
@@ -215,10 +246,13 @@ define([
                         x: base.x,
                         y: base.y
                     });
-                    gengine.lineTo({
+                    gengine.radarTo({
+                        x: base.x,
+                        y: base.y
+                    }, {
                         x: base.x + normalized_vector.x * 50 / base.layer.camera.zoom,
                         y: base.y + normalized_vector.y * 50 / base.layer.camera.zoom
-                    }, "#228751", 2);
+                    }, "white", 2);
                 }
             }
 
@@ -229,9 +263,18 @@ define([
 
         },
 
-        physics: function (layer) {
+        physics: function(layer) {
             var base = this;
             base.active_planets = [];
+
+            if (base.last_pos.length > 50)
+                base.last_pos.shift();
+
+            base.last_pos.push({
+                x: base.x,
+                y: base.y
+            });
+
             var in_influence = false;
             for (var k in layer.planets) {
                 layer.planets[k].closest = false;
@@ -243,7 +286,7 @@ define([
                 }
                 var planet = layer.planets[k];
                 if (distance < planet.grav_influence + planet.radius) {
-//                    planet.close = true;
+                    //                    planet.close = true;
                 }
                 if (distance <= planet.influence + planet.radius && distance >= 10 + planet.radius) {
                     if (base.temperature < 20 || base.temperature > 24)
@@ -251,8 +294,7 @@ define([
                     else
                         base.temperature = 20;
                     in_influence = true;
-                }
-                else if (distance < 10 + planet.radius) {
+                } else if (distance < 10 + planet.radius) {
                     if (base.temperature < 500) {
                         base.temperature += 1;
                     }

@@ -1,6 +1,6 @@
 define([
     'class'
-], function (Class) {
+], function(Class) {
     var GraphicsEngine = Class.create();
 
 
@@ -8,17 +8,17 @@ define([
 
     });
     GraphicsEngine.include({
-        init: function (layer) {
+        init: function(layer) {
             var base = this;
             base.layer = layer;
             base.camera = layer.camera;
             base.context = layer.game.context;
-            base.canvas =  layer.game.canvas;
+            base.canvas = layer.game.canvas;
             base.images = [];
             base.notifications = [];
         },
 
-        run: function () {
+        run: function() {
             var base = this;
             var canvas = base.layer.game.canvas;
             base.context = base.layer.game.context;
@@ -45,7 +45,7 @@ define([
 
             }
         },
-        drawCircle: function (params) {
+        drawCircle: function(params) {
             var base = this;
 
             var context = base.context;
@@ -93,18 +93,18 @@ define([
 
 
         },
-        beginPath: function () {
+        beginPath: function() {
             var base = this;
             base.context.beginPath();
         },
-        moveTo: function (vector) {
+        moveTo: function(vector) {
             var base = this;
             var context = base.context;
 
             context.moveTo((vector.x - base.camera.x) * base.camera.zoom, (vector.y - base.camera.y) * base.camera.zoom);
-//            context.moveTo(vector.x, vector.y);
+            //            context.moveTo(vector.x, vector.y);
         },
-        lineTo: function (vector, color, line_width) {
+        lineTo: function(vector, color, line_width) {
             var base = this;
             var context = base.context;
 
@@ -113,7 +113,22 @@ define([
             context.lineTo((vector.x - base.camera.x) * base.camera.zoom, (vector.y - base.camera.y) * base.camera.zoom);
             context.stroke();
         },
-        arcTo: function (from, to, color, line_width) {
+        radarTo: function(center, dest, color, line_width) {
+            var base = this;
+            var context = base.context;
+
+            var theta = Math.atan2(center.x - dest.x, dest.y - center.y) + Math.PI / 2;
+
+            for (var i = 0; i < 10; i++) {
+                context.beginPath();
+                context.lineWidth = line_width !== undefined ? line_width : 4;
+                context.strokeStyle = color !== undefined ? color : "white";
+                context.arc((center.x - base.camera.x) * base.camera.zoom, (center.y - base.camera.y) * base.camera.zoom, 5 * i, theta - (Math.PI / 8), theta + (Math.PI / 8));
+                context.stroke();
+            }
+
+        },
+        arcTo: function(from, to, color, line_width) {
             var base = this;
             var context = base.context;
             context.lineWidth = line_width !== undefined ? line_width : 3;
@@ -122,7 +137,7 @@ define([
             context.stroke();
 
         },
-        drawImage: function (name, x, y, width, height, startx, starty, ssizex, ssizey) {
+        drawImage: function(name, x, y, width, height, startx, starty, ssizex, ssizey) {
             var base = this;
             var context = base.context;
             if (base.images[name] === undefined) {
@@ -145,15 +160,13 @@ define([
                 startx,
                 starty,
                 ssizex,
-                ssizey,
-                (x - base.camera.x) * base.camera.zoom - width * base.camera.zoom / 2,
-                (y - base.camera.y) * base.camera.zoom - height * base.camera.zoom / 2,
+                ssizey, (x - base.camera.x) * base.camera.zoom - width * base.camera.zoom / 2, (y - base.camera.y) * base.camera.zoom - height * base.camera.zoom / 2,
                 width * base.camera.zoom,
                 height * base.camera.zoom
             );
-//            context.drawImage(image, 0, 0);
+            //            context.drawImage(image, 0, 0);
         },
-        createRadialGradient: function (x, y, radius, color1, color2) {
+        createRadialGradient: function(x, y, radius, color1, color2) {
             var base = this;
             var ctx = this.context;
             var rad = ctx.createRadialGradient((x - base.camera.x) * base.camera.zoom, (y - base.camera.y) * base.camera.zoom, radius * base.camera.zoom, (x - base.camera.x) * base.camera.zoom, (y - base.camera.y) * base.camera.zoom, 0);
@@ -162,15 +175,15 @@ define([
             rad.addColorStop(1, color1);
             return rad;
         },
-        closePath: function () {
+        closePath: function() {
             var base = this;
             base.context.closePath();
         },
-        drawText: function (condition, x, y, height) {
+        drawText: function(condition, x, y, height) {
             var ctx = this.context;
-//            ctx
+            //            ctx
         },
-        notification: function (text, time) {
+        notification: function(text, time) {
             var base = this;
             base.notifications.push({
                 text: text,
@@ -178,7 +191,7 @@ define([
                 creation: (new Date()).getTime()
             });
         },
-        drawCache: function () {
+        drawCache: function() {
             var base = this;
             var context = base.context;
             context.fillStyle = "rgba(0, 0, 0, 0.8)";
