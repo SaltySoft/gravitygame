@@ -10,11 +10,11 @@ define([
     './game_layer/vector',
     './menu_layers/pause_menu',
     './hud'
-], function (Class, Layer, InputsEngine, PhysicsEngine, GraphicsEngine, Planet, Player, LevelGenerator, Vector, PauseMenu, HudLayer) {
+], function(Class, Layer, InputsEngine, PhysicsEngine, GraphicsEngine, Planet, Player, LevelGenerator, Vector, PauseMenu, HudLayer) {
     var GameLayer = Layer.create();
 
     GameLayer.include({
-        initializeLayer: function (game) {
+        initializeLayer: function(game) {
             var base = this;
             base.game = game;
             base.camera = {
@@ -64,7 +64,7 @@ define([
             }
             base.warmup_percentage = 0;
         },
-        cameraPos: function (params) {
+        cameraPos: function(params) {
             var base = this;
             if (params.x)
                 base.camera.x = params.x;
@@ -72,7 +72,7 @@ define([
                 base.camera.y = params.y;
 
         },
-        logic: function () {
+        logic: function() {
             var base = this;
 
             if (base.last) {
@@ -83,6 +83,7 @@ define([
                 base.objects[k].logic(base);
             }
             var won = true;
+            var lost = false;
             base.alive_planets = 0;
             base.warmup_percentage = 0;
             base.warming_planets = 0;
@@ -100,12 +101,19 @@ define([
                     base.warmup_percentage += planet.warmup / 500;
                 }
             }
+            if (base.player.orbs_count <= 0) {
+                lost = true;
+            }
 
             base.warmup_percentage = Math.round(base.warmup_percentage / base.life_planets * 100);
 
             if (won) {
                 base.finished = true;
                 base.game.won(Math.round(base.player.score));
+            }
+            if (lost) {
+                base.finished = true;
+                base.game.lost("No energy left");
             }
 
             if (base.game.debugging) {
@@ -120,12 +128,12 @@ define([
             }
 
         },
-        inputs: function () {
+        inputs: function() {
             var base = this;
             base.inputs_engine.run();
 
         },
-        pauseMenu: function () {
+        pauseMenu: function() {
             var base = this;
             if (!base.finished) {
                 base.paused = true;
@@ -135,7 +143,7 @@ define([
                 base.game.addLayer(pause_layer);
             }
         },
-        physics: function () {
+        physics: function() {
             var base = this;
             if (base.running) {
                 if ((base.player.x) < base.camera.x + 50) {
@@ -154,16 +162,10 @@ define([
                     base.camera.y = (base.player.y) - base.game.canvas.height / base.camera.zoom + 50;
                 }
 
-
-                if (base.inputs_engine.buttonPressed(2) && Math.abs(base.inputs_engine.mouse_move.y) > 0.5) {
-                    var new_zoom = base.camera.zoom + (base.inputs_engine.mouse_move.y > 0 ? 0.025 * base.camera.zoom : -0.025 * base.camera.zoom);
-                    if (new_zoom <= 2 && new_zoom >= 0.0005) {
-                        base.camera.x += base.game.canvas.width / (base.camera.zoom) / 2 - base.game.canvas.width / (new_zoom) / 2;
-                        base.camera.y += base.game.canvas.height / (base.camera.zoom) / 2 - base.game.canvas.height / (new_zoom) / 2;
-
-
+                if (Math.abs(base.inputs_engine.getScroll()) > 0.0001) {
+                    var new_zoom = base.camera.zoom + base.inputs_engine.getScroll() * 0.0001;
+                    if (new_zoom >= 0.0007)
                         base.camera.zoom = new_zoom;
-                    }
                 }
 
 
@@ -179,9 +181,6 @@ define([
 
 
                 if (!base.planet_centered) {
-//                    base.camera.x -= base.inputs_engine.mouse_move.x / base.camera.zoom ;
-//                    base.camera.y -= base.inputs_engine.mouse_move.y / base.camera.zoom;
-
                     var camera_center = {
                         x: base.camera.x + base.game.canvas.width / 2 / base.camera.zoom,
                         y: base.camera.y + base.game.canvas.height / 2 / base.camera.zoom
@@ -211,15 +210,17 @@ define([
                         var unit_to_planet = cplanet.unitVectorTo(vector);
                         if (distance > Vector.calcSpeed(base.camera.speedX, base.camera.speedY) + 100) {
 
-                            if (Vector.lgth({ x: base.camera.speedX, y: base.camera.speedY}) < 30 * base.player.closest_planet.speed * base.player.closest_planet.orbit_distance) {
+                            if (Vector.lgth({
+                                x: base.camera.speedX,
+                                y: base.camera.speedY
+                            }) < 30 * base.player.closest_planet.speed * base.player.closest_planet.orbit_distance) {
                                 base.camera.speedX += unit_to_planet.x * 15;
                                 base.camera.speedY += unit_to_planet.y * 15;
                             }
-                            console.log("j", Vector.calcSpeed(base.camera.speedX, base.camera.speedY), distance, base.camera.speedX, base.camera.speedY);
+
                             base.camera.x += base.camera.speedX;
                             base.camera.y += base.camera.speedY;
                         } else {
-                            console.log(Vector.calcSpeed(base.camera.speedX, base.camera.speedY), distance, base.camera.speedX, base.camera.speedY);
                             base.camera.x = cplanet.x - base.game.canvas.width / 2 / base.camera.zoom;
                             base.camera.y = cplanet.y - base.game.canvas.height / 2 / base.camera.zoom;
 
@@ -235,7 +236,7 @@ define([
             }
 
         },
-        draw: function () {
+        draw: function() {
             var base = this;
             for (var k in base.orbs)
                 base.orbs[k].draw(base.graphics_engine);
@@ -244,7 +245,7 @@ define([
             base.inputs_engine.draw();
             base.graphics_engine.run();
         },
-        layerRun: function (last) {
+        layerRun: function(last) {
             var base = this;
             base.last = last;
             if (!base.running) {
@@ -254,11 +255,11 @@ define([
             }
 
         },
-        pauseGame: function () {
+        pauseGame: function() {
             var base = this;
             base.running = false;
         },
-        unPauseGame: function () {
+        unPauseGame: function() {
             var base = this;
             base.running = true;
         }

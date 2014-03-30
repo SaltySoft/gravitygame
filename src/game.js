@@ -7,17 +7,17 @@ define([
     './layers/menu_layers/end_menu',
     './layers/menu_layers/scores_menu',
     'amplify'
-], function ($, Class, GameLayer, MenuLayer, StartMenu, EndMenu, ScoreMenu) {
+], function($, Class, GameLayer, MenuLayer, StartMenu, EndMenu, ScoreMenu) {
     var Game = Class.create();
 
     Game.extend({
         layers: []
     });
     Game.include({
-        init: function (container) {
+        init: function(container) {
             var base = this;
             base.focused = false;
-            base.debugging = true   ;
+            base.debugging = false;
             $("html").css("padding", "0px");
             $("body").css("padding", "0px");
             $("html").css("margin", "0px");
@@ -33,7 +33,7 @@ define([
             base.resetSize();
             $(base.canvas).attr("oncontextmenu", "return false;");
             $(document).css("overflow", "hidden");
-            $(window).resize(function () {
+            $(window).resize(function() {
                 base.resetSize();
 
 
@@ -52,7 +52,7 @@ define([
             base.current_music = 0;
             base.music_playing = false;
             if (base.sound_container) {
-                base.sound_container.bind("ended", function () {
+                base.sound_container.bind("ended", function() {
                     base.current_music++;
                     base.current_music %= 3;
                     base.sound_container.html('<source src="resources/music/circus_' + base.current_music + '.mp3" type="audio/mpeg">');
@@ -62,9 +62,9 @@ define([
             }
             base.volume = 0.2;
             if (!amplify.store("music_off"))
-            base.startMusic();
+                base.startMusic();
         },
-        resetSize: function () {
+        resetSize: function() {
             var base = this;
             var oldw = base.canvas.width;
             var oldh = base.canvas.height;
@@ -78,26 +78,34 @@ define([
                 base.layers[k].resetSize(widthchange, heightchange);
             }
         },
-        startMenu: function () {
+        startMenu: function() {
             var base = this;
             base.clearLayers();
 
             var layer = StartMenu.init(base);
             base.addLayer(layer);
         },
-        scoresMenu: function () {
+        scoresMenu: function() {
             var base = this;
             var layer = ScoreMenu.init(base);
             base.addLayer(layer);
         },
-        won: function (score) {
+        won: function(score) {
             var base = this;
             base.score = score;
             base.running = true;
             var layer = EndMenu.init(base);
             base.addLayer(layer);
         },
-        startMusic: function () {
+        lost: function(lost_reason) {
+            var base = this;
+            base.score = 0;
+            base.lost_reason = lost_reason;
+            base.running = true;
+            var layer = EndMenu.init(base);
+            base.addLayer(layer);
+        },
+        startMusic: function() {
             var base = this;
 
             if (base.sound_container) {
@@ -109,7 +117,7 @@ define([
                 amplify.store("music_off", false);
             }
         },
-        volumeDown: function () {
+        volumeDown: function() {
             var base = this;
             base.volume -= 0.05;
             if (base.volume < 0) {
@@ -119,7 +127,7 @@ define([
                 base.sound_container[0].volume = base.volume;
             }
         },
-        volumeUp: function () {
+        volumeUp: function() {
             var base = this;
             base.volume += 0.05;
             if (base.volume > 1) {
@@ -129,7 +137,7 @@ define([
                 base.sound_container[0].volume = base.volume;
             }
         },
-        stopMusic: function () {
+        stopMusic: function() {
             var base = this;
             if (base.sound_container) {
                 base.sound_container[0].pause();
@@ -137,25 +145,25 @@ define([
                 amplify.store("music_off", true);
             }
         },
-        newGame: function () {
+        newGame: function() {
             var base = this;
             var game_layer = GameLayer.init(base)
             base.addLayer(game_layer);
         },
-        clearLayers: function () {
+        clearLayers: function() {
             var base = this;
             base.layers = [];
         },
-        addLayer: function (layer) {
+        addLayer: function(layer) {
             this.layers.push(layer);
         },
-        popLayer: function () {
+        popLayer: function() {
             this.layers.pop();
         },
-        animate: function (timestamp) {
+        animate: function(timestamp) {
             var base = this;
 
-            setTimeout(function () {
+            setTimeout(function() {
                 base.anfunc.call(window, base.animate.bind(base));
                 base.context.clearRect(0, 0, base.canvas.width, base.canvas.height);
                 for (var k in base.layers) {
@@ -168,7 +176,7 @@ define([
             }, 1);
 
         },
-        run: function () {
+        run: function() {
             var base = this;
             base.animate();
         }

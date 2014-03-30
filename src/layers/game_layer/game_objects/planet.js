@@ -3,7 +3,7 @@ define([
     './player',
     './energy_orb',
     '../vector'
-], function (Obj, Player, EnergyOrb, Vector) {
+], function(Obj, Player, EnergyOrb, Vector) {
     var Planet = Obj.create();
 
     Planet.extend({
@@ -11,7 +11,7 @@ define([
     });
     Planet.include({
         type: "planet",
-        addOrb: function (type, i) {
+        addOrb: function(type, i) {
             var base = this;
             type = type ? type : "energy";
             i = i !== undefined ? i : 0;
@@ -23,10 +23,10 @@ define([
                 type: type
             });
             switch (type) {
-                case "water" :
+                case "water":
                     base.water_counts++;
                     break;
-                case "acid" :
+                case "acid":
                     base.acid_counts++;
                     break;
                 case "earth":
@@ -37,7 +37,7 @@ define([
             }
             base.orbs.push(orb);
         },
-        init: function (layer, obj) {
+        init: function(layer, obj) {
             var base = this;
             base.temperature = 0;
             base.layer = layer;
@@ -110,24 +110,21 @@ define([
             base.image_disy = 0;
             base.image_factor = 0;
 
-            if (base.planet_type == "life") {
-                console.log("INIT PLANET L", layer);
-            }
 
             base.previous_alive = false;
             base.warmup = 0;
         },
-        setVector: function (x, y) {
+        setVector: function(x, y) {
             var base = this;
 
             base.x = x;
             base.y = y;
         },
-        setRadius: function (r) {
+        setRadius: function(r) {
             var base = this;
             base.radius = r;
         },
-        physics: function (layer) {
+        physics: function(layer) {
             var base = this;
             base.layer = layer;
             if (layer.game.debugging && layer.inputs_engine.keyPressed(77)) {
@@ -147,14 +144,14 @@ define([
             if (base.destination)
                 base.influence = base.orbs.length * 2000;
             else if (base.planet_type == "life") {
-                base.influence = (base.water_counts / 10 + base.acid_counts / 10 + base.earth_counts / 10 ) / 3 * 500;
+                base.influence = (base.water_counts / 10 + base.acid_counts / 10 + base.earth_counts / 10) / 3 * 500;
             } else {
                 base.influence = base.origin_orbs > 0 ? base.orbs.length / base.origin_orbs * 10000 : 0;
             }
             if (base.center !== undefined) {
                 if (base.center.x && base.center.y) {
-                    base.x = base.center.x + Math.cos(base.angle) * ( base.orbit_distance);
-                    base.y = base.center.y + Math.sin(base.angle) * ( base.orbit_distance);
+                    base.x = base.center.x + Math.cos(base.angle) * (base.orbit_distance);
+                    base.y = base.center.y + Math.sin(base.angle) * (base.orbit_distance);
                 }
                 base.angle += base.speed / base.orbit_distance;
             }
@@ -164,22 +161,20 @@ define([
 
             if (base.planet_type == "life" && base.center && Vector.distance(base.center, base) < base.center.influence &&
                 base.water_counts >= 10 && base.earth_counts >= 10 && base.acid_counts >= 10) {
-                console.log("d");
-                if (base.warmup == 500 && Vector.distance(base.center, base) < base.center.influence) {
+
+
+                if (base.warmup <= 500 && Vector.distance(base.center, base) < base.center.influence) {
+                    base.warmup += 1;
+                } else {
+                    base.alive = false;
+                    if (Vector.distance(base.center, base) > base.center.influence)
+                        base.warmup -= 1;
+                }
+                if (base.warmup >= 500 && Vector.distance(base.center, base) < base.center.influence) {
                     base.alive = true;
                     base.warming = false;
                 } else {
                     base.warming = true;
-
-
-                }
-                if (base.warmup <= 500 && Vector.distance(base.center, base) < base.center.influence) {
-                    base.warmup += 1;
-                } else {
-                    console.log("-");
-                    base.alive = false;
-                    if (Vector.distance(base.center, base) > base.center.influence)
-                        base.warmup -= 1;
                 }
 
                 if (!base.previous_alive) {
@@ -189,7 +184,7 @@ define([
             base.previous_alive = base.alive;
 
         },
-        predraw: function (gengine) {
+        predraw: function(gengine) {
             var base = this;
 
             var x = base.x;
@@ -220,12 +215,11 @@ define([
                     break;
                 case "life":
                     rad = base.alive ? gengine.createRadialGradient(base.x, base.y, radius + base.influence, "white", "rgb(100, 255, 255)") : gengine.createRadialGradient(base.x, base.y, radius + base.influence, "white", "rgb(255, 255, 255)");
-                    base.color = base.alive ? "white" : "rgb(" + (100 * base.earth_counts / 10 + 50 ) + ", " + (100 * base.acid_counts / 10 + 50) + ", " + (100 * base.water_counts / 10 + 50) + ")";
+                    base.color = base.alive ? "white" : "rgb(" + (100 * base.earth_counts / 10 + 50) + ", " + (100 * base.acid_counts / 10 + 50) + ", " + (100 * base.water_counts / 10 + 50) + ")";
                     break;
                 default:
                     break;
-            }
-            ;
+            };
 
             gengine.drawCircle({
                 x: x,
@@ -249,14 +243,14 @@ define([
             }
 
         },
-        draw: function (gengine) {
+        draw: function(gengine) {
             var base = this;
             var x = base.x;
             var y = base.y;
             var radius = base.radius;
             base.color = "rgb(0, 0, 0)";
             if (base.destination) {
-                base.color = "rgb(" + Math.round(255 * (base.temperature / 1000)) + ", " + Math.round(255 * (base.temperature / 1000)) + ", " + Math.round(255 * ( base.temperature / 1000)) + ")";
+                base.color = "rgb(" + Math.round(255 * (base.temperature / 1000)) + ", " + Math.round(255 * (base.temperature / 1000)) + ", " + Math.round(255 * (base.temperature / 1000)) + ")";
 
             }
 
@@ -285,20 +279,20 @@ define([
                 var disp = base.influence > 0 ? base.influence / 20000 : 0.01;
 
                 base.radius = 500 * disp;
-////                gengine.drawImage("sun.png", base.x, base.y, 1100 * disp, 1124 * disp, 4608 / 9 * base.image_disx, 0, 512, 512);
-////                if (base.image_factor % 10 == 0) {
-////
-////                    if (base.image_disx > 7) {
-////                        base.image_ddx = -1;
-////                    }
-////                    if (base.image_disx < 2) {
-////                        base.image_ddx = 1;
-////                    }
-////                    base.image_disx += base.image_ddx;
-////
-////                }
-//                base.image_factor++;
-//                base.image_factor %= 100;
+                ////                gengine.drawImage("sun.png", base.x, base.y, 1100 * disp, 1124 * disp, 4608 / 9 * base.image_disx, 0, 512, 512);
+                ////                if (base.image_factor % 10 == 0) {
+                ////
+                ////                    if (base.image_disx > 7) {
+                ////                        base.image_ddx = -1;
+                ////                    }
+                ////                    if (base.image_disx < 2) {
+                ////                        base.image_ddx = 1;
+                ////                    }
+                ////                    base.image_disx += base.image_ddx;
+                ////
+                ////                }
+                //                base.image_factor++;
+                //                base.image_factor %= 100;
                 gengine.drawCircle({
                     x: x,
                     y: y,
