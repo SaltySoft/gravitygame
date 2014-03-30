@@ -61,7 +61,7 @@ define([
             base.orbs_consumption = 0;
             base.score = 0;
             base.previous_closest = 0;
-            base.show_radar = true;
+            base.show_radar = false;
             base.radar_key = false;
             base.last_pos = [];
             base.cur_frame = 0;
@@ -128,6 +128,8 @@ define([
                 base.moved = true;
             } else {
                 base.mouse_attracted = false;
+                if (!base.moved)
+                    base.layer.graphics_engine.showMainHint("[Left click] Hold to run the engine");
             }
             base.closest_distance = -1;
 
@@ -185,10 +187,10 @@ define([
                 gengine.closePath();
             }
             var context = base.layer.game.context;
-            context.font = "18px verdana";
-            context.fillStyle = "white";
-            var metrics = context.measureText("Score : " + Math.round(base.score) + " points");
-            context.fillText("Score : " + Math.round(base.score) + " points", base.layer.game.canvas.width - metrics.width - 10, 28);
+            // context.font = "18px verdana";
+            // context.fillStyle = "white";
+            // var metrics = context.measureText("Score : " + Math.round(base.score) + " points");
+            // context.fillText("Score : " + Math.round(base.score) + " points", base.layer.game.canvas.width - metrics.width - 10, 28);
 
             for (var k in base.active_planets) {
                 gengine.beginPath();
@@ -266,6 +268,11 @@ define([
                         y: base.y + normalized_vector.y * 50 / base.layer.camera.zoom
                     }, "rgba(50,255,50," + (100000 / distance) + ")", 2, Math.PI / 6);
                 }
+
+                //Hint
+                base.layer.graphics_engine.addHint("[R] Hide Radar");
+            } else {
+                base.layer.graphics_engine.addHint("[R] Show Radar");
             }
 
             base.forces = [];
@@ -404,10 +411,16 @@ define([
 
             base.x += base.speedX * speed_f + base.offsetx;
             base.y += base.speedY * speed_f + base.offsety;
+            if (!layer.inputs_engine.keyPressed(32)) {
+                base.layer.graphics_engine.addHint("[Shift] Hyper speed warp (consumes energy)");
+            }
 
 
             if (base.closest_planet) {
+                if (base.closest_distance < base.closest_planet.influence)
+                    base.layer.graphics_engine.addHint("[Space] Leave the planet's orbital influence");
                 if (base.closest_planet.destination) {
+                    base.layer.graphics_engine.addHint("[Enter] Increase sun rays influence (consumes energy)");
                     if (base.layer.inputs_engine.keyPressed(13)) {
                         if (base.orbs_count > 25) {
                             base.closest_planet.addOrb();
@@ -418,8 +431,10 @@ define([
                     }
                 }
                 if (base.closest_planet.planet_type == "life") {
+                    base.layer.graphics_engine.addHint("[Enter] Drop collected materials to help life come to this planet");
                     if (base.layer.inputs_engine.keyPressed(13)) {
                         if (base.water_orbs > 0 && base.closest_planet.water_counts < 10) {
+
                             base.closest_planet.addOrb("water");
                             base.water_orbs -= 1;
                             base.score += 10;
@@ -428,6 +443,7 @@ define([
                             }
                         }
                         if (base.acid_orbs > 0 && base.closest_planet.acid_counts < 10) {
+
                             base.closest_planet.addOrb("acid");
                             base.acid_orbs -= 1;
                             base.score += 10;
@@ -436,6 +452,7 @@ define([
                             }
                         }
                         if (base.earth_orbs > 0 && base.closest_planet.earth_counts < 10) {
+
                             base.closest_planet.addOrb("earth");
                             base.earth_orbs -= 1;
                             base.score += 10;
@@ -449,6 +466,20 @@ define([
 
             var orbs = base.closest_planet.orbs;
             if (base.closest_planet.planet_type != "life" && (!base.closest_planet.destination || base.layer.inputs_engine.keyPressed(90))) {
+
+                if (base.closest_planet.planet_type == "energy") {
+                    base.layer.graphics_engine.addHint("Orbit around this planet to increase your ship's ENERGY");
+                }
+                if (base.closest_planet.planet_type == "water") {
+                    base.layer.graphics_engine.addHint("Orbit around this planet to fill your WATER tanks");
+                }
+                if (base.closest_planet.planet_type == "acid") {
+                    base.layer.graphics_engine.addHint("Orbit around this planet to fill your AMINATE ACIDS tanks");
+                }
+                if (base.closest_planet.planet_type == "earth") {
+                    base.layer.graphics_engine.addHint("Orbit around this planet to fill your EARTH tanks");
+                }
+
                 for (var k in orbs) {
                     var orb = orbs[k];
                     var d = base.distanceTo(orb);
@@ -462,24 +493,29 @@ define([
                         orb.offsety += d > 10 ? u.y * (base.speed + 5) : 0;
                     }
                     if (d < 900) {
+
                         if (orb.type === "energy") {
+
                             base.orbs_count++;
                             base.score += 1;
                             orbs.splice(k, 1);
                         }
                         if (orb.type == "water" && base.water_orbs < 10) {
+
                             base.water_orbs++;
                             base.closest_planet.water_counts--;
                             base.score += 10;
                             orbs.splice(k, 1);
                         }
                         if (orb.type == "acid" && base.acid_orbs < 10) {
+
                             base.acid_orbs++;
                             base.closest_planet.acid_counts--;
                             base.score += 10;
                             orbs.splice(k, 1);
                         }
                         if (orb.type == "earth" && base.earth_orbs < 10) {
+
                             base.earth_orbs++;
                             base.closest_planet.earth_counts--;
                             base.score += 10;

@@ -1,14 +1,14 @@
 define([
     './layer',
     './game_layer/vector'
-], function (Layer, Vector) {
+], function(Layer, Vector) {
     var HudLayer = Layer.create();
 
     HudLayer.include({
-        initializeLayer: function () {
+        initializeLayer: function() {
             var base = this;
         },
-        setup: function (layer) {
+        setup: function(layer) {
             var base = this;
             base.layer = layer;
 
@@ -32,7 +32,7 @@ define([
             base.images = images;
             base.show_hints = false;
         },
-        drawPlayerInformation: function () {
+        drawPlayerInformation: function() {
             var base = this;
 
             var canvas = base.layer.game.canvas;
@@ -83,7 +83,7 @@ define([
         },
 
 
-        drawPlanetInformation: function () {
+        drawPlanetInformation: function() {
             var base = this;
             var canvas = base.layer.game.canvas;
             var posy = canvas.height - 110;
@@ -154,7 +154,7 @@ define([
                 ctx.fillText("No near planet", 10, posy + 10);
             }
         },
-        drawObjectives: function () {
+        drawObjectives: function() {
             var base = this;
 
             var canvas = base.layer.game.canvas;
@@ -182,13 +182,12 @@ define([
                 ctx.fillText(base.layer.warming_planets + " planets planets warming", posx + 5, posy + 60);
             ctx.fillText(base.layer.warmup_percentage + "% of success", posx + 5, posy + 80);
         },
-        drawHints: function () {
+        drawHints: function() {
             var base = this;
 
             var canvas = base.layer.game.canvas;
 
-            var posx = canvas.width / 2;
-            var posy = canvas.height - 5;
+
 
             var ctx = base.layer.game.context;
             var player = base.layer.player;
@@ -196,66 +195,58 @@ define([
             ctx.font = "15px verdana";
             ctx.fillStyle = "white";
 
+            var hints = [
+                "To win this game :",
+                "First: gather materials and energy orbs by orbiting around other planets",
+                "Second: drop materials to life planets (indicated by your radars in GREEN)",
+                "Third: make the sun rays reach those planets to revive them by dropping energy orbs on the sun (radar: yellow)",
+                "",
+                "[Scroll] Zoom In/Out",
+                "[Left click] Hold to run engine and accelerate towards the pointer (costs energy)",
+                "[P] Pause menu",
+                "[Escape] Pause and unlock mouse"
+            ];
+
+            var posx = canvas.width / 2;
+            var posy = canvas.height - hints.length * 20;
+
             if (base.show_hints) {
+
+
+                ctx.font = "15px verdana";
+                ctx.fillStyle = "white";
+                var max_width = 0;
+                var pos = 0;
+                for (var k in hints) {
+                    ctx.font = "15px verdana";
+                    ctx.fillStyle = "white";
+                    var metrics = ctx.measureText(hints[k]);
+                    if (max_width < metrics.width)
+                        max_width = metrics.width;
+                    ctx.fillText(hints[k], posx + 5 - metrics.width / 2, posy + pos);
+                    pos += 20
+                }
 
                 ctx.fillStyle = "rgba(255,255,255,0.2);";
                 ctx.strokeStyle = "rgba(255,255,255,0.5);";
                 ctx.lineWidth = 2;
                 ctx.beginPath();
-                ctx.rect(canvas.width / 2 - 175, posy - 215, 365, 225);
+                ctx.rect(canvas.width / 2 - (max_width + 10) / 2, posy - 20, max_width + 10, hints.length * 20 + 10);
                 ctx.fill();
                 ctx.stroke();
 
-                ctx.font = "15px verdana";
-                ctx.fillStyle = "white";
-
-                var text = "[Maj] Ultra speed engine";
-                var metrics = ctx.measureText(text);
-                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 80);
-
-                var text = "[Space] Anti gravity ray";
-                var metrics = ctx.measureText(text);
-                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 100);
-
-                var text = "[Left click] Accelerate towards pointer";
-                var metrics = ctx.measureText(text);
-                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 60);
-
-                var text = "[Middle click] Zoom";
-                var metrics = ctx.measureText(text);
-                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 40);
-
-                var text = "[Right click] Camera move";
-                var metrics = ctx.measureText(text);
-                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 20);
-
-                var text = "Green radar lines indicate potential life planets";
-                var metrics = ctx.measureText(text);
-                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 200);
-
-
-                var text = "White radar line indicates the sun";
-                var metrics = ctx.measureText(text);
-                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 180);
-
-                var text = "Blue lines indicate gravitation influence";
-                var metrics = ctx.measureText(text);
-                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 160);
-
-                var text = "[R] Show radar";
-                var metrics = ctx.measureText(text);
-                ctx.fillText(text, posx + 5 - metrics.width / 2, posy - 120);
-                ctx.fillStyle = "red";
-                var text = "[H] Hide commands help";
-                var metrics = ctx.measureText(text);
-                ctx.fillText(text, posx + 5 - metrics.width / 2, posy);
             } else {
                 var text = "[H] Show commands help";
                 var metrics = ctx.measureText(text);
-                ctx.fillText(text, posx + 5 - metrics.width / 2, posy);
+                ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - 20);
             }
+
+
+
+
         },
-        draw: function () {
+
+        draw: function() {
             var base = this;
             base.drawPlanetInformation();
             base.drawPlayerInformation();

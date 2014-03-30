@@ -161,21 +161,20 @@ define([
 
             if (base.planet_type == "life" && base.center && Vector.distance(base.center, base) < base.center.influence &&
                 base.water_counts >= 10 && base.earth_counts >= 10 && base.acid_counts >= 10) {
-                console.log("d");
-                if (base.warmup == 500 && Vector.distance(base.center, base) < base.center.influence) {
-                    base.alive = true;
-                    base.warming = false;
-                } else {
-                    base.warming = true;
 
 
-                }
                 if (base.warmup <= 500 && Vector.distance(base.center, base) < base.center.influence) {
                     base.warmup += 1;
                 } else {
                     base.alive = false;
                     if (Vector.distance(base.center, base) > base.center.influence)
                         base.warmup -= 1;
+                }
+                if (base.warmup >= 500 && Vector.distance(base.center, base) < base.center.influence) {
+                    base.alive = true;
+                    base.warming = false;
+                } else {
+                    base.warming = true;
                 }
 
                 if (!base.previous_alive) {

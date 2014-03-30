@@ -1,6 +1,6 @@
 define([
     'class'
-], function (Class) {
+], function(Class) {
     var Obj = Class.create();
 
     Obj.extend({
@@ -8,7 +8,7 @@ define([
         y: 0
     });
     Obj.include({
-        init: function (layer, obj) {
+        init: function(layer, obj) {
             var base = this;
             base.x = obj && obj.x ? obj.x : 0;
             base.y = obj && obj.y ? obj.y : 0;
@@ -37,30 +37,30 @@ define([
 
             base.forces = [];
         },
-        logic: function () {
+        logic: function() {
 
         },
-        draw: function (gengine) {
+        draw: function(gengine) {
 
         },
-        physics: function (layer) {
+        physics: function(layer) {
 
         },
-        getScreenPos: function () {
+        getScreenPos: function() {
             var base = this;
             return {
                 x: Math.round(base.x - base.layer.camera.x) * base.layer.camera.zoom,
                 y: Math.round(base.y - base.layer.camera.y) * base.layer.camera.zoom
             };
         },
-        distanceTo: function (object) {
+        distanceTo: function(object) {
             var base = this;
             var x = (base.x - object.x);
             var y = (base.y - object.y);
             var distance = Math.sqrt(x * x + y * y);
             return distance;
         },
-        gravityTo: function (object) {
+        gravityTo: function(object) {
             var base = this;
             var distance = base.distanceTo(object);
             if (distance > 20 + object.radius) {
@@ -73,7 +73,7 @@ define([
 
             return force;
         },
-        unitVectorTo: function (object) {
+        unitVectorTo: function(object) {
             var base = this;
             var x = (base.x - object.x);
             var y = (base.y - object.y);
@@ -85,20 +85,20 @@ define([
             };
         },
 
-        gravityVectorTo: function (object) {
+        gravityVectorTo: function(object) {
             var base = this;
             var unit = base.unitVectorTo(object);
             var force = base.gravityTo(object);
-            return  {
+            return {
                 x: unit.x * force,
                 y: unit.y * force
             };
         },
-        getSpeed: function () {
+        getSpeed: function() {
             var base = this;
             return Math.sqrt(base.speedX * base.speedX + base.speedY * base.speedY);
         },
-        calcSpeed: function (speedX, speedY) {
+        calcSpeed: function(speedX, speedY) {
             var base = this;
             if (!speedX || !speedY) {
                 speedX = base.speedX;
@@ -107,7 +107,7 @@ define([
 
             return Math.sqrt(speedX * speedX + speedY * speedY);
         },
-        interractWith: function (layer, obj) {
+        interractWith: function(layer, obj) {
 
             var object = this;
             var base = obj;
@@ -143,19 +143,19 @@ define([
                     y: unit.x
                 };
 
-//                var active_planet = distance < base.radius + 500 || object.closest_planet.distanceTo(base) < 1000 &&
-//                    (distance < base.radius + 500 || object.closest_distance < object.closest_planet.radius + 500);
+                //                var active_planet = distance < base.radius + 500 || object.closest_planet.distanceTo(base) < 1000 &&
+                //                    (distance < base.radius + 500 || object.closest_distance < object.closest_planet.radius + 500);
 
                 var active_planet = distance < base.radius + base.grav_influence;
 
-//                if (active_planet && !layer.inputs_engine.keyPressed(192)) {
-//                    var angle = Math.atan(tangent.y / tangent.x);
-//                    object.addAngle(angle, 1 / distance);
-//                    object.addCenter({
-//                        x: base.x,
-//                        y: base.y
-//                    });
-//                }
+                //                if (active_planet && !layer.inputs_engine.keyPressed(192)) {
+                //                    var angle = Math.atan(tangent.y / tangent.x);
+                //                    object.addAngle(angle, 1 / distance);
+                //                    object.addCenter({
+                //                        x: base.x,
+                //                        y: base.y
+                //                    });
+                //                }
 
                 if (active_planet) {
                     object.active_planets.push(base);

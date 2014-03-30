@@ -16,6 +16,7 @@ define([
             base.canvas = layer.game.canvas;
             base.images = [];
             base.notifications = [];
+            base.hints = [];
         },
 
         run: function() {
@@ -32,18 +33,34 @@ define([
             }
             var text_offset = 1;
             var canvas = base.layer.game.canvas;
-            for (var k in base.notifications) {
-                var context = this.context;
-                context.font = "15px verdana";
-                context.fillStyle = "white";
-                if (base.notifications[k].creation + base.notifications[k].time > (new Date()).getTime()) {
-                    var metrics = context.measureText(base.notifications[k].text);
-                    var width = metrics.width;
-                    context.fillText(base.notifications[k].text, canvas.width / 2 - width / 2, text_offset * 20);
-                    text_offset++;
-                }
 
+            var pos = 0;
+            for (var k in base.hints) {
+                var posx = canvas.width / 2;
+                var posy = 20;
+
+                base.context.font = "15px verdana";
+                base.context.fillStyle = "white";
+                var metrics = base.context.measureText(base.hints[k]);
+                base.context.fillText(base.hints[k], posx + 5 - metrics.width / 2, posy + pos);
+                pos += 20
             }
+            base.hints = [
+
+            ];
+        },
+        addHint: function(hint) {
+            var base = this;
+            base.hints.push(hint);
+        },
+        showMainHint: function(text) {
+            var base = this;
+            var canvas = base.layer.game.canvas;
+            var ctx = base.context;
+            ctx.font = "40px verdana";
+            ctx.fillStyle = "rgba(150, 0, 0, 1)";
+            var metrics = ctx.measureText(text);
+            ctx.fillText(text, canvas.width / 2 - metrics.width / 2, canvas.height / 4 * 3);
         },
         drawCircle: function(params) {
             var base = this;
