@@ -389,7 +389,7 @@ define([
             }
 
             var orbs = base.closest_planet.orbs;
-            if (base.closest_planet.planet_type != "life" && !base.closest_planet.destination) {
+            if (base.closest_planet.planet_type != "life" && (!base.closest_planet.destination || base.layer.inputs_engine.keyPressed(90))) {
                 for (var k in orbs) {
                     var orb = orbs[k];
                     var d = base.distanceTo(orb);
