@@ -208,11 +208,10 @@ define([
                                 base.camera.speedX += unit_to_planet.x * 15;
                                 base.camera.speedY += unit_to_planet.y * 15;
                             }
-                            console.log("j", Vector.calcSpeed(base.camera.speedX, base.camera.speedY), distance, base.camera.speedX, base.camera.speedY);
+
                             base.camera.x += base.camera.speedX;
                             base.camera.y += base.camera.speedY;
                         } else {
-                            console.log(Vector.calcSpeed(base.camera.speedX, base.camera.speedY), distance, base.camera.speedX, base.camera.speedY);
                             base.camera.x = cplanet.x - base.game.canvas.width / 2 / base.camera.zoom;
                             base.camera.y = cplanet.y - base.game.canvas.height / 2 / base.camera.zoom;
 

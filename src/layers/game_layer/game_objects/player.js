@@ -51,7 +51,7 @@ define([
                 y: 0
             };
 
-            base.orbs_count = base.layer.game.debugging ? 1000 : 10;
+            base.orbs_count = base.layer.game.debugging ? 1000 : 100;
             base.water_orbs = base.layer.game.debugging ? 10 : 0;
             base.acid_orbs = base.layer.game.debugging ? 10 : 0;
             base.earth_orbs = base.layer.game.debugging ? 10 : 0;
@@ -149,13 +149,13 @@ define([
                 fill_style: "blue",
                 stroke_style: "#FFAA88"
             });
-            var i = 10;
+            var i = base.last_pos.length + 5;
             for (var k in base.last_pos) {
                 var alpha = 1 / i--;
                 gengine.drawCircle({
                     x: base.last_pos[k].x,
                     y: base.last_pos[k].y,
-                    radius: 5 / base.layer.camera.zoom,
+                    radius: (5 - (2 * i / base.last_pos.length)) / base.layer.camera.zoom,
                     fill_style: "rgba(255,255,255," + alpha + ")",
                     stroke_style: "#FFAA88"
                 });
@@ -246,13 +246,18 @@ define([
                         x: base.x,
                         y: base.y
                     });
+
+                    var distance = base.distanceTo({
+                        x: base.layer.level.life_planets[k].x,
+                        y: base.layer.level.life_planets[k].y
+                    });
                     gengine.radarTo({
                         x: base.x,
                         y: base.y
                     }, {
                         x: base.x + normalized_vector.x * 50 / base.layer.camera.zoom,
                         y: base.y + normalized_vector.y * 50 / base.layer.camera.zoom
-                    }, "white", 2);
+                    }, "rgba(255,255,255," + (100000 / distance) + ")", 2);
                 }
             }
 
@@ -266,14 +271,19 @@ define([
         physics: function(layer) {
             var base = this;
             base.active_planets = [];
+            // ++base.cur_frame;
+            // base.cur_frame = base.cur_frame % 5;
+            if (true || base.cur_frame == 0) {
 
-            if (base.last_pos.length > 50)
-                base.last_pos.shift();
+                if (base.last_pos.length > 30)
+                    base.last_pos.shift();
+                base.last_pos.push({
+                    x: base.x,
+                    y: base.y
+                });
 
-            base.last_pos.push({
-                x: base.x,
-                y: base.y
-            });
+            }
+
 
             var in_influence = false;
             for (var k in layer.planets) {

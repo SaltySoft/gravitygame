@@ -123,7 +123,7 @@ define([
                 context.beginPath();
                 context.lineWidth = line_width !== undefined ? line_width : 4;
                 context.strokeStyle = color !== undefined ? color : "white";
-                context.arc((center.x - base.camera.x) * base.camera.zoom, (center.y - base.camera.y) * base.camera.zoom, 5 * i, theta - (Math.PI / 8), theta + (Math.PI / 8));
+                context.arc((center.x - base.camera.x) * base.camera.zoom, (center.y - base.camera.y) * base.camera.zoom, 5 * i, theta - (Math.PI / 12), theta + (Math.PI / 12));
                 context.stroke();
             }
 
