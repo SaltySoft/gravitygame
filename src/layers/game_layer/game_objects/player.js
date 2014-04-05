@@ -352,7 +352,10 @@ define([
                 y: 0
             };
 
+            base.speed = Math.sqrt(base.speedX * base.speedX + base.speedY * base.speedY);
             if (base.mouse_attracted && base.orbs_count > 0) {
+                console.clear();
+                console.log(base.speed);
                 var vector_to_mouse = {
                     x: base.mouse_position.x - base.x,
                     y: base.mouse_position.y - base.y
@@ -361,15 +364,22 @@ define([
 
                 vector_to_mouse = Vector.normalize(vector_to_mouse);
                 vector_to_mouse = Vector.coeff_mult(vector_to_mouse, 1);
-
-                mouse_add.x = vector_to_mouse.x * 10;
-                mouse_add.y = vector_to_mouse.y * 10;
-
-                base.orbs_count -= 0.1;
+                if (base.speed < 500) {
+                    mouse_add.x = vector_to_mouse.x * 10;
+                    mouse_add.y = vector_to_mouse.y * 10;
+                    base.orbs_count -= 0.1;
+                } else {
+                    base.speedX *= 0.99;
+                    base.speedY *= 0.99;
+                }
                 if (base.orbs_count < 0) {
                     base.orbs_count = 0;
                 }
 
+            }
+            if (base.speed > 450) {
+                base.layer.graphics_engine.addHint("MAXIMUM SPEED FOR NORMAL ENGINE");
+                base.layer.graphics_engine.addHint("PRESS [SHIFT] TO ACTIVATE INTERPLANETARY ENGINE");
             }
 
 
