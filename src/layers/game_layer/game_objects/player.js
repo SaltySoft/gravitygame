@@ -191,57 +191,68 @@ define([
 
 
 
-            var i = base.last_pos.length + 5;
+            var i = base.last_pos.length;
             for (var k in base.last_pos) {
-                var alpha = (1 / (i-- * 2)) * base.speed / 1000;
-
-                var radius = ((20 + (10 * i / base.last_pos.length)));
-                if (base.inputs.keyPressed(16)) {
-                    alpha = (1 / (i-- * 2)) * base.speed / 200;
-                    radius *= 1.3;
-                }
+                var alpha = i-- * base.speed / 30000;
+                var radius = ((30 - i)) / base.layer.camera.zoom * Math.sqrt(base.speed) / 75 * base.layer.camera.zoom * 100;
                 radius = radius > 0 ? radius : 0;
+
+
                 gengine.drawCircle({
                     y: base.last_pos[k].y,
                     x: base.last_pos[k].x,
                     radius: radius,
-                    fill_style: "rgba(255,0,0," + alpha + ")",
+                    fill_style: "rgba(255,100,70," + alpha + ")",
                     stroke_style: "#FFAA88"
                 });
             }
-
+            var toX = (-base.x + base.inputs.mouse_position.x);
+            var toY = (-base.y + base.inputs.mouse_position.y);
+            base.speed_vector = Vector.normalize({
+                x: toX,
+                y: toY
+            });
             base.ac_angle = base.ac_angle || 0;
             if (base.inputs.buttonPressed(1)) {
-                var toX = (-base.x + base.inputs.mouse_position.x);
-                var toY = (-base.y + base.inputs.mouse_position.y);
-                base.speed_vector = Vector.normalize({
-                    x: toX,
-                    y: toY
-                });
-                base.ac_angle = Math.atan(toX / toY);
-                // if (toX > 0)
-                //     angle += Math.PI / 2;
-                if (toY > 0)
-                    base.ac_angle += Math.PI;
-                base.ac_angle = -base.ac_angle;
 
+                var aim = Math.atan(toX / toY);
+                if (toY > 0)
+                    aim += Math.PI;
+                aim = -aim;
+                base.ac_angle = aim;
+            } else {
+                base.ac_angle = base.angle + Math.PI / 2;
+            }
+
+            if (base.inputs.buttonPressed(1) || base.inputs.keyPressed(16)) {
                 var j = 10;
+
                 for (var i = 0; i < 10; i++) {
                     var alpha = j / 40;
-                    var radius = j / 2 / base.layer.camera.zoom;
+                    var radius = j / 2 * 100;
+                    var fillstyle = "rgba(255,255,255," + alpha + ")";
+                    var color = "#FFAA88";
+                    if (base.inputs.keyPressed(16)) {
+                        if (!base.inputs.buttonPressed(1))
+                            base.speed_vector = Vector.normalize({
+                                x: base.speedX,
+                                y: base.speedY
+                            });
+                        var fillstyle = "rgba(100,100,255," + alpha * 2 + ")";
+                    }
+
                     gengine.drawCircle({
                         x: base.x - (base.speed_vector.x * 5 * i / base.layer.camera.zoom + base.speed_vector.x * 10 / base.layer.camera.zoom),
                         y: base.y - (base.speed_vector.y * 5 * i / base.layer.camera.zoom + base.speed_vector.y * 10 / base.layer.camera.zoom),
                         radius: radius,
-                        fill_style: "rgba(255,255,255," + alpha + ")",
-                        stroke_style: "#FFAA88"
+                        fill_style: fillstyle,
+                        stroke_style: color
                     });
                     j--;
                 }
-
             }
 
-            gengine.drawImageCentered("ship.png", base.x, base.y, base.ac_angle);
+            gengine.drawImageCentered("ship.png", base.x, base.y, 75, base.ac_angle);
 
 
 
@@ -425,7 +436,7 @@ define([
                     }, {
                         x: base.x + normalized_vector.x * 50 / base.layer.camera.zoom,
                         y: base.y + normalized_vector.y * 50 / base.layer.camera.zoom
-                    }, target.color, 2, Math.PI / 6);
+                    }, target.color, 2, Math.PI / 10);
                 }
 
 
@@ -527,13 +538,12 @@ define([
             };
 
             base.speed = Math.sqrt(base.speedX * base.speedX + base.speedY * base.speedY);
+
             if (base.mouse_attracted && base.orbs_count > 0) {
                 var vector_to_mouse = {
                     x: base.mouse_position.x - base.x,
                     y: base.mouse_position.y - base.y
                 };
-
-
                 vector_to_mouse = Vector.normalize(vector_to_mouse);
                 vector_to_mouse = Vector.coeff_mult(vector_to_mouse, 1);
                 if (base.speed < 500) {
@@ -547,12 +557,9 @@ define([
                 if (base.orbs_count < 0) {
                     base.orbs_count = 0;
                 }
+            }
 
-            }
-            if (base.speed > 450) {
-                base.layer.graphics_engine.addHint("MAXIMUM SPEED FOR NORMAL ENGINE");
-                base.layer.graphics_engine.addHint("PRESS [SHIFT] TO ACTIVATE INTERPLANETARY ENGINE");
-            }
+
 
 
             base.speedX += base.accelerationX + Math.cos(base.angle) * base.accel_jet + mouse_add.x;
@@ -568,12 +575,6 @@ define([
 
                     base.speedX -= base.speed * unit.x / 10;
                     base.speedY -= base.speed * unit.y / 10;
-
-                    //Player loses score when on planet.
-                    base.score -= base.score > 50 ? 50 : base.score;
-                    if (base.previous_closest >= base.closest_planet.radius + 10) {
-                        base.layer.graphics_engine.notification("Don't touch planets ! You'll disturb its nature. Malus : 50pts", 2000);
-                    }
                 } else if (distance < base.closest_planet.radius + 5) {
                     base.speedX *= 0.9;
                     base.speedY *= 0.9;
@@ -586,18 +587,19 @@ define([
                 base.previous_closest = Vector.distance(base, base.closest_planet);
             }
             var speed_f = 1;
-            if (base.layer.inputs_engine.keyPressed(16) && base.orbs_count > 0.1) {
-                speed_f = 10;
-                base.orbs_count -= 0.01;
+            base.warp_add = base.warp_add || {
+                x: 0,
+                y: 0
+            };
+
+            if (base.inputs.keyPressed(16) && base.orbs_count > 0) {
+                speed_f = 5;
+                base.orbs_count -= 0.05;
             }
-
-            base.x += base.speedX * speed_f + base.offsetx;
-            base.y += base.speedY * speed_f + base.offsety;
-            if (!layer.inputs_engine.keyPressed(32)) {
-                base.layer.graphics_engine.addHint("[Shift] Hyper speed warp (consumes energy)");
-            }
-
-
+            base.x += base.speedX * speed_f + base.offsetx + base.warp_add.x;
+            base.y += base.speedY * speed_f + base.offsety + base.warp_add.y;
+            base.warp_add.x *= 0.9;
+            base.warp_add.y *= 0.9;
             if (base.closest_planet) {
                 if (base.closest_distance < base.closest_planet.influence)
                     base.layer.graphics_engine.addHint("[Space] Leave the planet's orbital influence");

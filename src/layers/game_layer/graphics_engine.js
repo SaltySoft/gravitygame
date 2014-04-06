@@ -183,7 +183,7 @@ define([
             );
             //            context.drawImage(image, 0, 0);
         },
-        drawImageCentered: function(name, x, y, angle) {
+        drawImageCentered: function(name, x, y, scale, angle) {
             var base = this;
             var context = base.context;
             context.save();
@@ -200,13 +200,9 @@ define([
             xx = (x - base.camera.x) * base.camera.zoom - width * base.camera.zoom / 2;
             yy = (y - base.camera.y) * base.camera.zoom - height * base.camera.zoom / 2;
 
-            // context.translate(x, y);
-            console.clear();
-            console.log(angle);
-
             context.translate(xx, yy);
             context.rotate(angle);
-            context.drawImage(image, -width / 2, -height / 2, width, height);
+            context.drawImage(image, -width / 2 * base.camera.zoom * scale, -height / 2 * base.camera.zoom * scale, width * base.camera.zoom * scale, height * base.camera.zoom * scale);
             context.restore();
 
         },

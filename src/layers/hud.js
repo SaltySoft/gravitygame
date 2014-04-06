@@ -80,6 +80,37 @@ define([
 
             ctx.drawImage(base.images.battery, posx + 5, posy + 75);
             ctx.fillText((player.orbs_count).toFixed(2), posx + 40, posy + 98);
+
+            if (player.speed) {
+                ctx.save();
+                ctx.translate(5, 150);
+                ctx.fillText("Primary engine speed capacity", 0, 0);
+                ctx.fillStyle = "gray";
+                ctx.fillRect(0, 10, 250, 10);
+                if (player.speed > 500)
+                    ctx.fillStyle = "#FF0000";
+                else {
+                    var red = Math.floor(player.speed / 500 * 255);
+                    var green = Math.floor(255 - player.speed / 500 * 255);
+                    ctx.fillStyle = "rgba(" + red + ", " + green + ", 0, 1)";
+                }
+
+                ctx.fillRect(0, 10, player.speed / 500 * 250, 10);
+
+                if (player.speed >= 490 && !base.layer.inputs_engine.keyPressed(16)) {
+                    ctx.font = "16px verdana";
+                    ctx.fillStyle = "white";
+                    ctx.fillText("Use SHIFT to use WARP ENGINE", 0, 40);
+                }
+                if (base.layer.inputs_engine.keyPressed(16)) {
+                    ctx.font = "16px verdana";
+                    ctx.fillStyle = "white";
+                    ctx.fillText("Warp engine ACTIVE : speed x 5", 0, 40);
+                }
+
+                ctx.restore();
+            }
+
         },
 
 
@@ -295,6 +326,18 @@ define([
                         ctx.font = "25px verdana";
                         ctx.fillStyle = "yellow";
                         text += "Drop materials on life planets (white radar).";
+                        var metrics = ctx.measureText(text);
+                        ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - 200);
+                        ctx.font = "20px verdana";
+                        ctx.fillStyle = "white";
+                        text = "Hold [ENTER] to drop.";
+                        var metrics = ctx.measureText(text);
+                        ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - 175);
+                        break;
+                    case "sun_warmup":
+                        ctx.font = "25px verdana";
+                        ctx.fillStyle = "yellow";
+                        text += "Gather energy and drop it on the sun (white radar, ENTER key).";
                         var metrics = ctx.measureText(text);
                         ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - 200);
                         ctx.font = "20px verdana";
