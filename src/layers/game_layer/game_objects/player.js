@@ -354,8 +354,6 @@ define([
 
             base.speed = Math.sqrt(base.speedX * base.speedX + base.speedY * base.speedY);
             if (base.mouse_attracted && base.orbs_count > 0) {
-                console.clear();
-                console.log(base.speed);
                 var vector_to_mouse = {
                     x: base.mouse_position.x - base.x,
                     y: base.mouse_position.y - base.y

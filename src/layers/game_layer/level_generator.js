@@ -1,9 +1,9 @@
 define([
     './game_objects/planet',
     './game_objects/player'
-], function (Planet, Player) {
+], function(Planet, Player) {
 
-    var generate = function (layer, params) {
+    var generate = function(layer, params) {
         var planets = [];
         var objects = [];
         var player;
@@ -36,8 +36,7 @@ define([
                         planet_type = "earth";
                         earths++;
                     }
-                }
-                else if (lifes < 3) {
+                } else if (lifes < 3) {
                     if (Math.random() * (3 - lifes) < 0.7) {
                         planet_type = "life";
                         lifes++;
@@ -78,12 +77,12 @@ define([
                 }
 
 
-                var radius = 500 + 200 * Math.random()
+                var radius = 5000 + 200 * Math.random()
                 var speed = 0.5 + (Math.random() * 1.5);
 
                 var planet = Planet.init(layer, {
                     center: center,
-                    orbit_distance: i * (2 * radius + 4 * 4000) + (center.radius + 40000) /*+ ( 500 * (Math.random()))*/,
+                    orbit_distance: i * (2 * radius + 4 * 4000) + (center.radius + 40000) /*+ ( 500 * (Math.random()))*/ ,
                     speed_factor: speed,
                     radius: radius,
                     planet_type: planet_type,

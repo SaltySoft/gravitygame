@@ -143,21 +143,12 @@ define([
                     y: unit.x
                 };
 
-                //                var active_planet = distance < base.radius + 500 || object.closest_planet.distanceTo(base) < 1000 &&
-                //                    (distance < base.radius + 500 || object.closest_distance < object.closest_planet.radius + 500);
-
                 var active_planet = distance < base.radius + base.grav_influence;
 
-                //                if (active_planet && !layer.inputs_engine.keyPressed(192)) {
-                //                    var angle = Math.atan(tangent.y / tangent.x);
-                //                    object.addAngle(angle, 1 / distance);
-                //                    object.addCenter({
-                //                        x: base.x,
-                //                        y: base.y
-                //                    });
-                //                }
 
                 if (active_planet) {
+                    console.clear();
+                    console.log("hey");
                     object.active_planets.push(base);
 
                     if (base.radius >= distance) {
