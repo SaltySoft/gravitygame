@@ -17,8 +17,8 @@ define([
             base.images = [];
             base.notifications = [];
             base.hints = [];
-        },
 
+        },
         run: function() {
             var base = this;
             var canvas = base.layer.game.canvas;
@@ -182,6 +182,33 @@ define([
                 height * base.camera.zoom
             );
             //            context.drawImage(image, 0, 0);
+        },
+        drawImageCentered: function(name, x, y, angle) {
+            var base = this;
+            var context = base.context;
+            context.save();
+            if (base.images[name] === undefined) {
+                var image = new Image();
+                image.src = "resources/" + name;
+                base.images[name] = image;
+
+            } else {
+                var image = base.images[name];
+            }
+            var width = image.width;
+            var height = image.height;
+            xx = (x - base.camera.x) * base.camera.zoom - width * base.camera.zoom / 2;
+            yy = (y - base.camera.y) * base.camera.zoom - height * base.camera.zoom / 2;
+
+            // context.translate(x, y);
+            console.clear();
+            console.log(angle);
+
+            context.translate(xx, yy);
+            context.rotate(angle);
+            context.drawImage(image, -width / 2, -height / 2, width, height);
+            context.restore();
+
         },
         createRadialGradient: function(x, y, radius, color1, color2) {
             var base = this;

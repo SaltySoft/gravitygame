@@ -243,6 +243,74 @@ define([
 
 
 
+            for (var k in player.state) {
+                var state = player.state[k];
+
+
+                var text = "";
+
+                switch (state) {
+                    case "energy_search":
+                        ctx.font = "25px verdana";
+                        ctx.fillStyle = "yellow";
+                        text += "Get energy : " + Math.floor(player.orbs_count) + " / 200";
+                        var metrics = ctx.measureText(text);
+                        ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - 200);
+                        break;
+                    case "materials_search":
+                        ctx.font = "25px verdana";
+                        ctx.fillStyle = "yellow";
+                        text += "Fill your tanks :";
+                        var metrics = ctx.measureText(text);
+                        ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - 200);
+                        text = "";
+                        ctx.font = "20px verdana";
+                        var pos = 175;
+                        if (player.state.indexOf("earth_search") !== -1) {
+                            ctx.fillStyle = "red";
+                            var text = "";
+                            text += "Earth (red planets, red radar)";
+                            var metrics = ctx.measureText(text);
+                            ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - pos);
+                            pos -= 25;
+                        }
+                        if (player.state.indexOf("water_search") !== -1) {
+                            ctx.fillStyle = "blue";
+                            text = "";
+                            text += "Water (blue planets, blue radar)";
+                            var metrics = ctx.measureText(text);
+                            ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - pos);
+                            pos -= 25;
+                        }
+                        if (player.state.indexOf("acid_search") !== -1) {
+                            text = "";
+                            ctx.fillStyle = "green";
+                            text += "Aminate Acids (green planets, green radar)";
+                            var metrics = ctx.measureText(text);
+                            ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - pos);
+                        }
+
+                        break;
+                    case "life_search":
+                        ctx.font = "25px verdana";
+                        ctx.fillStyle = "yellow";
+                        text += "Drop materials on life planets (white radar).";
+                        var metrics = ctx.measureText(text);
+                        ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - 200);
+                        ctx.font = "20px verdana";
+                        ctx.fillStyle = "white";
+                        text = "Hold [ENTER] to drop.";
+                        var metrics = ctx.measureText(text);
+                        ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - 175);
+                        break;
+                    default:
+                        break;
+                }
+
+
+            }
+
+
 
         },
 

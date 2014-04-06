@@ -57,7 +57,7 @@ define([
             base.acid_orbs = base.layer.game.debugging ? 10 : 0;
             base.earth_orbs = base.layer.game.debugging ? 10 : 0;
             base.shield_orbs = base.layer.game.debugging ? 10 : 0;
-            base.moved = false;
+            base.moved = true;
             base.orbs = [];
             base.orbs_consumption = 0;
             base.score = 0;
@@ -66,6 +66,8 @@ define([
             base.radar_key = false;
             base.last_pos = [];
             base.cur_frame = 0;
+
+            base.positionned = false;
         },
         addAngle: function(angle, weight) {
             var base = this;
@@ -86,6 +88,12 @@ define([
         },
         logic: function(layer) {
             var base = this;
+            if (!base.positionned) {
+                base.x = base.layer.level.sun.x + 15000;
+                base.y = base.layer.level.sun.y;
+                base.speedY = 400;
+                base.positionned = true;
+            }
             base.inputs = layer.inputs_engine;
 
             base.accelOffsetX = 0;
@@ -173,24 +181,68 @@ define([
         },
         draw: function(gengine) {
             var base = this;
-            gengine.drawCircle({
-                x: base.x,
-                y: base.y,
-                radius: 5 / base.layer.camera.zoom,
-                fill_style: "blue",
-                stroke_style: "#FFAA88"
-            });
+            // gengine.drawCircle({
+            //     x: base.x,
+            //     y: base.y,
+            //     radius: 5 / base.layer.camera.zoom,
+            //     fill_style: "blue",
+            //     stroke_style: "#FFAA88"
+            // });
+
+
+
             var i = base.last_pos.length + 5;
             for (var k in base.last_pos) {
-                var alpha = 1 / i--;
+                var alpha = (1 / (i-- * 2)) * base.speed / 1000;
+
+                var radius = ((20 + (10 * i / base.last_pos.length)));
+                if (base.inputs.keyPressed(16)) {
+                    alpha = (1 / (i-- * 2)) * base.speed / 200;
+                    radius *= 1.3;
+                }
+                radius = radius > 0 ? radius : 0;
                 gengine.drawCircle({
-                    x: base.last_pos[k].x,
                     y: base.last_pos[k].y,
-                    radius: (5 - (2 * i / base.last_pos.length)) / base.layer.camera.zoom,
-                    fill_style: "rgba(255,255,255," + alpha + ")",
+                    x: base.last_pos[k].x,
+                    radius: radius,
+                    fill_style: "rgba(255,0,0," + alpha + ")",
                     stroke_style: "#FFAA88"
                 });
             }
+
+            base.ac_angle = base.ac_angle || 0;
+            if (base.inputs.buttonPressed(1)) {
+                var toX = (-base.x + base.inputs.mouse_position.x);
+                var toY = (-base.y + base.inputs.mouse_position.y);
+                base.speed_vector = Vector.normalize({
+                    x: toX,
+                    y: toY
+                });
+                base.ac_angle = Math.atan(toX / toY);
+                // if (toX > 0)
+                //     angle += Math.PI / 2;
+                if (toY > 0)
+                    base.ac_angle += Math.PI;
+                base.ac_angle = -base.ac_angle;
+
+                var j = 10;
+                for (var i = 0; i < 10; i++) {
+                    var alpha = j / 40;
+                    var radius = j / 2 / base.layer.camera.zoom;
+                    gengine.drawCircle({
+                        x: base.x - (base.speed_vector.x * 5 * i / base.layer.camera.zoom + base.speed_vector.x * 10 / base.layer.camera.zoom),
+                        y: base.y - (base.speed_vector.y * 5 * i / base.layer.camera.zoom + base.speed_vector.y * 10 / base.layer.camera.zoom),
+                        radius: radius,
+                        fill_style: "rgba(255,255,255," + alpha + ")",
+                        stroke_style: "#FFAA88"
+                    });
+                    j--;
+                }
+
+            }
+
+            gengine.drawImageCentered("ship.png", base.x, base.y, base.ac_angle);
+
 
 
             if (base.layer.game.debugging) {
@@ -285,7 +337,7 @@ define([
                             if ((distance < radars.energy.distance || radars.energy.distance < 0) && target.orbs.length > 0) {
                                 if (base.state.indexOf("energy_search") !== -1) {
                                     radars.energy.distance = distance;
-                                    color = "rgba(255,150,0," + (10000 / distance) + ")";
+                                    color = "rgba(255,150,0," + (100000 / distance) + ")";
                                     radars.energy.target = {
                                         x: target.x,
                                         y: target.y,
