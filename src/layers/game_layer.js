@@ -169,15 +169,15 @@ define([
                 }
 
 
-                if (base.inputs_engine.buttonPressed(3)) {
-                    if (!base.previous_right_button) {
-                        base.planet_centered = !base.planet_centered;
-                    }
+                // if (base.inputs_engine.buttonPressed(3)) {
+                //     if (!base.previous_right_button) {
+                //         base.planet_centered = !base.planet_centered;
+                //     }
 
-                    base.previous_right_button = true;
-                } else {
-                    base.previous_right_button = false;
-                }
+                //     base.previous_right_button = true;
+                // } else {
+                //     base.previous_right_button = false;
+                // }
 
 
                 if (!base.planet_centered) {
