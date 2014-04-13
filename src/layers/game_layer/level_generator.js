@@ -9,8 +9,8 @@ define([
         var player;
 
         var center = Planet.init(layer, {
-            x: layer.game.canvas.width / 2 / layer.camera.zoom,
-            y: layer.game.canvas.height / 2 / layer.camera.zoom,
+            x: layer.game.canvas.gwidth / 2 / layer.camera.zoom,
+            y: layer.game.canvas.gheight / 2 / layer.camera.zoom,
             radius: 1000,
             destination: true,
             planet_type: "sun"

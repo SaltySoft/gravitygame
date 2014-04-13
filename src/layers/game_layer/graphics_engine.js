@@ -36,7 +36,7 @@ define([
 
             var pos = 0;
             for (var k in base.hints) {
-                var posx = canvas.width / 2;
+                var posx = canvas.gwidth / 2;
                 var posy = 20;
 
                 base.context.font = "15px verdana";
@@ -60,7 +60,7 @@ define([
             ctx.font = "40px verdana";
             ctx.fillStyle = "rgba(150, 0, 0, 1)";
             var metrics = ctx.measureText(text);
-            ctx.fillText(text, canvas.width / 2 - metrics.width / 2, canvas.height / 4 * 3);
+            ctx.fillText(text, canvas.gwidth / 2 - metrics.width / 2, canvas.gheight / 4 * 3);
         },
         drawCircle: function(params) {
             var base = this;
@@ -235,7 +235,7 @@ define([
             var base = this;
             var context = base.context;
             context.fillStyle = "rgba(0, 0, 0, 0.8)";
-            context.fillRect(0, 0, base.canvas.width, base.canvas.height);
+            context.fillRect(0, 0, base.canvas.gwidth, base.canvas.gheight);
         }
     });
 

@@ -117,7 +117,7 @@ define([
         drawPlanetInformation: function() {
             var base = this;
             var canvas = base.layer.game.canvas;
-            var posy = canvas.height - 110;
+            var posy = canvas.gheight - 110;
             var posx = 5;
             var height = 115;
             var width = 250;
@@ -191,8 +191,8 @@ define([
             var canvas = base.layer.game.canvas;
             var height = 110;
             var width = 250;
-            var posx = canvas.width - 5 - width;
-            var posy = canvas.height - 5 - height;
+            var posx = canvas.gwidth - 5 - width;
+            var posy = canvas.gheight - 5 - height;
 
             var ctx = base.layer.game.context;
             var player = base.layer.player;
@@ -238,8 +238,8 @@ define([
                 "[Escape] Pause and unlock mouse"
             ];
 
-            var posx = canvas.width / 2;
-            var posy = canvas.height - hints.length * 20;
+            var posx = canvas.gwidth / 2;
+            var posy = canvas.gheight - hints.length * 20;
 
             if (base.show_hints) {
 
@@ -262,14 +262,14 @@ define([
                 ctx.strokeStyle = "rgba(255,255,255,0.5);";
                 ctx.lineWidth = 2;
                 ctx.beginPath();
-                ctx.rect(canvas.width / 2 - (max_width + 10) / 2, posy - 20, max_width + 10, hints.length * 20 + 10);
+                ctx.rect(canvas.gwidth / 2 - (max_width + 10) / 2, posy - 20, max_width + 10, hints.length * 20 + 10);
                 ctx.fill();
                 ctx.stroke();
 
             } else {
                 var text = "[H] Show commands help";
                 var metrics = ctx.measureText(text);
-                ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - 20);
+                ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.gheight - 20);
             }
 
 
@@ -286,14 +286,14 @@ define([
                         ctx.fillStyle = "yellow";
                         text += "Get energy : " + Math.floor(player.orbs_count) + " / 200";
                         var metrics = ctx.measureText(text);
-                        ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - 200);
+                        ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.gheight - 200);
                         break;
                     case "materials_search":
                         ctx.font = "25px verdana";
                         ctx.fillStyle = "yellow";
                         text += "Fill your tanks :";
                         var metrics = ctx.measureText(text);
-                        ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - 200);
+                        ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.gheight - 200);
                         text = "";
                         ctx.font = "20px verdana";
                         var pos = 175;
@@ -302,7 +302,7 @@ define([
                             var text = "";
                             text += "Earth (red planets, red radar)";
                             var metrics = ctx.measureText(text);
-                            ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - pos);
+                            ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.gheight - pos);
                             pos -= 25;
                         }
                         if (player.state.indexOf("water_search") !== -1) {
@@ -310,7 +310,7 @@ define([
                             text = "";
                             text += "Water (blue planets, blue radar)";
                             var metrics = ctx.measureText(text);
-                            ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - pos);
+                            ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.gheight - pos);
                             pos -= 25;
                         }
                         if (player.state.indexOf("acid_search") !== -1) {
@@ -318,7 +318,7 @@ define([
                             ctx.fillStyle = "green";
                             text += "Aminate Acids (green planets, green radar)";
                             var metrics = ctx.measureText(text);
-                            ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - pos);
+                            ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.gheight - pos);
                         }
 
                         break;
@@ -327,24 +327,24 @@ define([
                         ctx.fillStyle = "yellow";
                         text += "Drop materials on life planets (white radar).";
                         var metrics = ctx.measureText(text);
-                        ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - 200);
+                        ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.gheight - 200);
                         ctx.font = "20px verdana";
                         ctx.fillStyle = "white";
                         text = "Hold [ENTER] to drop.";
                         var metrics = ctx.measureText(text);
-                        ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - 175);
+                        ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.gheight - 175);
                         break;
                     case "sun_warmup":
                         ctx.font = "25px verdana";
                         ctx.fillStyle = "yellow";
                         text += "Gather energy and drop it on the sun (white radar, ENTER key).";
                         var metrics = ctx.measureText(text);
-                        ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - 200);
+                        ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.gheight - 200);
                         ctx.font = "20px verdana";
                         ctx.fillStyle = "white";
                         text = "Hold [ENTER] to drop.";
                         var metrics = ctx.measureText(text);
-                        ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - 175);
+                        ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.gheight - 175);
                         break;
                     default:
                         break;

@@ -154,12 +154,12 @@ define([
                     base.camera.y = (base.player.y) - 50;
                 }
 
-                if ((base.player.x) > base.camera.x + base.game.canvas.width / base.camera.zoom - 50) {
-                    base.camera.x = (base.player.x) - base.game.canvas.width / base.camera.zoom + 50;
+                if ((base.player.x) > base.camera.x + base.game.canvas.gwidth / base.camera.zoom - 50) {
+                    base.camera.x = (base.player.x) - base.game.canvas.gwidth / base.camera.zoom + 50;
                 }
 
-                if ((base.player.y) > base.camera.y + base.game.canvas.height / base.camera.zoom - 50) {
-                    base.camera.y = (base.player.y) - base.game.canvas.height / base.camera.zoom + 50;
+                if ((base.player.y) > base.camera.y + base.game.canvas.gheight / base.camera.zoom - 50) {
+                    base.camera.y = (base.player.y) - base.game.canvas.gheight / base.camera.zoom + 50;
                 }
 
                 if (Math.abs(base.inputs_engine.getScroll()) > 0.0001) {
@@ -182,8 +182,8 @@ define([
 
                 if (!base.planet_centered) {
                     var camera_center = {
-                        x: base.camera.x + base.game.canvas.width / 2 / base.camera.zoom,
-                        y: base.camera.y + base.game.canvas.height / 2 / base.camera.zoom
+                        x: base.camera.x + base.game.canvas.gwidth / 2 / base.camera.zoom,
+                        y: base.camera.y + base.game.canvas.gheight / 2 / base.camera.zoom
                     };
                     var vector = base.player.unitVectorTo(camera_center);
                     var speed = base.player.calcSpeed();
@@ -192,8 +192,8 @@ define([
                         base.camera.x += vector.x * ((speed * 2) || 200);
                         base.camera.y += vector.y * ((speed * 2) || 200);
                     } else {
-                        base.camera.x = base.player.x - base.game.canvas.width / 2 / base.camera.zoom;
-                        base.camera.y = base.player.y - base.game.canvas.height / 2 / base.camera.zoom;
+                        base.camera.x = base.player.x - base.game.canvas.gwidth / 2 / base.camera.zoom;
+                        base.camera.y = base.player.y - base.game.canvas.gheight / 2 / base.camera.zoom;
                     }
 
 
@@ -201,8 +201,8 @@ define([
                     if (base.player.closest_planet) {
                         var cplanet = base.player.closest_planet;
                         var vector = {
-                            x: base.camera.x + base.game.canvas.width / 2 / base.camera.zoom,
-                            y: base.camera.y + base.game.canvas.height / 2 / base.camera.zoom
+                            x: base.camera.x + base.game.canvas.gwidth / 2 / base.camera.zoom,
+                            y: base.camera.y + base.game.canvas.gheight / 2 / base.camera.zoom
                         };
                         var distance = Vector.distance(cplanet, vector);
                         base.camera.speedX *= 0.95;
@@ -221,8 +221,8 @@ define([
                             base.camera.x += base.camera.speedX;
                             base.camera.y += base.camera.speedY;
                         } else {
-                            base.camera.x = cplanet.x - base.game.canvas.width / 2 / base.camera.zoom;
-                            base.camera.y = cplanet.y - base.game.canvas.height / 2 / base.camera.zoom;
+                            base.camera.x = cplanet.x - base.game.canvas.gwidth / 2 / base.camera.zoom;
+                            base.camera.y = cplanet.y - base.game.canvas.gheight / 2 / base.camera.zoom;
 
                         }
                     }
