@@ -33,6 +33,8 @@ define([
             base.resetSize();
             $(base.canvas).attr("oncontextmenu", "return false;");
             $(document).css("overflow", "hidden");
+            base.pixelRatio = window.devicePixelRatio;
+
             $(window).resize(function() {
                 base.resetSize();
 
@@ -66,13 +68,23 @@ define([
         },
         resetSize: function() {
             var base = this;
-            var oldw = base.canvas.width;
-            var oldh = base.canvas.height;
-            base.canvas.width = $(document).width();
-            base.canvas.height = $(window).height();
+            var oldw = base.canvas.style.width;
+            var oldh = base.canvas.style.height;
 
-            var widthchange = base.canvas.width - oldw;
-            var heightchange = base.canvas.height - oldh;
+            base.pixelRatio = window.devicePixelRatio;
+            base.canvas.width = $(window).width() * base.pixelRatio;
+            base.canvas.height = $(window).height() * base.pixelRatio;
+
+            base.canvas.gwidth = $(window).width();
+            base.canvas.gheight = $(window).height();
+            
+            $(base.canvas).width($(window).width());
+            $(base.canvas).height($(window).height());
+
+            base.canvas.getContext('2d').scale(base.pixelRatio, base.pixelRatio);
+
+            var widthchange = base.canvas.style.width - oldw;
+            var heightchange = base.canvas.style.height - oldh;
 
             for (var k in base.layers) {
                 base.layers[k].resetSize(widthchange, heightchange);
@@ -165,7 +177,7 @@ define([
 
             setTimeout(function() {
                 base.anfunc.call(window, base.animate.bind(base));
-                base.context.clearRect(0, 0, base.canvas.width, base.canvas.height);
+                base.context.clearRect(0, 0, base.canvas.gwidth, base.canvas.gheight);
                 for (var k in base.layers) {
                     var last = false;
                     if (k == base.layers.length - 1) {

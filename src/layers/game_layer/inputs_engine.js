@@ -21,13 +21,13 @@ define([
             };
 
             base.mouse_position = {
-                x: layer.game.canvas.width / 2,
-                y: layer.game.canvas.height / 2
+                x: layer.game.canvas.gwidth / 2,
+                y: layer.game.canvas.gheight / 2
             };
 
             base.mouse_position_scr = {
-                x: layer.game.canvas.width / 2,
-                y: layer.game.canvas.height / 2
+                x: layer.game.canvas.gwidth / 2,
+                y: layer.game.canvas.gheight / 2
             }
             $("body").keydown(function(e) {
                 if ($.inArray(e.keyCode, base.pressed_keys) == -1) {
@@ -219,9 +219,9 @@ define([
                             x: movementX,
                             y: movementY
                         };
-                        if (base.mouse_position_scr.x + movementX > 0 && base.mouse_position_scr.x + movementX < base.layer.game.canvas.width)
+                        if (base.mouse_position_scr.x + movementX > 0 && base.mouse_position_scr.x + movementX < base.layer.game.canvas.gwidth)
                             base.mouse_position_scr.x += movementX;
-                        if (base.mouse_position_scr.y + movementY > 0 && base.mouse_position_scr.y + movementY < base.layer.game.canvas.height)
+                        if (base.mouse_position_scr.y + movementY > 0 && base.mouse_position_scr.y + movementY < base.layer.game.canvas.gheight)
                             base.mouse_position_scr.y += movementY;
                     }
                 }, false);
