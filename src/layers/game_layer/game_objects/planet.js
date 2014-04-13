@@ -54,7 +54,7 @@ define([
             base.destination = obj.destination ? obj.destination : false;
             base.orbs = [];
             base.origin_orbs = 0;
-            base.grav_influence = base.destination ? 20000 : 15000;
+            base.grav_influence = base.destination ? 20000 : 30000;
             base.alive = false;
             base.active = false;
             base.previous_active = false;
@@ -190,31 +190,31 @@ define([
             var x = base.x;
             var y = base.y;
             var radius = base.radius;
-            var rad = gengine.createRadialGradient(base.x, base.y, radius + base.influence, "rgba(255,255,255,0.5)", "rgba(255,255,0,0.1)");
+            var rad = gengine.createRadialGradient(base.x, base.y, radius + base.influence + 2000, "rgba(255,255,255,0.5)", "rgba(255,255,0,0.1)");
 
             switch (base.planet_type) {
                 case "energy":
-                    rad = gengine.createRadialGradient(base.x, base.y, radius + base.influence, "white", "rgba(255,255,100,0.5)");
+                    rad = gengine.createRadialGradient(base.x, base.y, radius + base.influence + 2000, "white", "rgba(255,255,100,0.5)");
                     base.color = "rgb( " + (255 * base.temperature / 1000) + ",  " + (255 * base.temperature / 1000) + ", " + (255 * base.temperature / 1000) + ")";
                     break;
                 case "water":
-                    rad = gengine.createRadialGradient(base.x, base.y, radius + base.influence, "white", "rgba(0,0,255,0.5)");
+                    rad = gengine.createRadialGradient(base.x, base.y, radius + base.influence + 2000, "white", "rgba(0,0,255,0.5)");
                     base.color = "rgb(0, 0, " + (255 * base.temperature / 1000) + ")";
                     break;
                 case "acid":
-                    rad = gengine.createRadialGradient(base.x, base.y, radius + base.influence, "white", "rgba(0,255,0,0.5)");
+                    rad = gengine.createRadialGradient(base.x, base.y, radius + base.influence + 2000, "white", "rgba(0,255,0,0.5)");
                     base.color = "rgb(0, " + (255 * base.temperature / 1000) + ", 0)";
                     break;
                 case "shield":
-                    rad = gengine.createRadialGradient(base.x, base.y, radius + base.influence, "white", "rgba(255,0,255,0.5)");
+                    rad = gengine.createRadialGradient(base.x, base.y, radius + base.influence + 2000, "white", "rgba(255,0,255,0.5)");
                     base.color = "rgb(0, " + (255 * base.temperature / 1000) + ", " + (255 * base.temperature / 1000) + ")";
                     break;
                 case "earth":
-                    rad = gengine.createRadialGradient(base.x, base.y, radius + base.influence, "white", "rgba(255,0,255,0.5)");
+                    rad = gengine.createRadialGradient(base.x, base.y, radius + base.influence + 2000, "white", "rgba(255,0,255,0.5)");
                     base.color = "rgb(0, " + (255 * base.temperature / 1000) + ", " + (255 * base.temperature / 1000) + ")";
                     break;
                 case "life":
-                    rad = base.alive ? gengine.createRadialGradient(base.x, base.y, radius + base.influence, "white", "rgb(100, 255, 255)") : gengine.createRadialGradient(base.x, base.y, radius + base.influence, "white", "rgb(255, 255, 255)");
+                    rad = base.alive ? gengine.createRadialGradient(base.x, base.y, radius + base.influence + 2000, "white", "rgb(100, 255, 255)") : gengine.createRadialGradient(base.x, base.y, radius + base.influence, "white", "rgb(255, 255, 255)");
                     base.color = base.alive ? "white" : "rgb(" + (100 * base.earth_counts / 10 + 50) + ", " + (100 * base.acid_counts / 10 + 50) + ", " + (100 * base.water_counts / 10 + 50) + ")";
                     break;
                 default:
@@ -224,7 +224,7 @@ define([
             gengine.drawCircle({
                 x: x,
                 y: y,
-                radius: radius + base.influence,
+                radius: radius + base.influence + 2000,
                 fill_style: rad
             });
             gengine.drawCircle({

@@ -668,15 +668,15 @@ define([
                     var orb = orbs[k];
                     var d = base.distanceTo(orb);
                     var u = base.unitVectorTo(orb);
-                    if (d < 10000 &&
+                    if (d < 30000 &&
                         ((orb.type === "water" && base.water_orbs < 10) ||
                             (orb.type === "earth" && base.earth_orbs < 10) ||
                             (orb.type === "acid" && base.acid_orbs < 10) ||
                             orb.type === "energy")) {
-                        orb.offsetx += d > 10 ? u.x * (base.speed + 5) : 0;
-                        orb.offsety += d > 10 ? u.y * (base.speed + 5) : 0;
+                        orb.offsetx += d > 10 ? u.x * (base.speed + 10) : 0;
+                        orb.offsety += d > 10 ? u.y * (base.speed + 10) : 0;
                     }
-                    if (d < 900) {
+                    if (d < 1000) {
 
                         if (orb.type === "energy") {
 

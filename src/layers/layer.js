@@ -68,8 +68,8 @@ define([
         drawText: function (text, x, y, ofx, ofy, centered, color, font) {
             var base = this;
 
-            var x = x * base.game.canvas.width;
-            var y = y * base.game.canvas.height;
+            var x = x * base.game.canvas.gwidth;
+            var y = y * base.game.canvas.gheight;
 
             color = color ? color : "white";
             font = "normal 18px verdana";
@@ -91,8 +91,8 @@ define([
             var mx = base.inputs_engine.mouse_position_scr.x;
             var my = base.inputs_engine.mouse_position_scr.y;
 
-            var x = element.x * base.game.canvas.width + element.ofx;
-            var y = element.y * base.game.canvas.height + element.ofy;
+            var x = element.x * base.game.canvas.gwidth + element.ofx;
+            var y = element.y * base.game.canvas.gheight + element.ofy;
             var width = element.width;
             var height = element.height;
 
