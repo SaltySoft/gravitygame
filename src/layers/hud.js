@@ -80,6 +80,37 @@ define([
 
             ctx.drawImage(base.images.battery, posx + 5, posy + 75);
             ctx.fillText((player.orbs_count).toFixed(2), posx + 40, posy + 98);
+
+            if (player.speed) {
+                ctx.save();
+                ctx.translate(5, 150);
+                ctx.fillText("Primary engine speed capacity", 0, 0);
+                ctx.fillStyle = "gray";
+                ctx.fillRect(0, 10, 250, 10);
+                if (player.speed > 500)
+                    ctx.fillStyle = "#FF0000";
+                else {
+                    var red = Math.floor(player.speed / 500 * 255);
+                    var green = Math.floor(255 - player.speed / 500 * 255);
+                    ctx.fillStyle = "rgba(" + red + ", " + green + ", 0, 1)";
+                }
+
+                ctx.fillRect(0, 10, player.speed / 500 * 250, 10);
+
+                if (player.speed >= 490 && !base.layer.inputs_engine.keyPressed(16)) {
+                    ctx.font = "16px verdana";
+                    ctx.fillStyle = "white";
+                    ctx.fillText("Use SHIFT to use WARP ENGINE", 0, 40);
+                }
+                if (base.layer.inputs_engine.keyPressed(16)) {
+                    ctx.font = "16px verdana";
+                    ctx.fillStyle = "white";
+                    ctx.fillText("Warp engine ACTIVE : speed x 5", 0, 40);
+                }
+
+                ctx.restore();
+            }
+
         },
 
 
@@ -241,6 +272,86 @@ define([
                 ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - 20);
             }
 
+
+
+            for (var k in player.state) {
+                var state = player.state[k];
+
+
+                var text = "";
+
+                switch (state) {
+                    case "energy_search":
+                        ctx.font = "25px verdana";
+                        ctx.fillStyle = "yellow";
+                        text += "Get energy : " + Math.floor(player.orbs_count) + " / 200";
+                        var metrics = ctx.measureText(text);
+                        ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - 200);
+                        break;
+                    case "materials_search":
+                        ctx.font = "25px verdana";
+                        ctx.fillStyle = "yellow";
+                        text += "Fill your tanks :";
+                        var metrics = ctx.measureText(text);
+                        ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - 200);
+                        text = "";
+                        ctx.font = "20px verdana";
+                        var pos = 175;
+                        if (player.state.indexOf("earth_search") !== -1) {
+                            ctx.fillStyle = "red";
+                            var text = "";
+                            text += "Earth (red planets, red radar)";
+                            var metrics = ctx.measureText(text);
+                            ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - pos);
+                            pos -= 25;
+                        }
+                        if (player.state.indexOf("water_search") !== -1) {
+                            ctx.fillStyle = "blue";
+                            text = "";
+                            text += "Water (blue planets, blue radar)";
+                            var metrics = ctx.measureText(text);
+                            ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - pos);
+                            pos -= 25;
+                        }
+                        if (player.state.indexOf("acid_search") !== -1) {
+                            text = "";
+                            ctx.fillStyle = "green";
+                            text += "Aminate Acids (green planets, green radar)";
+                            var metrics = ctx.measureText(text);
+                            ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - pos);
+                        }
+
+                        break;
+                    case "life_search":
+                        ctx.font = "25px verdana";
+                        ctx.fillStyle = "yellow";
+                        text += "Drop materials on life planets (white radar).";
+                        var metrics = ctx.measureText(text);
+                        ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - 200);
+                        ctx.font = "20px verdana";
+                        ctx.fillStyle = "white";
+                        text = "Hold [ENTER] to drop.";
+                        var metrics = ctx.measureText(text);
+                        ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - 175);
+                        break;
+                    case "sun_warmup":
+                        ctx.font = "25px verdana";
+                        ctx.fillStyle = "yellow";
+                        text += "Gather energy and drop it on the sun (white radar, ENTER key).";
+                        var metrics = ctx.measureText(text);
+                        ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - 200);
+                        ctx.font = "20px verdana";
+                        ctx.fillStyle = "white";
+                        text = "Hold [ENTER] to drop.";
+                        var metrics = ctx.measureText(text);
+                        ctx.fillText(text, posx + 5 - metrics.width / 2, canvas.height - 175);
+                        break;
+                    default:
+                        break;
+                }
+
+
+            }
 
 
 

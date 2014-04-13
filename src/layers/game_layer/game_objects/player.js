@@ -51,20 +51,23 @@ define([
                 y: 0
             };
 
+            base.has_to_fill = true;
             base.orbs_count = base.layer.game.debugging ? 1000 : 100;
             base.water_orbs = base.layer.game.debugging ? 10 : 0;
             base.acid_orbs = base.layer.game.debugging ? 10 : 0;
             base.earth_orbs = base.layer.game.debugging ? 10 : 0;
             base.shield_orbs = base.layer.game.debugging ? 10 : 0;
-            base.moved = false;
+            base.moved = true;
             base.orbs = [];
             base.orbs_consumption = 0;
             base.score = 0;
             base.previous_closest = 0;
-            base.show_radar = false;
+            base.show_radar = true;
             base.radar_key = false;
             base.last_pos = [];
             base.cur_frame = 0;
+
+            base.positionned = false;
         },
         addAngle: function(angle, weight) {
             var base = this;
@@ -85,6 +88,12 @@ define([
         },
         logic: function(layer) {
             var base = this;
+            if (!base.positionned) {
+                base.x = base.layer.level.sun.x + 15000;
+                base.y = base.layer.level.sun.y;
+                base.speedY = 400;
+                base.positionned = true;
+            }
             base.inputs = layer.inputs_engine;
 
             base.accelOffsetX = 0;
@@ -141,27 +150,110 @@ define([
             } else {
                 base.radar_key = false;
             }
+            base.state = [];
+            base.target_lifes = [];
+            for (var k in base.layer.level.life_planets) {
+                var p = base.layer.level.life_planets[k];
+                if (p.water_counts < 10 && p.acid_counts < 10 && p.earth_counts < 10)
+                    base.target_lifes.push(p);
+            }
+            if (base.orbs_count < 200 && base.has_to_fill || base.orbs_count < 40) {
+                base.state.push("energy_search");
+                if (base.orbs_count < 40) {
+                    base.has_to_fill = true;
+                }
+            } else {
+                if ((base.water_orbs < 10 || base.acid_orbs < 10 || base.earth_orbs < 10) && base.target_lifes.length > 0) {
+                    base.state.push("materials_search");
+                    if (base.water_orbs < 10)
+                        base.state.push("water_search");
+                    if (base.acid_orbs < 10)
+                        base.state.push("acid_search");
+                    if (base.earth_orbs < 10)
+                        base.state.push("earth_search");
+                } else {
+                    if (base.target_lifes.length > 0)
+                        base.state.push("life_search");
+                    else
+                        base.state.push("sun_warmup");
+                }
+            }
         },
         draw: function(gengine) {
             var base = this;
-            gengine.drawCircle({
-                x: base.x,
-                y: base.y,
-                radius: 5 / base.layer.camera.zoom,
-                fill_style: "blue",
-                stroke_style: "#FFAA88"
-            });
-            var i = base.last_pos.length + 5;
+            // gengine.drawCircle({
+            //     x: base.x,
+            //     y: base.y,
+            //     radius: 5 / base.layer.camera.zoom,
+            //     fill_style: "blue",
+            //     stroke_style: "#FFAA88"
+            // });
+
+
+
+            var i = base.last_pos.length;
             for (var k in base.last_pos) {
-                var alpha = 1 / i--;
+                var alpha = i-- * base.speed / 30000;
+                var radius = ((30 - i)) / base.layer.camera.zoom * Math.sqrt(base.speed) / 75 * base.layer.camera.zoom * 100;
+                radius = radius > 0 ? radius : 0;
+
+
                 gengine.drawCircle({
-                    x: base.last_pos[k].x,
                     y: base.last_pos[k].y,
-                    radius: (5 - (2 * i / base.last_pos.length)) / base.layer.camera.zoom,
-                    fill_style: "rgba(255,255,255," + alpha + ")",
+                    x: base.last_pos[k].x,
+                    radius: radius,
+                    fill_style: "rgba(255,100,70," + alpha + ")",
                     stroke_style: "#FFAA88"
                 });
             }
+            var toX = (-base.x + base.inputs.mouse_position.x);
+            var toY = (-base.y + base.inputs.mouse_position.y);
+            base.speed_vector = Vector.normalize({
+                x: toX,
+                y: toY
+            });
+            base.ac_angle = base.ac_angle || 0;
+            if (base.inputs.buttonPressed(1)) {
+
+                var aim = Math.atan(toX / toY);
+                if (toY > 0)
+                    aim += Math.PI;
+                aim = -aim;
+                base.ac_angle = aim;
+            } else {
+                base.ac_angle = base.angle + Math.PI / 2;
+            }
+
+            if (base.inputs.buttonPressed(1) || base.inputs.keyPressed(16)) {
+                var j = 10;
+
+                for (var i = 0; i < 10; i++) {
+                    var alpha = j / 40;
+                    var radius = j / 2 * 100;
+                    var fillstyle = "rgba(255,255,255," + alpha + ")";
+                    var color = "#FFAA88";
+                    if (base.inputs.keyPressed(16)) {
+                        if (!base.inputs.buttonPressed(1))
+                            base.speed_vector = Vector.normalize({
+                                x: base.speedX,
+                                y: base.speedY
+                            });
+                        var fillstyle = "rgba(100,100,255," + alpha * 2 + ")";
+                    }
+
+                    gengine.drawCircle({
+                        x: base.x - (base.speed_vector.x * 5 * i / base.layer.camera.zoom + base.speed_vector.x * 10 / base.layer.camera.zoom),
+                        y: base.y - (base.speed_vector.y * 5 * i / base.layer.camera.zoom + base.speed_vector.y * 10 / base.layer.camera.zoom),
+                        radius: radius,
+                        fill_style: fillstyle,
+                        stroke_style: color
+                    });
+                    j--;
+                }
+            }
+
+            gengine.drawImageCentered("ship.png", base.x, base.y, 75, base.ac_angle);
+
 
 
             if (base.layer.game.debugging) {
@@ -187,10 +279,6 @@ define([
                 gengine.closePath();
             }
             var context = base.layer.game.context;
-            // context.font = "18px verdana";
-            // context.fillStyle = "white";
-            // var metrics = context.measureText("Score : " + Math.round(base.score) + " points");
-            // context.fillText("Score : " + Math.round(base.score) + " points", base.layer.game.canvas.width - metrics.width - 10, 28);
 
             for (var k in base.active_planets) {
                 gengine.beginPath();
@@ -213,42 +301,128 @@ define([
                 y: (base.layer.level.sun.y - base.y)
             });
             if (base.show_radar) {
-                var distance = base.distanceTo({
-                    x: (base.layer.level.sun.x - base.x),
-                    y: (base.layer.level.sun.y - base.y)
-                });
-                gengine.radarTo({
-                    x: base.x,
-                    y: base.y
-                }, {
-                    x: base.x + normalized_vector.x * 50 / base.layer.camera.zoom,
-                    y: base.y + normalized_vector.y * 50 / base.layer.camera.zoom
-                }, "rgba(255, 255, 20," + (50000 / distance) + ")", 2, Math.PI / 6);
-            }
+                radars = {
+                    targets: [],
+                    energy: {
+                        distance: -1,
+                        target: undefined
+                    },
+                    water: {
+                        distance: -1,
+                        target: undefined
+                    },
+                    earth: {
+                        distance: -1,
+                        target: undefined
+                    },
+                    acid: {
+                        distance: -1,
+                        target: undefined
+                    }
 
-            if (base.mouse_attracted) {
-                gengine.beginPath();
-                gengine.moveTo({
-                    x: base.x,
-                    y: base.y
-                });
-                gengine.lineTo({
-                    x: base.layer.inputs_engine.mouse_position.x,
-                    y: base.layer.inputs_engine.mouse_position.y
-                }, "rgba(255, 0, 0, 0.3)", 3);
-            }
-
-            if (base.show_radar) {
-                for (var k in base.layer.level.life_planets) {
-                    gengine.beginPath();
-                    gengine.moveTo({
-                        x: base.x,
-                        y: base.y
+                };
+                //All planets radar
+                for (var k in base.layer.level.planets) {
+                    var target = base.layer.level.planets[k];
+                    var distance = base.distanceTo({
+                        x: target.x,
+                        y: target.y
                     });
+
+                    var color = "black";
+                    switch (target.planet_type) {
+                        case "water":
+                            if ((distance < radars.water.distance || radars.water.distance < 0) && target.orbs.length > 0) {
+                                if (base.state.indexOf("water_search") !== -1) {
+                                    color = "rgba(0,0,255," + (500000 / distance) + ")";
+                                    radars.water.distance = distance;
+                                    radars.water.target = {
+                                        x: target.x,
+                                        y: target.y,
+                                        color: color
+                                    };
+                                }
+                            }
+                            break;
+                        case "energy":
+                            if ((distance < radars.energy.distance || radars.energy.distance < 0) && target.orbs.length > 0) {
+                                if (base.state.indexOf("energy_search") !== -1) {
+                                    radars.energy.distance = distance;
+                                    color = "rgba(255,150,0," + (100000 / distance) + ")";
+                                    radars.energy.target = {
+                                        x: target.x,
+                                        y: target.y,
+                                        color: color
+                                    };
+                                }
+                            }
+                            break;
+                        case "acid":
+                            if ((distance < radars.acid.distance || radars.acid.distance < 0) && target.orbs.length > 0) {
+                                if (base.state.indexOf("acid_search") !== -1) {
+                                    radars.acid.distance = distance;
+                                    color = "rgba(0,255,0," + (50000 / distance) + ")";
+                                    radars.acid.target = {
+                                        x: target.x,
+                                        y: target.y,
+                                        color: color
+                                    };
+                                }
+                            }
+                            break;
+                        case "earth":
+                            if ((distance < radars.earth.distance || radars.earth.distance < 0) && target.orbs.length > 0) {
+                                if (base.state.indexOf("earth_search") !== -1) {
+                                    radars.earth.distance = distance;
+                                    color = "rgba(255,0,0," + (50000 / distance) + ")";
+                                    radars.earth.target = {
+                                        x: target.x,
+                                        y: target.y,
+                                        color: color
+                                    };
+                                }
+                            }
+                            break;
+                        case "life":
+                            if (base.state.indexOf("life_search") !== -1 && (target.water_counts < 10 && target.earth_counts < 10 && target.acid_counts < 10)) {
+                                color = "rgba(255,255,255," + (500000 / distance) + ")";
+                                radars.targets.push({
+                                    x: target.x,
+                                    y: target.y,
+                                    color: color
+                                });
+                            }
+                            break;
+                        case "sun":
+                            color = "rgba(255,255,0," + (50000 / distance) + ")";
+                            if (base.state.indexOf("sun_warmup") !== -1)
+                                radars.targets.push({
+                                    x: target.x,
+                                    y: target.y,
+                                    color: color
+                                });
+                            break;
+                        default:
+                            break;
+                    };
+                }
+
+                if (radars.energy.target)
+                    radars.targets.push(radars.energy.target);
+                if (radars.acid.target)
+                    radars.targets.push(radars.acid.target);
+                if (radars.water.target)
+                    radars.targets.push(radars.water.target);
+                if (radars.earth.target)
+                    radars.targets.push(radars.earth.target);
+
+                for (var k in radars.targets) {
+                    var target = radars.targets[k];
+                    gengine.beginPath();
 
                     var normalized_vector = Vector.normalize({
-                        x: (base.layer.level.life_planets[k].x - base.x),
-                        y: (base.layer.level.life_planets[k].y - base.y)
+                        x: (target.x - base.x),
+                        y: (target.y - base.y)
                     });
 
                     gengine.moveTo({
@@ -256,18 +430,29 @@ define([
                         y: base.y
                     });
 
-                    var distance = base.distanceTo({
-                        x: base.layer.level.life_planets[k].x,
-                        y: base.layer.level.life_planets[k].y
-                    });
                     gengine.radarTo({
                         x: base.x,
                         y: base.y
                     }, {
                         x: base.x + normalized_vector.x * 50 / base.layer.camera.zoom,
                         y: base.y + normalized_vector.y * 50 / base.layer.camera.zoom
-                    }, "rgba(50,255,50," + (100000 / distance) + ")", 2, Math.PI / 6);
+                    }, target.color, 2, Math.PI / 10);
                 }
+
+
+                if (base.mouse_attracted) {
+                    gengine.beginPath();
+                    gengine.moveTo({
+                        x: base.x,
+                        y: base.y
+                    });
+                    gengine.lineTo({
+                        x: base.layer.inputs_engine.mouse_position.x,
+                        y: base.layer.inputs_engine.mouse_position.y
+                    }, "rgba(255, 0, 0, 0.3)", 3);
+                }
+
+
 
                 //Hint
                 base.layer.graphics_engine.addHint("[R] Hide Radar");
@@ -353,13 +538,12 @@ define([
             };
 
             base.speed = Math.sqrt(base.speedX * base.speedX + base.speedY * base.speedY);
+
             if (base.mouse_attracted && base.orbs_count > 0) {
                 var vector_to_mouse = {
                     x: base.mouse_position.x - base.x,
                     y: base.mouse_position.y - base.y
                 };
-
-
                 vector_to_mouse = Vector.normalize(vector_to_mouse);
                 vector_to_mouse = Vector.coeff_mult(vector_to_mouse, 1);
                 if (base.speed < 500) {
@@ -373,12 +557,9 @@ define([
                 if (base.orbs_count < 0) {
                     base.orbs_count = 0;
                 }
+            }
 
-            }
-            if (base.speed > 450) {
-                base.layer.graphics_engine.addHint("MAXIMUM SPEED FOR NORMAL ENGINE");
-                base.layer.graphics_engine.addHint("PRESS [SHIFT] TO ACTIVATE INTERPLANETARY ENGINE");
-            }
+
 
 
             base.speedX += base.accelerationX + Math.cos(base.angle) * base.accel_jet + mouse_add.x;
@@ -394,12 +575,6 @@ define([
 
                     base.speedX -= base.speed * unit.x / 10;
                     base.speedY -= base.speed * unit.y / 10;
-
-                    //Player loses score when on planet.
-                    base.score -= base.score > 50 ? 50 : base.score;
-                    if (base.previous_closest >= base.closest_planet.radius + 10) {
-                        base.layer.graphics_engine.notification("Don't touch planets ! You'll disturb its nature. Malus : 50pts", 2000);
-                    }
                 } else if (distance < base.closest_planet.radius + 5) {
                     base.speedX *= 0.9;
                     base.speedY *= 0.9;
@@ -412,18 +587,19 @@ define([
                 base.previous_closest = Vector.distance(base, base.closest_planet);
             }
             var speed_f = 1;
-            if (base.layer.inputs_engine.keyPressed(16) && base.orbs_count > 0.1) {
-                speed_f = 10;
-                base.orbs_count -= 0.01;
+            base.warp_add = base.warp_add || {
+                x: 0,
+                y: 0
+            };
+
+            if (base.inputs.keyPressed(16) && base.orbs_count > 0) {
+                speed_f = 5;
+                base.orbs_count -= 0.05;
             }
-
-            base.x += base.speedX * speed_f + base.offsetx;
-            base.y += base.speedY * speed_f + base.offsety;
-            if (!layer.inputs_engine.keyPressed(32)) {
-                base.layer.graphics_engine.addHint("[Shift] Hyper speed warp (consumes energy)");
-            }
-
-
+            base.x += base.speedX * speed_f + base.offsetx + base.warp_add.x;
+            base.y += base.speedY * speed_f + base.offsety + base.warp_add.y;
+            base.warp_add.x *= 0.9;
+            base.warp_add.y *= 0.9;
             if (base.closest_planet) {
                 if (base.closest_distance < base.closest_planet.influence)
                     base.layer.graphics_engine.addHint("[Space] Leave the planet's orbital influence");
@@ -507,6 +683,10 @@ define([
                             base.orbs_count++;
                             base.score += 1;
                             orbs.splice(k, 1);
+                            if (base.orbs_count >= 200 && base.has_to_fill) {
+                                base.has_to_fill = false;
+                            }
+
                         }
                         if (orb.type == "water" && base.water_orbs < 10) {
 

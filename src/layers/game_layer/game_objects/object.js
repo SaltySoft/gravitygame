@@ -145,7 +145,6 @@ define([
 
                 var active_planet = distance < base.radius + base.grav_influence;
 
-
                 if (active_planet) {
                     console.clear();
                     console.log("hey");
